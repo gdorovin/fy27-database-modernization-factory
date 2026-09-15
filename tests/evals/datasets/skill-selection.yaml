@@ -1,0 +1,127 @@
+# Which skill should handle which request.
+#
+# Selection is where a skill library actually succeeds or fails. A perfect skill that never
+# gets chosen is worth nothing, and two skills that could both plausibly answer a request
+# is a design bug rather than redundancy.
+#
+# `also_acceptable` exists because some requests genuinely sit on a boundary. Where a case
+# has no acceptable alternative, the boundary should be sharp -- and if it is not, that is
+# the finding.
+
+version: 1.0.0
+
+cases:
+  - id: new-engagement
+    request: A customer wants to talk about their SQL estate before the renewal. Where do we start?
+    expected: engagement-intake
+    also_acceptable: []
+    boundary_note: Nothing exists yet, so nothing downstream can run.
+
+  - id: have-exports
+    request: They sent a CMDB extract and an Arc export. What now?
+    expected: estate-discovery
+    also_acceptable: [evidence-normalization]
+    boundary_note: >-
+      Discovery is the right entry point; it calls normalization. Choosing normalization
+      first is not wrong, only narrower.
+
+  - id: unknown-export-format
+    request: Our assessment tool exports a format no adapter understands.
+    expected: evidence-normalization
+    also_acceptable: []
+    boundary_note: This is adapter work, not estate judgement.
+
+  - id: which-target
+    request: Which Azure service should this database move to?
+    expected: azure-target-recommendation
+    also_acceptable: []
+    boundary_note: The comparison itself.
+
+  - id: sql-features
+    request: This SQL Server instance uses linked servers and scheduled jobs. What are the options?
+    expected: sql-server-modernization
+    also_acceptable: [azure-target-recommendation]
+    boundary_note: Platform assessment feeds the comparison.
+
+  - id: postgres-extensions
+    request: We are on PostgreSQL 11 with PostGIS. Can we move to the managed service?
+    expected: postgres-mysql-modernization
+    also_acceptable: []
+    boundary_note: >-
+      Must not select sql-server-modernization. Cross-family selection is the failure this
+      case exists to catch.
+
+  - id: oracle-conversion
+    request: We have Oracle schemas with heavy PL/SQL and a licensing renewal.
+    expected: oracle-heterogeneous-migration
+    also_acceptable: []
+    boundary_note: Conversion evidence is required before any comparison is meaningful.
+
+  - id: disposition
+    request: Should this workload be replatformed or rebuilt?
+    expected: modernization-classification
+    also_acceptable: []
+    boundary_note: How much must change, not where it goes.
+
+  - id: platform-readiness
+    request: Is the subscription and network ready for the first wave?
+    expected: landing-zone-readiness
+    also_acceptable: []
+    boundary_note: Platform, not workload.
+
+  - id: business-case
+    request: The sponsor needs a funding case before committing.
+    expected: business-case
+    also_acceptable: []
+    boundary_note: Must not invent a figure.
+
+  - id: sequencing
+    request: In what order should these twelve workloads move?
+    expected: migration-wave-planning
+    also_acceptable: []
+    boundary_note: Sequencing, not destination.
+
+  - id: detailed-plan
+    request: Turn wave 1 into a task plan with owners.
+    expected: migration-plan-generation
+    also_acceptable: []
+    boundary_note: Consumes waves.
+
+  - id: rollback-thresholds
+    request: What exactly triggers a rollback, and by when must we decide?
+    expected: cutover-and-rollback
+    also_acceptable: []
+    boundary_note: Read under pressure; must be a threshold, not a judgement.
+
+  - id: acceptance-criteria
+    request: How will we know the migration actually worked?
+    expected: migration-validation
+    also_acceptable: []
+    boundary_note: Evidence for the go decision.
+
+  - id: ai-ambition
+    request: After this, we want an assistant over our customer data.
+    expected: ai-data-readiness
+    also_acceptable: []
+    boundary_note: >-
+      Must not be answered by a target skill. The question is about data, not destination.
+
+  - id: audit-the-trail
+    request: Before sign-off, check the approvals and exceptions are all in order.
+    expected: governance-compliance
+    also_acceptable: []
+    boundary_note: Checks, never approves.
+
+  - id: sponsor-summary
+    request: Summarise where we are for the steering group.
+    expected: executive-brief
+    also_acceptable: []
+    boundary_note: Introduces no new fact.
+
+  - id: ambiguous-readiness
+    request: Are we ready?
+    expected: null
+    also_acceptable: [landing-zone-readiness, ai-data-readiness, migration-validation]
+    boundary_note: >-
+      Genuinely ambiguous. The correct behaviour is to ask which readiness is meant, not to
+      guess. A confident answer here is the wrong answer.

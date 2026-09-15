@@ -1,0 +1,712 @@
+{
+  "decisions": [
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed.",
+        "Dependency discovery is incomplete, so this impact assessment is provisional."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "Instance-scoped features observed in use: sql-agent."
+      ],
+      "confidence": "low",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "rationale": "Evidence is incomplete, and Arc gives continuous inventory, assessment, and governance while that is fixed (+25); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+          "score": 80.0,
+          "target": "azure-arc-enabled-sql-server",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [
+            "wl-acquired-unit-b-sales-r-dependencies-unknown"
+          ],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "azure-sql-database",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [
+            "wl-acquired-unit-b-sales-r-dependencies-unknown"
+          ],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "azure-sql-database-hyperscale",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [
+            "wl-acquired-unit-b-sales-r-dependencies-unknown"
+          ],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "azure-sql-managed-instance",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "rationale": "Scored 40 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Open blocking findings mean any move would be made on incomplete evidence (+10)",
+          "score": 40.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [
+            "wl-acquired-unit-b-sales-r-dependencies-unknown"
+          ],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "blocked"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-07-06T00:00:00Z",
+      "disposition": "retain",
+      "downtime_approach": {
+        "basis": "No planned-downtime budget has been agreed, so no method can be justified.",
+        "expected_class": "unknown",
+        "measured": false,
+        "method": "To be selected once a planned-downtime budget is agreed."
+      },
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+      ],
+      "id": "td-wl-acquired-unit-b-sales",
+      "open_questions": [
+        {
+          "blocking": true,
+          "id": "q-wl-acquired-unit-b-sales-r-dependencies-unknown",
+          "needed_by": null,
+          "owner_role": "database-owner",
+          "question": "Dependency discovery is incomplete, so the consumers of this database and the blast radius of a cutover are unknown. This must be resolved before a destination can be recommended."
+        }
+      ],
+      "operational_notes": [
+        "The workload stays where it is. This delivers inventory, assessment, and governance, not modernization.",
+        "A follow-on decision is still required for the destination."
+      ],
+      "performance_notes": [
+        "Sizing figures are estimates. No capacity or cost commitment can rest on them until a performance baseline has been collected."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "No destination can be recommended for Acquired unit b sales while blocking evidence is open, so every migration target is blocked. azure-arc-enabled-sql-server is proposed as an interim posture only: it governs the workload where it stands and does not move it. It must not be recorded as completed modernization. Evidence is incomplete, and Arc gives continuous inventory, assessment, and governance while that is fixed (+25); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+      "recommended_target": "azure-arc-enabled-sql-server",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as us-central."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_id": "wl-acquired-unit-b-sales",
+      "workload_ids": [
+        "wl-acquired-unit-b-sales"
+      ]
+    },
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "Instance-scoped features observed in use: linked-servers, sql-agent."
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "rationale": "Scored 40 against 95 for azure-sql-managed-instance. Evidence is already sufficient to choose a destination, so a bridge adds a step without adding information (-15); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+          "score": 40.0,
+          "target": "azure-arc-enabled-sql-server",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [
+            "Instance-scoped features are in use and are not available at database scope: linked-servers, sql-agent"
+          ],
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "rationale": "Blocked: Instance-scoped features are in use and are not available at database scope: linked-servers, sql-agent",
+          "score": 0.0,
+          "target": "azure-sql-database",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [
+            "Instance-scoped features are in use and are not available at database scope: linked-servers, sql-agent"
+          ],
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "rationale": "Blocked: Instance-scoped features are in use and are not available at database scope: linked-servers, sql-agent",
+          "score": 0.0,
+          "target": "azure-sql-database-hyperscale",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "rationale": "Instance-scoped features in use are available at instance scope: linked-servers, sql-agent (+25); Broad engine compatibility limits application change (+12); Managed operations remove patching and backup toil (+8)",
+          "score": 95.0,
+          "target": "azure-sql-managed-instance",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "rationale": "Scored 30 against 95 for azure-sql-managed-instance. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "rationale": "Scored 37 against 95 for azure-sql-managed-instance. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5)",
+          "score": 37.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-07-06T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 60 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_refs": [
+        "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+        "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+      ],
+      "id": "td-wl-group-finance",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-sql-managed-instance scored highest (95) for Group finance on the published comparison. Instance-scoped features in use are available at instance scope: linked-servers, sql-agent (+25); Broad engine compatibility limits application change (+12); Managed operations remove patching and backup toil (+8). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-sql-managed-instance",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately.",
+        "In scope for SOX; control evidence must be collected during validation."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as us-central."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_id": "wl-group-finance",
+      "workload_ids": [
+        "wl-group-finance"
+      ]
+    },
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed.",
+        "Dependency discovery is incomplete, so this impact assessment is provisional."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "Instance-scoped features observed in use: polybase, sql-agent."
+      ],
+      "confidence": "low",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "rationale": "Evidence is incomplete, and Arc gives continuous inventory, assessment, and governance while that is fixed (+25); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+          "score": 80.0,
+          "target": "azure-arc-enabled-sql-server",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [
+            "wl-legacy-warehouse-r-dependencies-unknown",
+            "wl-legacy-warehouse-r-evidence-conflict"
+          ],
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "azure-sql-database",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [
+            "wl-legacy-warehouse-r-dependencies-unknown",
+            "wl-legacy-warehouse-r-evidence-conflict"
+          ],
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "azure-sql-database-hyperscale",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [
+            "wl-legacy-warehouse-r-dependencies-unknown",
+            "wl-legacy-warehouse-r-evidence-conflict"
+          ],
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "azure-sql-managed-instance",
+          "verdict": "blocked"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "rationale": "Scored 40 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Open blocking findings mean any move would be made on incomplete evidence (+10)",
+          "score": 40.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [
+            "wl-legacy-warehouse-r-dependencies-unknown",
+            "wl-legacy-warehouse-r-evidence-conflict"
+          ],
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "rationale": "Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.",
+          "score": 0.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "blocked"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-07-06T00:00:00Z",
+      "disposition": "retain",
+      "downtime_approach": {
+        "basis": "No planned-downtime budget has been agreed, so no method can be justified.",
+        "expected_class": "unknown",
+        "measured": false,
+        "method": "To be selected once a planned-downtime budget is agreed."
+      },
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_refs": [
+        "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+        "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+      ],
+      "id": "td-wl-legacy-warehouse",
+      "open_questions": [
+        {
+          "blocking": true,
+          "id": "q-wl-legacy-warehouse-r-dependencies-unknown",
+          "needed_by": null,
+          "owner_role": "database-owner",
+          "question": "Dependency discovery is incomplete, so the consumers of this database and the blast radius of a cutover are unknown. This must be resolved before a destination can be recommended."
+        },
+        {
+          "blocking": true,
+          "id": "q-wl-legacy-warehouse-r-evidence-conflict",
+          "needed_by": null,
+          "owner_role": "database-owner",
+          "question": "Evidence sources disagree about: data_size_gb. The repository will not choose between them. This must be resolved before a destination can be recommended."
+        }
+      ],
+      "operational_notes": [
+        "The workload stays where it is. This delivers inventory, assessment, and governance, not modernization.",
+        "A follow-on decision is still required for the destination."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "No destination can be recommended for Legacy warehouse while blocking evidence is open, so every migration target is blocked. azure-arc-enabled-sql-server is proposed as an interim posture only: it governs the workload where it stands and does not move it. It must not be recorded as completed modernization. Evidence is incomplete, and Arc gives continuous inventory, assessment, and governance while that is fixed (+25); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+      "recommended_target": "azure-arc-enabled-sql-server",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as us-central."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_id": "wl-legacy-warehouse",
+      "workload_ids": [
+        "wl-legacy-warehouse"
+      ]
+    },
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "No compatibility obstacle was found in the available evidence."
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+            "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+          ],
+          "rationale": "Scored 40 against 75 for azure-sql-database. Evidence is already sufficient to choose a destination, so a bridge adds a step without adding information (-15); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+          "score": 40.0,
+          "target": "azure-arc-enabled-sql-server",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+            "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+          ],
+          "rationale": "No instance-scoped dependencies, so database-level isolation fits (+15); Managed operations remove patching and backup toil (+10)",
+          "score": 75.0,
+          "target": "azure-sql-database",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+            "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+          ],
+          "rationale": "Scored 30 against 75 for azure-sql-database. Neither size nor growth justifies Hyperscale; choosing it here would add capability nobody asked for (-25); Managed operations remove patching and backup toil (+5)",
+          "score": 30.0,
+          "target": "azure-sql-database-hyperscale",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+            "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+          ],
+          "rationale": "Scored 65 against 75 for azure-sql-database. No instance-scoped dependency was found, so instance scope is more surface area than this workload needs (-5); Broad engine compatibility limits application change (+12); Managed operations remove patching and backup toil (+8)",
+          "score": 65.0,
+          "target": "azure-sql-managed-instance",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+            "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+          ],
+          "rationale": "Scored 30 against 75 for azure-sql-database. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+            "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+          ],
+          "rationale": "Scored 42 against 75 for azure-sql-database. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
+          "score": 42.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-07-06T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 180 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_refs": [
+        "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+        "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+      ],
+      "id": "td-wl-shared-services",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-sql-database scored highest (75) for Shared services on the published comparison. No instance-scoped dependencies, so database-level isolation fits (+15); Managed operations remove patching and backup toil (+10). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-sql-database",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as us-central."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_id": "wl-shared-services",
+      "workload_ids": [
+        "wl-shared-services"
+      ]
+    }
+  ],
+  "engagement_id": "eng-adatum-group-fy27",
+  "unresolved_workload_ids": [
+    "wl-acquired-unit-b-sales",
+    "wl-legacy-warehouse"
+  ]
+}

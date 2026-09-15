@@ -1,0 +1,135 @@
+id: eng-woodgrove-services-fy27
+artifact_type: engagement
+engagement_id: eng-woodgrove-services-fy27
+schema_version: 1.0.0
+as_of: 2026-08-10
+created_at: 2026-08-10T00:00:00Z
+updated_at: 2026-08-10T00:00:00Z
+author: engagement-lead-f
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+customer_alias: woodgrove-services
+
+primary_trigger: application-modernization
+secondary_triggers:
+  - ai-or-analytics-requirement
+  - end-of-support
+renewal_date: null
+target_first_workload_live: 2027-01-31
+
+desired_outcomes:
+  - Let a customer service agent answer a question in one step instead of checking four systems.
+  - Release application changes without a database release becoming a separate project.
+  - Be able to trust the answer a customer is given, which means trusting the data behind it.
+
+business_context: >-
+  A services business modernizing a long-lived application alongside its database, with a
+  stated ambition to put an assistant in front of customer data. The data quality and
+  ownership questions that ambition depends on have not been answered, and the customer has
+  asked to be told honestly whether they are ready.
+
+scope:
+  in_scope:
+    - Case management database
+    - Customer master database
+    - The application that consumes both
+  out_of_scope:
+    - The public website
+  estate_summary: Two databases behind one application, plus a reporting copy.
+  estimated_workload_count: 3
+  estimated_count_is_assumption: false
+
+constraints:
+  - id: c-customer-data-accuracy
+    category: regulatory
+    statement: Any answer given to a customer must be traceable to a system of record.
+    hard: true
+    source: Security owner and business owner, intake workshop
+  - id: c-no-shadow-copies
+    category: technical
+    statement: No further uncontrolled copies of customer data may be created.
+    hard: true
+    source: Security owner
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-f
+    responsibility: Owns the customer service outcome.
+    decision_rights:
+      - Business case acceptance
+      - Cutover approval
+  - role: application-owner
+    alias: app-owner-f
+    responsibility: Owns the case management application.
+    decision_rights:
+      - Application impact
+      - Cutover approval
+  - role: database-owner
+    alias: dba-f
+    responsibility: Owns both databases and the reporting copy.
+    decision_rights:
+      - Workload classification
+      - Cutover approval
+  - role: security-owner
+    alias: security-owner-f
+    responsibility: Owns data protection and the traceability requirement.
+    decision_rights:
+      - Policy exceptions
+      - Cutover approval
+  - role: operations-owner
+    alias: ops-owner-f
+    responsibility: Owns run-state and support.
+    decision_rights:
+      - Cutover approval
+
+success_measures:
+  - id: sm-single-step-answer
+    statement: An agent can answer a common question without leaving one system.
+    baseline: Four systems
+    target: One system
+    measured_by: Service desk observation study
+    baseline_known: true
+  - id: sm-data-ownership
+    statement: Every customer attribute has a named system of record and owner.
+    baseline: null
+    target: 100%
+    measured_by: Data ownership register
+    baseline_known: false
+
+cadence:
+  - label: T-6
+    objective: Modernize the application and database together, with tests.
+    target_date: 2026-11-30
+    owner_role: delivery-lead
+    complete: false
+  - label: T-0
+    objective: First workload live under an approved cutover.
+    target_date: 2027-01-31
+    owner_role: delivery-lead
+    complete: false
+  - label: T+90
+    objective: Reassess readiness for analytics and assistant scenarios, on evidence.
+    target_date: 2027-04-30
+    owner_role: architect
+    complete: false
+
+evidence_refs: []
+assumptions: []
+open_questions:
+  - id: q-system-of-record
+    question: Which system is the system of record for a customer address?
+    owner_role: database-owner
+    blocking: false
+    needed_by: 2026-10-01
+  - id: q-data-owner
+    question: Who owns customer data quality once the application is modernized?
+    owner_role: business-owner
+    blocking: false
+risk_ids: []
+approvals: []
+workload_ids: []

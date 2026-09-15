@@ -1,0 +1,55 @@
+﻿title: Oracle heterogeneous modernization with a separate disposition per workload
+engagement: input/engagement.yaml
+evidence_dir: input
+playbook: playbooks/default
+
+acceptance:
+  # Each schema gets its own disposition. There is no estate-wide Oracle answer.
+  - kind: recommended_target
+    workload: wl-order-management
+    target: azure-database-for-postgresql-flexible-server
+  - kind: recommended_target
+    workload: wl-finance-ledger
+    target: azure-sql-managed-instance
+
+  # A conversion result against one destination says nothing about another. Targets that
+  # were never assessed must not be recommended.
+  - kind: option_not_recommended
+    workload: wl-order-management
+    target: azure-sql-managed-instance
+  - kind: option_not_recommended
+    workload: wl-finance-ledger
+    target: azure-database-for-postgresql-flexible-server
+  - kind: option_not_recommended
+    workload: wl-order-management
+    target: replace-with-saas
+
+  # No conversion assessment at all means no migration recommendation. Retaining is a
+  # legitimate outcome, not a failure to migrate.
+  - kind: recommended_target
+    workload: wl-plant-maintenance
+    target: retain-on-premises
+
+  # Conversion is explicit, and compatibility is never claimed automatically.
+  - kind: conversion_required
+    workload: wl-order-management
+  - kind: conversion_required
+    workload: wl-finance-ledger
+  - kind: text_present
+    file: target-decision.md
+    value: automatic compatibility is not claimed
+  - kind: text_present
+    file: assessment-summary.md
+    value: a conversion percentage is not a compatibility verdict
+
+  # Application remediation and business validation are required, not optional.
+  - kind: text_present
+    file: migration-plan-1.md
+    value: convert schema and database code
+  - kind: text_present
+    file: validation-plan-1.md
+    value: business validation of converted behaviour
+
+  - kind: text_absent
+    file: target-decision.md
+    value: fully compatible

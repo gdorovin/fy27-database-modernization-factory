@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/validation-report.schema.json",
+  "title": "Validation report",
+  "description": "The evidence behind a go / no-go decision. A blocking failure forces no-go. A blocking check that has not run forbids go. A no-go must produce corrective issues. Generated tests are marked as such and can never be the sole basis for go.",
+  "type": "object",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/artifactBase" }],
+  "properties": {
+    "artifact_type": { "const": "validation-report" },
+    "wave_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "migration_plan_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "executed_on": { "type": "string", "description": "Date or window the validation ran." },
+    "checks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/check" } },
+    "outcome": { "type": "string", "enum": ["go", "conditional-go", "no-go"] },
+    "rollback_triggered": { "type": "boolean" },
+    "rollback_reason": { "type": ["string", "null"] },
+    "business_acceptance": { "$ref": "#/$defs/businessAcceptance" },
+    "corrective_issue_ids": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["wave_id", "migration_plan_id", "executed_on", "checks", "outcome"],
+  "unevaluatedProperties": false,
+  "$comment": "Cross-field rules (a blocking failure forces no-go, a no-go requires corrective issues, rollback requires a reason, generated tests alone cannot justify go) are enforced by the Pydantic model because they quantify over the checks array.",
+  "$defs": {
+    "check": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "category": {
+          "type": "string",
+          "enum": [
+            "inventory",
+            "configuration",
+            "schema",
+            "data-reconciliation",
+            "data-types",
+            "referential-integrity",
+            "programmability",
+            "connectivity",
+            "functional",
+            "regression",
+            "integration",
+            "performance",
+            "concurrency",
+            "availability",
+            "backup-restore",
+            "rpo-rto",
+            "security-configuration",
+            "identity",
+            "network-isolation",
+            "encryption",
+            "auditing",
+            "posture",
+            "cost-sizing",
+            "monitoring",
+            "runbooks",
+            "business-acceptance"
+          ]
+        },
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "method": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "tolerance": {
+          "type": ["string", "null"],
+          "description": "The threshold that separates pass from fail. Without one, 'pass' is an opinion."
+        },
+        "baseline": { "type": ["string", "null"] },
+        "observed": { "type": ["string", "null"] },
+        "result": { "type": "string", "enum": ["pass", "fail", "not-run", "not-applicable"] },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/identifier" }
+        },
+        "blocking": { "type": "boolean" },
+        "notes": { "type": ["string", "null"] },
+        "generated_test": {
+          "type": "boolean",
+          "description": "True when the check is an auto-generated test. Supporting evidence only."
+        }
+      },
+      "required": ["id", "category", "name", "method"],
+      "additionalProperties": false
+    },
+    "businessAcceptance": {
+      "type": "object",
+      "properties": {
+        "business_owner_accepted": { "type": "boolean" },
+        "application_owner_accepted": { "type": "boolean" },
+        "accepted_on": { "type": ["string", "null"] },
+        "conditions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

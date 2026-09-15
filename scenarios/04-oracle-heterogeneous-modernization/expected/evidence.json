@@ -1,0 +1,228 @@
+{
+  "conflicts": [],
+  "engagement_id": "eng-litware-manufacturing-fy27",
+  "generated_at": "2026-06-08T00:00:00Z",
+  "generator": "dbmodernize normalize-evidence",
+  "manifest": [],
+  "records": [
+    {
+      "attributes": {
+        "annual_growth_percent": 8.0,
+        "availability_target": "99.95% monthly",
+        "compliance_scopes": [
+          "SOX"
+        ],
+        "cpu_cores": 16,
+        "criticality": "critical",
+        "data_residency": "us-east",
+        "data_size_gb": 480.0,
+        "dependency_discovery_complete": true,
+        "edition": "Enterprise",
+        "environment": "production",
+        "host_alias": "host-ora-b",
+        "largest_table_gb": 140.0,
+        "max_planned_downtime_minutes": 60,
+        "measured": true,
+        "memory_gb": 128.0,
+        "name": "Finance ledger",
+        "peak_concurrent_sessions": 260,
+        "peak_iops": 4800,
+        "rpo_minutes": 5,
+        "rto_minutes": 60,
+        "service_level_stated_by": "business-owner",
+        "source_platform": "oracle",
+        "source_version": "19.3"
+      },
+      "classification": "internal",
+      "collected_on": "2026-06-08",
+      "confidence": "medium",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "evidence_class": "observed",
+      "id": "ev-csv-inventory-wl-finance-ledger-inventor-53689ee7",
+      "injection_findings": [],
+      "notes": "Conversion assessed against Azure SQL Managed Instance.",
+      "source": "csv-inventory",
+      "source_ref": "inventory.csv#row=3",
+      "subject_id": "wl-finance-ledger",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "assessed_target": "azure-sql-managed-instance",
+        "conversion_automatic": 498,
+        "conversion_automatic_percent": 85.0,
+        "conversion_errors": 12,
+        "conversion_manual": 76,
+        "conversion_total": 586,
+        "manual_effort_hours": 410,
+        "measured": true,
+        "name": "Finance ledger",
+        "object_counts": {
+          "packages": 39,
+          "procedures": 174,
+          "tables": 260,
+          "triggers": 62,
+          "views": 51
+        },
+        "source_platform": "oracle",
+        "source_schema": "FIN",
+        "top_issues": [
+          {
+            "category": "plsql",
+            "description": "Autonomous transactions used in audit logging need a different pattern.",
+            "occurrences": 18
+          },
+          {
+            "category": "sequence",
+            "description": "Sequence usage inside triggers requires review against target semantics.",
+            "occurrences": 44
+          }
+        ]
+      },
+      "classification": "internal",
+      "collected_on": "2026-06-05",
+      "confidence": "high",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "evidence_class": "observed",
+      "id": "ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4",
+      "injection_findings": [],
+      "notes": "Conversion statistics describe tool output only. They say nothing about whether the converted code behaves identically, which requires application testing.",
+      "source": "ssma",
+      "source_ref": "ssma-conversion.json#schemas[1] project=litware-oracle-assessment",
+      "subject_id": "wl-finance-ledger",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "annual_growth_percent": 10.0,
+        "availability_target": "99.9% monthly",
+        "cpu_cores": 16,
+        "criticality": "high",
+        "data_residency": "us-east",
+        "data_size_gb": 720.0,
+        "dependency_discovery_complete": true,
+        "edition": "Enterprise",
+        "environment": "production",
+        "host_alias": "host-ora-a",
+        "largest_table_gb": 210.0,
+        "max_planned_downtime_minutes": 180,
+        "measured": true,
+        "memory_gb": 128.0,
+        "name": "Order management",
+        "peak_concurrent_sessions": 340,
+        "peak_iops": 5600,
+        "rpo_minutes": 15,
+        "rto_minutes": 120,
+        "service_level_stated_by": "business-owner",
+        "source_platform": "oracle",
+        "source_version": "19.3"
+      },
+      "classification": "internal",
+      "collected_on": "2026-06-08",
+      "confidence": "medium",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "evidence_class": "observed",
+      "id": "ev-csv-inventory-wl-order-management-invent-6a4e1f19",
+      "injection_findings": [],
+      "notes": "Substantial PL/SQL. Conversion assessed against PostgreSQL Flexible Server.",
+      "source": "csv-inventory",
+      "source_ref": "inventory.csv#row=2",
+      "subject_id": "wl-order-management",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "assessed_target": "azure-database-for-postgresql-flexible-server",
+        "conversion_automatic": 812,
+        "conversion_automatic_percent": 84.1,
+        "conversion_errors": 20,
+        "conversion_manual": 133,
+        "conversion_total": 965,
+        "manual_effort_hours": 640,
+        "measured": true,
+        "name": "Order management",
+        "object_counts": {
+          "packages": 74,
+          "procedures": 260,
+          "tables": 412,
+          "triggers": 131,
+          "views": 88
+        },
+        "source_platform": "oracle",
+        "source_schema": "OMS",
+        "top_issues": [
+          {
+            "category": "plsql",
+            "description": "Package-level state has no direct equivalent and must be redesigned.",
+            "occurrences": 41
+          },
+          {
+            "category": "datatype",
+            "description": "NUMBER columns without precision need an explicit target type decision.",
+            "occurrences": 188
+          },
+          {
+            "category": "sql",
+            "description": "Hierarchical queries require rewriting as recursive common table expressions.",
+            "occurrences": 27
+          }
+        ]
+      },
+      "classification": "internal",
+      "collected_on": "2026-06-05",
+      "confidence": "high",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "evidence_class": "observed",
+      "id": "ev-ssma-wl-order-management-ssma-conversion-cad17b4a",
+      "injection_findings": [],
+      "notes": "Conversion statistics describe tool output only. They say nothing about whether the converted code behaves identically, which requires application testing.",
+      "source": "ssma",
+      "source_ref": "ssma-conversion.json#schemas[0] project=litware-oracle-assessment",
+      "subject_id": "wl-order-management",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "annual_growth_percent": 6.0,
+        "availability_target": "99.5% monthly",
+        "cpu_cores": 8,
+        "criticality": "high",
+        "data_residency": "us-east",
+        "data_size_gb": 210.0,
+        "dependency_discovery_complete": true,
+        "edition": "Standard",
+        "environment": "production",
+        "host_alias": "host-ora-c",
+        "largest_table_gb": 70.0,
+        "max_planned_downtime_minutes": 240,
+        "measured": true,
+        "memory_gb": 64.0,
+        "name": "Plant maintenance",
+        "peak_concurrent_sessions": 120,
+        "peak_iops": 1600,
+        "rpo_minutes": 30,
+        "rto_minutes": 240,
+        "service_level_stated_by": "business-owner",
+        "source_platform": "oracle",
+        "source_version": "12.2"
+      },
+      "classification": "internal",
+      "collected_on": "2026-06-08",
+      "confidence": "medium",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "evidence_class": "observed",
+      "id": "ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b",
+      "injection_findings": [],
+      "notes": "Vendor-supported application. No conversion assessment has been performed.",
+      "source": "csv-inventory",
+      "source_ref": "inventory.csv#row=4",
+      "subject_id": "wl-plant-maintenance",
+      "subject_type": "workload",
+      "superseded_by": null
+    }
+  ]
+}

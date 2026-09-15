@@ -1,0 +1,5 @@
+name,platform,version,edition,environment,criticality,host,size_gb,largest_table_gb,cpu_cores,memory_gb,peak_iops,peak_sessions,growth_percent,rpo_minutes,rto_minutes,max_downtime_minutes,availability_target,sla_stated_by,features,dependencies,deps_confirmed,compliance,data_residency,measured,notes
+Group finance,sql-server,14.0,Enterprise,production,critical,host-fin-a,540,160,16,128,4600,300,9,5,60,60,99.95% monthly,business-owner,sql-agent;linked-servers,,true,SOX,us-central,true,Linked servers confirmed in use by the database owner.
+Shared services,sql-server,14.0,Standard,production,medium,host-shr-a,150,45,8,64,1400,140,7,30,120,180,99.5% monthly,business-owner,,,true,,us-central,true,Straightforward workload used to prove the method.
+Acquired unit b sales,sql-server,12.0,Standard,production,high,host-acq-a,300,110,8,64,2200,190,13,,,,,,sql-agent,,false,,us-central,false,Acquired estate. Documentation is incomplete and consumers are unknown.
+Legacy warehouse,sql-server,11.0,Standard,production,medium,host-leg-a,1250,700,8,64,3000,90,4,,,,,,sql-agent;polybase,,false,,us-central,false,Nobody currently owns this system. Discovered during network scanning.

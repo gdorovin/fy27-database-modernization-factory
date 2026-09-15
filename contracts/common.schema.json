@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/common.schema.json",
+  "title": "Common definitions",
+  "description": "Shared types and the provenance envelope every decision-oriented artifact carries. Referenced by every other contract so that provenance cannot be omitted by accident.",
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "pattern": "^[A-Za-z0-9][\\w.\\-]*$",
+      "description": "Stable, human-readable identifier."
+    },
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "isoDate": { "type": "string", "format": "date" },
+    "isoDateTime": { "type": "string", "format": "date-time" },
+    "sha256": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Deliberately coarse. A percentage would imply precision the evidence lacks."
+    },
+    "evidenceClass": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "user-provided",
+        "derived",
+        "assumption",
+        "recommendation",
+        "approved-decision"
+      ],
+      "description": "How a statement came to be believed."
+    },
+    "classification": {
+      "type": "string",
+      "enum": ["public", "internal", "confidential", "restricted"],
+      "description": "Anything above 'internal' must never be committed to this repository."
+    },
+    "artifactStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "evidence-complete",
+        "recommended",
+        "reviewed",
+        "approved",
+        "implementation-ready",
+        "validating",
+        "accepted",
+        "rejected",
+        "superseded"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "low", "medium", "high", "blocker"]
+    },
+    "likelihood": { "type": "string", "enum": ["low", "medium", "high"] },
+    "sourcePlatform": {
+      "type": "string",
+      "enum": ["sql-server", "postgresql", "mysql", "mariadb", "oracle", "other"]
+    },
+    "azureTarget": {
+      "type": "string",
+      "enum": [
+        "azure-sql-database",
+        "azure-sql-database-hyperscale",
+        "azure-sql-managed-instance",
+        "sql-server-on-azure-vm",
+        "azure-arc-enabled-sql-server",
+        "azure-database-for-postgresql-flexible-server",
+        "azure-database-for-mysql-flexible-server",
+        "retain-on-premises",
+        "retire",
+        "replace-with-saas"
+      ],
+      "description": "Retain, retire, and replace are first-class outcomes, not failures."
+    },
+    "disposition": {
+      "type": "string",
+      "enum": [
+        "rehost",
+        "replatform",
+        "refactor",
+        "rearchitect",
+        "rebuild",
+        "retain",
+        "retire",
+        "replace"
+      ]
+    },
+    "downtimeClass": {
+      "type": "string",
+      "enum": ["near-zero-planned", "short-planned", "extended-planned", "unknown"],
+      "description": "'zero' is intentionally absent; it cannot be substantiated."
+    },
+    "approvalRole": {
+      "type": "string",
+      "enum": [
+        "business-owner",
+        "application-owner",
+        "database-owner",
+        "security-owner",
+        "operations-owner",
+        "architect",
+        "delivery-lead"
+      ]
+    },
+    "assumption": {
+      "type": "object",
+      "description": "A gap filled in so work could proceed. Carries an owner and a way to settle it.",
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "owner_role": { "$ref": "#/$defs/nonEmptyString" },
+        "validation_step": { "$ref": "#/$defs/nonEmptyString" },
+        "impact_if_wrong": { "$ref": "#/$defs/severity" }
+      },
+      "required": ["id", "statement", "owner_role", "validation_step"],
+      "additionalProperties": false
+    },
+    "openQuestion": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "question": { "$ref": "#/$defs/nonEmptyString" },
+        "owner_role": { "$ref": "#/$defs/nonEmptyString" },
+        "blocking": { "type": "boolean" },
+        "needed_by": { "$ref": "#/$defs/isoDate" }
+      },
+      "required": ["id", "question", "owner_role"],
+      "additionalProperties": false
+    },
+    "playbookRef": {
+      "type": "object",
+      "description": "Pins the governance contract that produced the artifact.",
+      "properties": {
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "version": { "$ref": "#/$defs/nonEmptyString" },
+        "commit": { "type": ["string", "null"] },
+        "policy_ids": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["path", "version"],
+      "additionalProperties": false
+    },
+    "approvalRef": {
+      "type": "object",
+      "properties": {
+        "approval_id": { "$ref": "#/$defs/identifier" },
+        "role": { "$ref": "#/$defs/approvalRole" },
+        "decision": { "type": "string" },
+        "approved_at": { "$ref": "#/$defs/isoDateTime" }
+      },
+      "required": ["approval_id", "role", "decision", "approved_at"],
+      "additionalProperties": false
+    },
+    "criterion": {
+      "type": "object",
+      "description": "A testable gate. Prose that cannot be checked is not a criterion.",
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "verification_method": { "$ref": "#/$defs/nonEmptyString" },
+        "owner_role": { "$ref": "#/$defs/nonEmptyString" },
+        "automated": { "type": "boolean" }
+      },
+      "required": ["id", "statement", "verification_method", "owner_role"],
+      "additionalProperties": false
+    },
+    "artifactBase": {
+      "type": "object",
+      "description": "Provenance envelope. Inherited through allOf by every decision-oriented artifact.",
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "schema_version": { "type": "string" },
+        "artifact_type": { "type": "string" },
+        "engagement_id": { "$ref": "#/$defs/identifier" },
+        "workload_ids": { "type": "array", "items": { "$ref": "#/$defs/identifier" } },
+        "created_at": { "$ref": "#/$defs/isoDateTime" },
+        "updated_at": { "$ref": "#/$defs/isoDateTime" },
+        "author": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "Human principal or generating agent, e.g. 'agent:target-architect'."
+        },
+        "evidence_refs": { "type": "array", "items": { "$ref": "#/$defs/identifier" } },
+        "assumptions": { "type": "array", "items": { "$ref": "#/$defs/assumption" } },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "open_questions": { "type": "array", "items": { "$ref": "#/$defs/openQuestion" } },
+        "risk_ids": { "type": "array", "items": { "$ref": "#/$defs/identifier" } },
+        "playbook": { "$ref": "#/$defs/playbookRef" },
+        "approvals": { "type": "array", "items": { "$ref": "#/$defs/approvalRef" } },
+        "status": { "$ref": "#/$defs/artifactStatus" },
+        "supersedes": { "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }] }
+      },
+      "required": [
+        "id",
+        "engagement_id",
+        "created_at",
+        "updated_at",
+        "author",
+        "playbook"
+      ]
+    }
+  }
+}

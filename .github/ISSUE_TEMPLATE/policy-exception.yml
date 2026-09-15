@@ -1,0 +1,90 @@
+name: Policy exception
+description: Request a time-boxed, compensated deviation from a playbook policy.
+title: "[exception] "
+labels: ["governance", "policy-exception"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An exception is a deliberate, temporary, compensated deviation. Every field here is
+        mandatory because an exception missing any of them is indistinguishable from an
+        oversight — and an exception with no expiry becomes permanent by default.
+
+        The requesting role cannot be the approving role.
+
+  - type: input
+    id: policy
+    attributes:
+      label: Policy id
+      placeholder: IAM-001
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Exactly which workloads, environments, and period this covers.
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justification
+      description: Why compliance is not achievable within the timeframe, and what was tried.
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: Requesting owner role
+      placeholder: database-owner
+    validations:
+      required: true
+
+  - type: input
+    id: approver
+    attributes:
+      label: Approving role
+      description: Must differ from the requesting role.
+      placeholder: security-owner
+    validations:
+      required: true
+
+  - type: textarea
+    id: compensating
+    attributes:
+      label: Compensating controls
+      description: >
+        What reduces the risk while the exception is live? "Accepted by the business" is
+        not a compensating control.
+    validations:
+      required: true
+
+  - type: input
+    id: expires
+    attributes:
+      label: Expiry date (YYYY-MM-DD)
+      description: Keep it short. Ninety days is a reasonable ceiling.
+    validations:
+      required: true
+
+  - type: input
+    id: review
+    attributes:
+      label: Review date (YYYY-MM-DD)
+      description: Must be on or before the expiry date.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: understanding
+    attributes:
+      label: Understanding
+      options:
+        - label: I understand that an expired exception fails validation and blocks the build.
+          required: true
+        - label: I am not the approving role for this request.
+          required: true

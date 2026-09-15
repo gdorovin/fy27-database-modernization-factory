@@ -1,0 +1,12 @@
+{
+  "engagement/outcome-names-a-product": "names a product",
+  "workload/support-status-without-version": "support_status",
+  "evidence/evidence-class-is-a-recommendation": "recommendation",
+  "target-decision/no-rejected-alternative": "at least one alternative",
+  "risk/unattributed-acceptance": "who accepted it",
+  "migration-wave/pilot-is-neither-first-nor-small": "sequence 1",
+  "migration-plan/mutating-task-without-approval-or-rollback": "does not require approval",
+  "approval/author-approves-own-artifact": "cannot approve it",
+  "validation-report/go-despite-a-blocking-failure": "force a no-go",
+  "github-issue/target-without-a-decision": "target decision"
+}

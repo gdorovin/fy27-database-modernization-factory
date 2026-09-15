@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/migration-plan.schema.json",
+  "title": "Migration plan",
+  "description": "The executable plan for one wave. Any task that changes an environment must require approval and document a rollback path. A plan without a validation task cannot support a go/no-go decision and is rejected.",
+  "type": "object",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/artifactBase" }],
+  "properties": {
+    "artifact_type": { "const": "migration-plan" },
+    "wave_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "target_decision_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/identifier" }
+    },
+    "phases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/phase" } },
+    "cutover": { "$ref": "#/$defs/cutover" },
+    "rollback": { "$ref": "#/$defs/rollback" },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/criterion" }
+    },
+    "validation_plan_ref": { "type": ["string", "null"] }
+  },
+  "required": [
+    "wave_id",
+    "target_decision_ids",
+    "phases",
+    "cutover",
+    "rollback",
+    "acceptance_criteria"
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "task": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "title": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "prepare",
+            "build",
+            "migrate",
+            "validate",
+            "cutover",
+            "stabilize",
+            "optimize",
+            "decommission"
+          ]
+        },
+        "description": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "owner_role": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "depends_on": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/identifier" }
+        },
+        "dry_run_command": {
+          "type": ["string", "null"],
+          "description": "A command that shows the effect without making a change."
+        },
+        "changes_environment": { "type": "boolean" },
+        "approval_required": { "type": "boolean" },
+        "rollback_note": { "type": ["string", "null"] },
+        "policy_ids": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["id", "title", "kind", "description", "owner_role"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": { "properties": { "changes_environment": { "const": true } }, "required": ["changes_environment"] },
+          "then": {
+            "properties": {
+              "approval_required": { "const": true },
+              "rollback_note": { "type": "string", "minLength": 1 }
+            },
+            "required": ["approval_required", "rollback_note"]
+          }
+        }
+      ]
+    },
+    "phase": {
+      "type": "object",
+      "properties": {
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "objective": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "tasks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/task" } }
+      },
+      "required": ["name", "objective", "tasks"],
+      "additionalProperties": false
+    },
+    "cutover": {
+      "type": "object",
+      "description": "All five approval roles are required. Fewer is not a cutover approval.",
+      "properties": {
+        "freeze_start": { "type": "string" },
+        "replication_method": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "go_no_go_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "common.schema.json#/$defs/criterion" }
+        },
+        "communication_plan": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "required_approval_roles": {
+          "type": "array",
+          "minItems": 5,
+          "items": { "$ref": "common.schema.json#/$defs/approvalRole" }
+        },
+        "execution_window": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "owner_role": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      },
+      "required": [
+        "freeze_start",
+        "replication_method",
+        "go_no_go_criteria",
+        "communication_plan",
+        "required_approval_roles",
+        "execution_window",
+        "owner_role"
+      ],
+      "additionalProperties": false
+    },
+    "rollback": {
+      "type": "object",
+      "properties": {
+        "triggers": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "common.schema.json#/$defs/criterion" }
+        },
+        "method": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "maximum_decision_window": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "data_reconciliation_note": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "owner_role": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "rehearsed": { "type": "boolean" },
+        "evidence_preservation": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString",
+          "description": "What is captured before rollback so the failure can be analysed afterwards."
+        }
+      },
+      "required": [
+        "triggers",
+        "method",
+        "maximum_decision_window",
+        "data_reconciliation_note",
+        "owner_role",
+        "evidence_preservation"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

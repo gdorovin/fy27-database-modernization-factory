@@ -1,0 +1,46 @@
+# Risk register
+#
+# Severity is derived from likelihood x impact and is not written by hand.
+# Anything scoring 6 or more needs a contingency, not only a mitigation.
+# Accepting a risk requires a named role and a date; unattributed acceptance is not
+# acceptance.
+#
+# Validated against contracts/risk.schema.json.
+
+engagement_id: REPLACE-ENGAGEMENT-ID
+risks:
+  - id: risk-example-unknown-consumers
+    artifact_type: risk
+    schema_version: 1.0.0
+    engagement_id: REPLACE-ENGAGEMENT-ID
+    workload_ids:
+      - wl-example
+    created_at: 2026-01-01T00:00:00Z
+    updated_at: 2026-01-01T00:00:00Z
+    author: agent:estate-assessor
+    status: draft
+    confidence: medium
+    playbook:
+      path: playbooks/default
+      version: 1.0.0
+    evidence_refs:
+      - ev-example
+    title: Unknown database consumers
+    description: >-
+      Dependency discovery is incomplete, so an unidentified consumer may break at cutover
+      and the blast radius cannot be stated.
+    category: application
+    likelihood: high
+    impact: high
+    owner_role: application-owner
+    mitigation: >-
+      Complete dependency mapping and confirm every consumer with its application owner
+      before the wave entry gate.
+    contingency: >-
+      Hold the workload out of the wave and extend the parallel-run window until the
+      consumer list is confirmed.
+    trigger: Dependency mapping is still incomplete at the wave entry gate.
+    risk_status: open
+    due_date: null
+    accepted_by_role: null
+    accepted_on: null

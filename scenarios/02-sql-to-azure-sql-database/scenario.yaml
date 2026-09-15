@@ -1,0 +1,55 @@
+﻿title: SQL Server to Azure SQL Database, with Hyperscale compared only where evidence supports it
+engagement: input/engagement.yaml
+evidence_dir: input
+playbook: playbooks/default
+
+acceptance:
+  # No instance-scoped dependency, modest size: database scope is the fit.
+  - kind: recommended_target
+    workload: wl-tenant-metadata
+    target: azure-sql-database
+  - kind: recommended_target
+    workload: wl-product-core
+    target: azure-sql-database
+
+  # Hyperscale is rejected where neither size nor growth justifies it. Recommending more
+  # capability than the evidence supports is a failure mode, not a safe default.
+  - kind: option_not_recommended
+    workload: wl-tenant-metadata
+    target: azure-sql-database-hyperscale
+
+  # The large, fast-growing event store is where Hyperscale earns its place.
+  - kind: recommended_target
+    workload: wl-product-events
+    target: azure-sql-database-hyperscale
+
+  # Instance scope is more surface area than this application needs.
+  - kind: option_not_recommended
+    workload: wl-product-core
+    target: azure-sql-managed-instance
+  - kind: option_not_recommended
+    workload: wl-product-core
+    target: sql-server-on-azure-vm
+
+  # Every workload here has complete evidence, so nothing should be deferred.
+  - kind: wave_count
+    value: 2
+  - kind: pilot_max_workloads
+    value: 2
+
+  # Application connectivity and performance testing are not optional.
+  - kind: text_present
+    file: validation-plan-1.md
+    value: application functional tests pass
+  - kind: text_present
+    file: validation-plan-1.md
+    value: performance is within tolerance of baseline
+
+  # Infrastructure work is what-if first.
+  - kind: text_present
+    file: migration-plan-1.md
+    value: what-if
+
+  - kind: text_absent
+    file: migration-plan-1.md
+    value: zero downtime

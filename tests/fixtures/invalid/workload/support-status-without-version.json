@@ -1,0 +1,14 @@
+{
+  "id": "wl-invalid-support-status",
+  "artifact_type": "workload",
+  "schema_version": "1.0.0",
+  "engagement_id": "eng-fixture",
+  "created_at": "2026-03-02T00:00:00Z",
+  "updated_at": "2026-03-02T00:00:00Z",
+  "author": "agent:estate-assessor",
+  "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+  "name": "Workload with an unknown version",
+  "source_platform": "sql-server",
+  "source_version": null,
+  "support_status": "end-of-support"
+}

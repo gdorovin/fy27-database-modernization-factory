@@ -1,0 +1,391 @@
+{
+  "decisions": [
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "Extension availability must be verified per extension and per version: pg_stat_statements, pgcrypto"
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+          ],
+          "rationale": "Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_stat_statements, pgcrypto (-12)",
+          "score": 68.0,
+          "target": "azure-database-for-postgresql-flexible-server",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+          ],
+          "rationale": "Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+          ],
+          "rationale": "Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
+          "score": 42.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-05-11T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 90 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-tailwind-logistics-fy27",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+      ],
+      "id": "td-wl-partner-integration",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-database-for-postgresql-flexible-server scored highest (68) for Partner integration on the published comparison. Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_stat_statements, pgcrypto (-12). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-database-for-postgresql-flexible-server",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately.",
+        "In scope for GDPR; control evidence must be collected during validation."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as eu-north."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-05-11T00:00:00Z",
+      "workload_id": "wl-partner-integration",
+      "workload_ids": [
+        "wl-partner-integration"
+      ]
+    },
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "Extension availability must be verified per extension and per version: pg_cron, pg_stat_statements, postgis"
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-routing-engine-inventor-2fe4c575"
+          ],
+          "rationale": "Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_cron, pg_stat_statements, postgis (-12)",
+          "score": 68.0,
+          "target": "azure-database-for-postgresql-flexible-server",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-routing-engine-inventor-2fe4c575"
+          ],
+          "rationale": "Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-routing-engine-inventor-2fe4c575"
+          ],
+          "rationale": "Scored 37 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5)",
+          "score": 37.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-05-11T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 45 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-tailwind-logistics-fy27",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-routing-engine-inventor-2fe4c575"
+      ],
+      "id": "td-wl-routing-engine",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-database-for-postgresql-flexible-server scored highest (68) for Routing engine on the published comparison. Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_cron, pg_stat_statements, postgis (-12). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-database-for-postgresql-flexible-server",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as eu-north."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-05-11T00:00:00Z",
+      "workload_id": "wl-routing-engine",
+      "workload_ids": [
+        "wl-routing-engine"
+      ]
+    },
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "Extension availability must be verified per extension and per version: pg_partman, pg_stat_statements"
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+          ],
+          "rationale": "Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_partman, pg_stat_statements (-12)",
+          "score": 68.0,
+          "target": "azure-database-for-postgresql-flexible-server",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+          ],
+          "rationale": "Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+          ],
+          "rationale": "Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
+          "score": 42.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-05-11T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 180 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-tailwind-logistics-fy27",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+      ],
+      "id": "td-wl-tracking-history",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-database-for-postgresql-flexible-server scored highest (68) for Tracking history on the published comparison. Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_partman, pg_stat_statements (-12). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-database-for-postgresql-flexible-server",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as eu-north."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-05-11T00:00:00Z",
+      "workload_id": "wl-tracking-history",
+      "workload_ids": [
+        "wl-tracking-history"
+      ]
+    }
+  ],
+  "engagement_id": "eng-tailwind-logistics-fy27",
+  "unresolved_workload_ids": []
+}

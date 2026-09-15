@@ -1,0 +1,16 @@
+{
+  "id": "eng-invalid-product-outcome",
+  "artifact_type": "engagement",
+  "schema_version": "1.0.0",
+  "engagement_id": "eng-invalid-product-outcome",
+  "created_at": "2026-03-02T00:00:00Z",
+  "updated_at": "2026-03-02T00:00:00Z",
+  "author": "engagement-lead-a",
+  "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+  "customer_alias": "contoso-test",
+  "as_of": "2026-03-02",
+  "primary_trigger": "end-of-support",
+  "desired_outcomes": ["Azure SQL Managed Instance for the whole estate"],
+  "business_context": "The sponsor named a product when asked for an outcome.",
+  "scope": { "in_scope": ["Everything"], "out_of_scope": [] }
+}

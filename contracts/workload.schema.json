@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/workload.schema.json",
+  "title": "Workload",
+  "description": "One database workload: the unit of assessment, target decision, and wave membership. Carries assessment findings inline so a finding can never be separated from the workload it describes.",
+  "type": "object",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/artifactBase" }],
+  "properties": {
+    "artifact_type": { "const": "workload" },
+    "name": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "source_platform": { "$ref": "common.schema.json#/$defs/sourcePlatform" },
+    "source_version": {
+      "type": ["string", "null"],
+      "description": "Null means unknown. Never guess a version; an unknown version is itself a finding."
+    },
+    "edition": { "type": ["string", "null"] },
+    "support_status": {
+      "type": "string",
+      "enum": ["supported", "extended-support", "end-of-support", "unknown"],
+      "description": "Cannot be anything but 'unknown' while source_version is null."
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "production",
+        "pre-production",
+        "test",
+        "development",
+        "disaster-recovery",
+        "unknown"
+      ]
+    },
+    "criticality": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "classification": { "$ref": "common.schema.json#/$defs/classification" },
+    "host_alias": {
+      "type": ["string", "null"],
+      "description": "Pseudonymous host label, never a real FQDN."
+    },
+    "sizing": { "$ref": "#/$defs/sizing" },
+    "service_level": { "$ref": "#/$defs/serviceLevel" },
+    "instance_features": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Engine features observed in use, e.g. sql-agent, service-broker, clr, linked-servers, filestream, replication, cross-database-queries."
+    },
+    "extensions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "PostgreSQL/MySQL extensions or plugins in use."
+    },
+    "dependencies": { "type": "array", "items": { "$ref": "#/$defs/dependency" } },
+    "compliance_scopes": { "type": "array", "items": { "type": "string" } },
+    "data_residency": { "type": ["string", "null"] },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "assessed_targets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Targets for which a conversion or compatibility assessment exists. A heterogeneous target absent from this list cannot be recommended, because cross-engine compatibility is demonstrated per target, never inferred."
+    },
+    "dependency_discovery_complete": {
+      "type": "boolean",
+      "description": "False means dependency evidence is incomplete, which blocks a target recommendation."
+    }
+  },
+  "required": ["name", "source_platform"],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "sizing": {
+      "type": "object",
+      "properties": {
+        "data_size_gb": { "type": ["number", "null"], "minimum": 0 },
+        "largest_table_gb": { "type": ["number", "null"], "minimum": 0 },
+        "cpu_cores": { "type": ["integer", "null"], "minimum": 0 },
+        "memory_gb": { "type": ["number", "null"], "minimum": 0 },
+        "peak_iops": { "type": ["integer", "null"], "minimum": 0 },
+        "peak_concurrent_sessions": { "type": ["integer", "null"], "minimum": 0 },
+        "annual_growth_percent": { "type": ["number", "null"], "minimum": 0 },
+        "measured": {
+          "type": "boolean",
+          "description": "False means these figures are estimates and must not drive a sizing commitment."
+        }
+      },
+      "additionalProperties": false
+    },
+    "serviceLevel": {
+      "type": "object",
+      "properties": {
+        "availability_target": { "type": ["string", "null"] },
+        "rpo_minutes": { "type": ["integer", "null"], "minimum": 0 },
+        "rto_minutes": { "type": ["integer", "null"], "minimum": 0 },
+        "max_planned_downtime_minutes": { "type": ["integer", "null"], "minimum": 0 },
+        "stated_by": { "type": ["string", "null"] },
+        "is_assumption": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "dependency": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "kind": {
+          "type": "string",
+          "description": "application | linked-server | etl | report | integration | job | unknown"
+        },
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "direction": { "type": "string", "enum": ["inbound", "outbound", "bidirectional", "unknown"] },
+        "confirmed": { "type": "boolean" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/identifier" }
+        }
+      },
+      "required": ["id", "kind", "name"],
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "description": "An assessed fact about the workload. An observed finding must cite evidence.",
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "category": {
+          "type": "string",
+          "enum": [
+            "compatibility",
+            "performance",
+            "availability",
+            "security",
+            "operations",
+            "licensing",
+            "dependency",
+            "data-quality",
+            "support-lifecycle",
+            "cost"
+          ]
+        },
+        "severity": { "$ref": "common.schema.json#/$defs/severity" },
+        "statement": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "evidence_class": { "$ref": "common.schema.json#/$defs/evidenceClass" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/identifier" }
+        },
+        "remediation": { "type": ["string", "null"] },
+        "blocking": {
+          "type": "boolean",
+          "description": "A blocking finding prevents target recommendation until it is closed."
+        }
+      },
+      "required": ["id", "category", "severity", "statement", "evidence_class"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "id": "wl-store-ops",
+      "artifact_type": "workload",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "created_at": "2026-02-03T10:00:00Z",
+      "updated_at": "2026-02-03T10:00:00Z",
+      "author": "agent:estate-assessor",
+      "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+      "name": "Store operations",
+      "source_platform": "sql-server",
+      "source_version": "13.0",
+      "support_status": "end-of-support",
+      "environment": "production",
+      "criticality": "critical",
+      "dependency_discovery_complete": false,
+      "findings": [
+        {
+          "id": "f-deps-unknown",
+          "category": "dependency",
+          "severity": "blocker",
+          "statement": "Application dependency discovery is incomplete; consumers of this database are unknown.",
+          "evidence_class": "observed",
+          "evidence_refs": ["ev-inventory-store-ops"],
+          "remediation": "Run dependency mapping and confirm consumers with the application owner.",
+          "blocking": true
+        }
+      ],
+      "confidence": "low",
+      "status": "evidence-complete"
+    }
+  ]
+}

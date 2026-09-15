@@ -1,0 +1,5 @@
+name,platform,version,edition,environment,criticality,host,size_gb,largest_table_gb,cpu_cores,memory_gb,peak_iops,peak_sessions,growth_percent,rpo_minutes,rto_minutes,max_downtime_minutes,availability_target,sla_stated_by,features,dependencies,deps_confirmed,compliance,data_residency,measured,notes
+Tenant metadata,sql-server,15.0,Standard,production,high,host-app-a,45,14,4,32,900,180,15,15,60,60,99.9% monthly,business-owner,,,true,,uk-south,true,Small control-plane database read by every request.
+Product core,sql-server,15.0,Standard,production,high,host-app-a,260,95,8,64,3200,640,25,15,60,60,99.9% monthly,business-owner,,Tenant metadata,true,,uk-south,true,Application was written against database-scoped features only.
+Product events,sql-server,15.0,Standard,production,medium,host-app-a,2400,1400,8,64,7800,420,65,30,120,120,99.5% monthly,business-owner,,Product core,true,,uk-south,true,High growth event store. Measured over a full seasonal cycle.
+Product staging,sql-server,15.0,Developer,pre-production,low,host-stg-a,60,20,4,16,400,40,10,1440,2880,480,None stated,database-owner,,,true,,uk-south,true,Pre-production copy used for release rehearsal.

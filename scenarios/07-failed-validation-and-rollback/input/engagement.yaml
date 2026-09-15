@@ -1,0 +1,112 @@
+id: eng-proseware-billing-fy27
+artifact_type: engagement
+engagement_id: eng-proseware-billing-fy27
+schema_version: 1.0.0
+as_of: 2026-09-07
+created_at: 2026-09-07T00:00:00Z
+updated_at: 2026-09-07T00:00:00Z
+author: engagement-lead-g
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+customer_alias: proseware-billing
+
+primary_trigger: aging-hardware
+secondary_triggers:
+  - end-of-support
+renewal_date: null
+target_first_workload_live: 2026-12-15
+
+desired_outcomes:
+  - Replace hardware that is out of warranty before it fails on its own schedule.
+  - Keep billing runs completing inside the overnight window they have always fitted into.
+  - Be able to undo a change quickly if the billing run is affected.
+
+business_context: >-
+  A billing platform on hardware past warranty. The overnight billing run is the constraint
+  that matters: if it does not finish before the business day, invoices are late and the
+  finance close slips.
+
+scope:
+  in_scope:
+    - Billing engine and its history database
+    - Billing sandbox used for rehearsal
+  out_of_scope:
+    - The customer-facing portal
+  estate_summary: Two production databases and one rehearsal copy.
+  estimated_workload_count: 3
+  estimated_count_is_assumption: false
+
+constraints:
+  - id: c-overnight-window
+    category: operational
+    statement: The overnight billing run must complete before 06:00.
+    hard: true
+    source: Business owner, intake workshop
+  - id: c-reversible
+    category: operational
+    statement: Any change must be reversible within the same overnight window.
+    hard: true
+    source: Operations owner
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-g
+    responsibility: Owns billing operations and the finance close.
+    decision_rights:
+      - Business case acceptance
+      - Cutover approval
+  - role: database-owner
+    alias: dba-g
+    responsibility: Owns the billing databases.
+    decision_rights:
+      - Workload classification
+      - Cutover approval
+  - role: application-owner
+    alias: app-owner-g
+    responsibility: Owns the billing application and its integrations.
+    decision_rights:
+      - Application impact
+      - Cutover approval
+  - role: security-owner
+    alias: security-owner-g
+    responsibility: Owns posture for the billing platform.
+    decision_rights:
+      - Cutover approval
+  - role: operations-owner
+    alias: ops-owner-g
+    responsibility: Owns the overnight run and incident response.
+    decision_rights:
+      - Availability design
+      - Cutover approval
+
+success_measures:
+  - id: sm-billing-window
+    statement: The overnight billing run completes before 06:00.
+    baseline: 04:40 average completion
+    target: No later than 05:00
+    measured_by: Batch scheduler records
+    baseline_known: true
+
+cadence:
+  - label: T-3
+    objective: Rehearse cutover and rollback, and measure both.
+    target_date: 2026-11-15
+    owner_role: delivery-lead
+    complete: false
+  - label: T-0
+    objective: First workload live under an approved cutover.
+    target_date: 2026-12-15
+    owner_role: delivery-lead
+    complete: false
+
+evidence_refs: []
+assumptions: []
+open_questions: []
+risk_ids: []
+approvals: []
+workload_ids: []

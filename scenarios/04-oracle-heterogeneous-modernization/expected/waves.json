@@ -1,0 +1,266 @@
+{
+  "deferred_workload_ids": [
+    "wl-plant-maintenance"
+  ],
+  "engagement_id": "eng-litware-manufacturing-fy27",
+  "waves": [
+    {
+      "approvals": [],
+      "artifact_type": "migration-wave",
+      "assumptions": [],
+      "author": "agent:migration-planner",
+      "confidence": "medium",
+      "created_at": "2026-06-08T00:00:00Z",
+      "depends_on_wave_ids": [],
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "entry_criteria": [
+        {
+          "automated": true,
+          "id": "wave-1-pilot-entry-decisions-approved",
+          "owner_role": "architect",
+          "statement": "Every workload in the wave has an approved target decision.",
+          "verification_method": "dbmodernize validate-scenario, plus the approval ledger"
+        },
+        {
+          "automated": true,
+          "id": "wave-1-pilot-entry-no-open-blockers",
+          "owner_role": "database-owner",
+          "statement": "No workload in the wave has an open blocking finding.",
+          "verification_method": "dbmodernize assess re-run against current evidence"
+        },
+        {
+          "automated": false,
+          "id": "wave-1-pilot-entry-rollback-rehearsed",
+          "owner_role": "operations-owner",
+          "statement": "The rollback path has been rehearsed in a non-production environment.",
+          "verification_method": "Rehearsal record attached to the wave as evidence"
+        }
+      ],
+      "evidence_refs": [],
+      "exit_criteria": [
+        {
+          "automated": true,
+          "id": "wave-1-pilot-exit-validation-pass",
+          "owner_role": "delivery-lead",
+          "statement": "All blocking validation checks pass and none is left un-run.",
+          "verification_method": "dbmodernize render-report against the wave validation report"
+        },
+        {
+          "automated": true,
+          "id": "wave-1-pilot-exit-business-acceptance",
+          "owner_role": "business-owner",
+          "statement": "Business and application owners have accepted the outcome.",
+          "verification_method": "Approval artifacts recorded in the ledger"
+        },
+        {
+          "automated": false,
+          "id": "wave-1-pilot-exit-monitoring-live",
+          "owner_role": "operations-owner",
+          "statement": "Monitoring, alerting, and the operational runbook are live and owned.",
+          "verification_method": "Operations owner sign-off with links to the alert rules"
+        },
+        {
+          "automated": false,
+          "id": "wave-1-pilot-exit-lessons-captured",
+          "owner_role": "delivery-lead",
+          "statement": "Lessons from the pilot are recorded and the plan for later waves is updated to reflect them.",
+          "verification_method": "Updated migration plan artifact referencing the pilot report"
+        }
+      ],
+      "id": "wave-1-pilot",
+      "is_pilot": true,
+      "name": "Wave 1 - pilot",
+      "objective": "Prove the migration method, the validation gate, and the rollback path on the lowest-risk workloads before anything else moves.",
+      "open_questions": [],
+      "owner_roles": [
+        "delivery-lead",
+        "database-owner",
+        "application-owner"
+      ],
+      "planned_end": null,
+      "planned_start": null,
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "prerequisites": [
+        "Landing zone readiness check passes for the subscriptions in scope.",
+        "A non-production environment exists that mirrors the target configuration."
+      ],
+      "risk_ids": [],
+      "rollback_required": true,
+      "schema_version": "1.0.0",
+      "sequence": 1,
+      "status": "draft",
+      "supersedes": null,
+      "updated_at": "2026-06-08T00:00:00Z",
+      "workload_ids": [
+        "wl-order-management"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "migration-wave",
+      "assumptions": [],
+      "author": "agent:migration-planner",
+      "confidence": "medium",
+      "created_at": "2026-06-08T00:00:00Z",
+      "depends_on_wave_ids": [
+        "wave-1-pilot"
+      ],
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "entry_criteria": [
+        {
+          "automated": true,
+          "id": "wave-2-business-critical-entry-decisions-approved",
+          "owner_role": "architect",
+          "statement": "Every workload in the wave has an approved target decision.",
+          "verification_method": "dbmodernize validate-scenario, plus the approval ledger"
+        },
+        {
+          "automated": true,
+          "id": "wave-2-business-critical-entry-no-open-blockers",
+          "owner_role": "database-owner",
+          "statement": "No workload in the wave has an open blocking finding.",
+          "verification_method": "dbmodernize assess re-run against current evidence"
+        },
+        {
+          "automated": false,
+          "id": "wave-2-business-critical-entry-rollback-rehearsed",
+          "owner_role": "operations-owner",
+          "statement": "The rollback path has been rehearsed in a non-production environment.",
+          "verification_method": "Rehearsal record attached to the wave as evidence"
+        }
+      ],
+      "evidence_refs": [],
+      "exit_criteria": [
+        {
+          "automated": true,
+          "id": "wave-2-business-critical-exit-validation-pass",
+          "owner_role": "delivery-lead",
+          "statement": "All blocking validation checks pass and none is left un-run.",
+          "verification_method": "dbmodernize render-report against the wave validation report"
+        },
+        {
+          "automated": true,
+          "id": "wave-2-business-critical-exit-business-acceptance",
+          "owner_role": "business-owner",
+          "statement": "Business and application owners have accepted the outcome.",
+          "verification_method": "Approval artifacts recorded in the ledger"
+        },
+        {
+          "automated": false,
+          "id": "wave-2-business-critical-exit-monitoring-live",
+          "owner_role": "operations-owner",
+          "statement": "Monitoring, alerting, and the operational runbook are live and owned.",
+          "verification_method": "Operations owner sign-off with links to the alert rules"
+        }
+      ],
+      "id": "wave-2-business-critical",
+      "is_pilot": false,
+      "name": "Wave 2 - business critical",
+      "objective": "Move the highest-criticality workloads last, with the fullest validation and rehearsal.",
+      "open_questions": [],
+      "owner_roles": [
+        "delivery-lead",
+        "database-owner",
+        "application-owner"
+      ],
+      "planned_end": null,
+      "planned_start": null,
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "prerequisites": [
+        "Landing zone readiness check passes for the subscriptions in scope.",
+        "A non-production environment exists that mirrors the target configuration.",
+        "Security owner has confirmed control requirements for the compliance scopes in this wave."
+      ],
+      "risk_ids": [],
+      "rollback_required": true,
+      "schema_version": "1.0.0",
+      "sequence": 2,
+      "status": "draft",
+      "supersedes": null,
+      "updated_at": "2026-06-08T00:00:00Z",
+      "workload_ids": [
+        "wl-finance-ledger"
+      ]
+    }
+  ]
+}

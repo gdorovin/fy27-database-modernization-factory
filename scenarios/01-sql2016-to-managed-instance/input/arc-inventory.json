@@ -1,0 +1,40 @@
+{
+  "collectedOn": "2026-03-02",
+  "instances": [
+    {
+      "name": "instance-pay-a",
+      "hostAlias": "host-pay-a",
+      "version": "13.0",
+      "edition": "Enterprise",
+      "patchLevel": "SP3 CU4",
+      "supportStatus": "end-of-support",
+      "environment": "production",
+      "features": ["sql-agent", "cross-database-queries", "service-broker"],
+      "securityFindings": [
+        "Transparent data encryption is not enabled",
+        "Auditing is written to a local disk with no retention policy"
+      ],
+      "databases": [
+        { "name": "Payments core", "sizeInGb": 820, "environment": "production" }
+      ]
+    },
+    {
+      "name": "instance-ops-a",
+      "hostAlias": "host-ops-a",
+      "version": "13.0",
+      "edition": "Standard",
+      "patchLevel": "SP2 CU17",
+      "supportStatus": "end-of-support",
+      "environment": "production",
+      "features": ["sql-agent"],
+      "securityFindings": ["Auditing is not enabled"],
+      "databases": [
+        { "name": "Store operations", "sizeInGb": 640, "environment": "production" }
+      ]
+    }
+  ],
+  "enrollmentCoverage": {
+    "estimatedTotalInstances": 12,
+    "basis": "CMDB record count for SQL Server hosts, last reconciled 2025-11-30 and not since verified."
+  }
+}

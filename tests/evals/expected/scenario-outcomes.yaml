@@ -1,0 +1,82 @@
+# Qualitative outcomes each scenario must exhibit.
+#
+# The acceptance criteria in scenario.yaml are the enforceable version of this. These are
+# the sentences a reviewer or a model evaluator reads the output against -- the intent
+# behind the assertions, stated in a form a machine cannot quietly satisfy on a technicality.
+
+version: 1.0.0
+
+scenarios:
+  01-sql2016-to-managed-instance:
+    must_hold:
+      - A workload with unknown consumers receives no destination, and the rationale says why.
+      - It is still governed in place, and that posture is not described as modernization.
+      - Two workloads on the same instance receive different destinations.
+      - Database scope is blocked, not merely scored down, where instance features are in use.
+      - Inventory completeness is low, and the brief leads with it.
+    must_not_hold:
+      - A destination for the workload with unknown consumers.
+      - An estate-wide default applied to both SQL workloads.
+      - A near-zero downtime claim without a measured rehearsal.
+
+  02-sql-to-azure-sql-database:
+    must_hold:
+      - The high-scale tier is chosen only where measured size and growth justify it.
+      - It is explicitly rejected elsewhere, with the reason stated.
+      - Application testing is required despite the application being modern.
+      - Provisioning is preceded by a what-if.
+    must_not_hold:
+      - The high-scale tier recommended for a small, slow-growing database.
+      - Instance scope recommended where no instance feature is in use.
+
+  03-postgresql-to-flexible-server:
+    must_hold:
+      - Every extension in use is named.
+      - Availability is qualified per extension and per version, not generally.
+      - Failover and restore are tested rather than assumed.
+      - The unsupported version raises urgency without selecting a target.
+    must_not_hold:
+      - The phrase "lift and shift".
+      - A SQL Server target offered for a PostgreSQL workload.
+
+  04-oracle-heterogeneous-modernization:
+    must_hold:
+      - Each schema receives its own disposition.
+      - A conversion result is confined to the target it was assessed against.
+      - The schema with no assessment is retained, and that is presented as a decision.
+      - Conversion implies application remediation and business validation.
+    must_not_hold:
+      - A target recommended that was never assessed for that schema.
+      - A conversion percentage presented as a compatibility verdict.
+      - The phrase "fully compatible".
+
+  05-arc-bridge-to-azure-sql:
+    must_hold:
+      - The size disagreement is surfaced and left unresolved.
+      - Governed-in-place workloads are excluded from waves.
+      - Workloads with complete evidence still receive real destinations.
+      - Inventory completeness is stated with its basis.
+    must_not_hold:
+      - A conflict resolved automatically by preferring one source.
+      - Arc enablement counted as progress against the migration.
+
+  06-app-database-ai-modernization:
+    must_hold:
+      - The database work proceeds normally.
+      - Compliance scope produces a control-evidence check.
+      - The brief states what has not been measured.
+    must_not_hold:
+      - Any claim of AI readiness.
+      - A named assistant or analytics product in a target decision.
+
+  07-failed-validation-and-rollback:
+    must_hold:
+      - The outcome is no-go.
+      - Rollback is triggered and the reason recorded.
+      - An unfinished reconciliation is reported as not run.
+      - A passing generated suite is marked as supporting evidence only.
+      - Corrective issues exist with owners.
+    must_not_hold:
+      - Success language of any kind, including "completed successfully with issues".
+      - A go or conditional-go outcome while a blocking check has failed.
+      - The passing generated suite treated as sufficient evidence for the verdict.

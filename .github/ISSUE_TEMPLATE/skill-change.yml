@@ -1,0 +1,72 @@
+name: Skill or agent change
+description: Add or change an Agent Skill or an agent definition.
+title: "[skill] "
+labels: ["skills"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Skills are operating procedures. Agents are privilege boundaries. Changing either
+        changes what the system is permitted to do, so both need an architect review and
+        agent changes need a security review as well.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is changing?
+      options:
+        - A skill
+        - An agent
+    validations:
+      required: true
+
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      placeholder: azure-target-recommendation
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why is this needed?
+      description: What goes wrong today without it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Selection boundary
+      description: >
+        For a skill: when should it be invoked, and which existing skill should be used
+        instead when it should not? Two skills that could answer the same request is a
+        design bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: privilege
+    attributes:
+      label: Tool privilege
+      description: >
+        For an agent: which tools, and why is each one the minimum needed? A read-only
+        agent that gains an editing tool fails the build, by design.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: No self-approval is introduced.
+          required: true
+        - label: No path that deploys, migrates, cuts over, or deletes anything.
+          required: true
+        - label: Examples are synthetic.
+          required: true
+        - label: Invoke and do-not-invoke fixtures will be added under tests/skills/.
+          required: false

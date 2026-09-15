@@ -1,0 +1,33 @@
+{
+  "id": "vr-invalid-go-despite-failure",
+  "artifact_type": "validation-report",
+  "schema_version": "1.0.0",
+  "engagement_id": "eng-fixture",
+  "workload_ids": ["wl-fixture"],
+  "created_at": "2026-03-02T00:00:00Z",
+  "updated_at": "2026-03-02T00:00:00Z",
+  "author": "agent:validation-engineer",
+  "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+  "wave_id": "wave-1-pilot",
+  "migration_plan_id": "plan-wave-1-pilot",
+  "executed_on": "2026-03-02",
+  "outcome": "go",
+  "business_acceptance": {
+    "business_owner_accepted": true,
+    "application_owner_accepted": true
+  },
+  "checks": [
+    {
+      "id": "vc-performance",
+      "category": "performance",
+      "name": "Performance within tolerance of baseline",
+      "method": "Replay the baseline workload and compare latency",
+      "tolerance": "Within 10% of the recorded baseline",
+      "baseline": "p95 180 ms",
+      "observed": "p95 340 ms, an 89% regression",
+      "result": "fail",
+      "blocking": true,
+      "generated_test": false
+    }
+  ]
+}

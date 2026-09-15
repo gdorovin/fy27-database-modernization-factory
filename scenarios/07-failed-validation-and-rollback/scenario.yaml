@@ -1,0 +1,65 @@
+﻿title: Failed validation, no-go, and rollback
+engagement: input/engagement.yaml
+evidence_dir: input
+playbook: playbooks/default
+validation_report: input/validation-report.json
+
+acceptance:
+  # The migration completed technically. That is not the same as succeeding, and the
+  # repository must not let the two blur together.
+  - kind: validation_outcome
+    value: no-go
+  - kind: rollback_triggered
+    value: true
+
+  # Every failure mode in this scenario has to be visible in the rendered report.
+  - kind: text_present
+    file: validation-report.md
+    value: "outcome: no-go"
+  - kind: text_present
+    file: validation-report.md
+    value: overnight billing run completes within tolerance
+  - kind: text_present
+    file: validation-report.md
+    value: invoice dispatch integration
+  - kind: text_present
+    file: validation-report.md
+    value: blocking checks that did not run
+
+  # A check that did not run is not a pass, and partial reconciliation is not
+  # reconciliation.
+  - kind: text_present
+    file: validation-report.md
+    value: a check that did not run is not a pass
+
+  # Generated tests passed. They must not be allowed to carry the verdict.
+  - kind: text_present
+    file: validation-report.md
+    value: generated test
+
+  # Corrective work is created, with owners.
+  - kind: text_present
+    file: validation-report.md
+    value: issue-wave-2-billing-latency-regression
+
+  # Success language is forbidden. This is the criterion the scenario exists to enforce.
+  - kind: text_absent
+    file: validation-report.md
+    value: successfully
+  - kind: text_absent
+    file: validation-report.md
+    value: migration succeeded
+  - kind: text_present
+    file: validation-report.md
+    value: nothing in this report should be read as a partial success
+
+  # The rollback path is documented, rehearsed-or-flagged, and preserves evidence.
+  - kind: text_present
+    file: rollback-plan-1.md
+    value: preserve evidence first
+  - kind: text_present
+    file: rollback-plan-1.md
+    value: has not been rehearsed
+  - kind: text_present
+    file: rollback-plan-1.md
+    value: never describe a rolled-back attempt as a success

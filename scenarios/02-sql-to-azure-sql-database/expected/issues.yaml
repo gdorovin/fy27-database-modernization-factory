@@ -1,0 +1,509 @@
+engagement_id: eng-fabrikam-saas-fy27
+issues:
+- acceptance_criteria:
+  - Non-production target is deployed from reviewed infrastructure as code.
+  - Replication reaches and holds zero lag.
+  - Cutover rehearsal produces a measured downtime figure.
+  - Rollback rehearsal completes inside the decision window.
+  approved_target: azure-sql-database
+  blocked_by: []
+  definition_of_done:
+  - Rehearsal evidence attached to the wave.
+  - Validation plan executed with observations recorded for every blocking check.
+  - No new blocking finding introduced.
+  dependencies:
+  - Wave 1 entry criteria are met.
+  engagement_id: eng-fabrikam-saas-fy27
+  id: issue-wave-1-pilot-wl-product-staging-implement
+  labels:
+  - azure-sql-database
+  - migrate
+  - wave-1
+  milestone: Wave 1 - pilot
+  out_of_scope:
+  - Production cutover, which requires a separate recorded approval from all five
+    owner roles.
+  - Decommissioning the source system.
+  owner_role: database-owner
+  playbook:
+    commit: null
+    path: C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default
+    policy_ids:
+    - AVL-001
+    - AVL-002
+    - AVL-003
+    - AVL-004
+    - COMP-001
+    - COMP-002
+    - COST-001
+    - COST-002
+    - DATA-001
+    - DATA-002
+    - DATA-003
+    - DATA-004
+    - IAM-001
+    - IAM-002
+    - IAM-003
+    - NAME-001
+    - NET-001
+    - NET-002
+    - NET-003
+    - OBS-001
+    - OBS-002
+    - OBS-003
+    - OPS-001
+    - OPS-002
+    - OPS-003
+    - SEC-001
+    - SEC-002
+    - SEC-003
+    - SEC-004
+    - SEC-005
+    - VAL-001
+    - VAL-002
+    - VAL-003
+    - VAL-004
+    version: 1.0.0
+  problem_statement: Product staging runs on sql-server 15.0 and is scheduled in Wave
+    1 - pilot. The recommended target is azure-sql-database.
+  rollback_considerations:
+  - Non-production work is reversible by deleting the target resource group.
+  - No production traffic moves under this issue.
+  scope:
+  - Prepare the azure-sql-database target for Product staging in a non-production
+    environment.
+  - Seed data and establish continuous replication.
+  - Rehearse the cutover and measure the actual window.
+  security_considerations:
+  - No credential, connection string, or customer identifier may appear in this issue
+    or in any artifact it produces.
+  source_evidence:
+  - ev-csv-inventory-wl-product-staging-invento-b829061d
+  target_decision_id: td-wl-product-staging
+  title: Implement azure-sql-database migration for Product staging
+  validation_commands:
+  - dbmodernize validate-scenario scenarios
+  - az deployment group what-if --template-file infra/bicep/main.bicep
+  workload_ids:
+  - wl-product-staging
+- acceptance_criteria:
+  - Every blocking check has a recorded observation.
+  - The validation report is schema-valid and its outcome follows the evidence.
+  - All five owner roles have reviewed the report.
+  approved_target: null
+  blocked_by: []
+  definition_of_done:
+  - Validation report committed and schema-valid.
+  - Go / no-go decision recorded with the approving roles.
+  - Corrective issues created for every failure.
+  dependencies:
+  - All implementation issues for Wave 1 - pilot are complete.
+  engagement_id: eng-fabrikam-saas-fy27
+  id: issue-wave-1-pilot-validate
+  labels:
+  - cutover
+  - validation
+  - wave-1
+  milestone: Wave 1 - pilot
+  out_of_scope:
+  - Executing the cutover itself.
+  owner_role: delivery-lead
+  playbook:
+    commit: null
+    path: C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default
+    policy_ids:
+    - AVL-001
+    - AVL-002
+    - AVL-003
+    - AVL-004
+    - COMP-001
+    - COMP-002
+    - COST-001
+    - COST-002
+    - DATA-001
+    - DATA-002
+    - DATA-003
+    - DATA-004
+    - IAM-001
+    - IAM-002
+    - IAM-003
+    - NAME-001
+    - NET-001
+    - NET-002
+    - NET-003
+    - OBS-001
+    - OBS-002
+    - OBS-003
+    - OPS-001
+    - OPS-002
+    - OPS-003
+    - SEC-001
+    - SEC-002
+    - SEC-003
+    - SEC-004
+    - SEC-005
+    - VAL-001
+    - VAL-002
+    - VAL-003
+    - VAL-004
+    version: 1.0.0
+  problem_statement: Wave 1 - pilot needs an evidence-backed go / no-go decision before
+    any production cutover. A blocking failure forces a no-go; an un-run blocking
+    check forbids a go.
+  rollback_considerations:
+  - A no-go triggers the documented rollback path.
+  - Evidence is preserved before any rollback, so the failure can be analysed.
+  scope:
+  - Execute every check in the wave validation plan.
+  - Record the observed value against the tolerance for each check.
+  - Produce the validation report artifact.
+  security_considerations:
+  - Security configuration, identity, network isolation, encryption, and auditing
+    checks are blocking and cannot be waived without an approved policy exception.
+  source_evidence: []
+  target_decision_id: null
+  title: Execute validation and decide go / no-go for Wave 1 - pilot
+  validation_commands:
+  - dbmodernize render-report --help
+  workload_ids:
+  - wl-product-staging
+- acceptance_criteria:
+  - Non-production target is deployed from reviewed infrastructure as code.
+  - Replication reaches and holds zero lag.
+  - Cutover rehearsal produces a measured downtime figure.
+  - Rollback rehearsal completes inside the decision window.
+  approved_target: azure-sql-database
+  blocked_by: []
+  definition_of_done:
+  - Rehearsal evidence attached to the wave.
+  - Validation plan executed with observations recorded for every blocking check.
+  - No new blocking finding introduced.
+  dependencies:
+  - Wave 2 entry criteria are met.
+  engagement_id: eng-fabrikam-saas-fy27
+  id: issue-wave-2-business-critical-wl-product-core-implement
+  labels:
+  - azure-sql-database
+  - migrate
+  - wave-2
+  milestone: Wave 2 - business critical
+  out_of_scope:
+  - Production cutover, which requires a separate recorded approval from all five
+    owner roles.
+  - Decommissioning the source system.
+  owner_role: database-owner
+  playbook:
+    commit: null
+    path: C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default
+    policy_ids:
+    - AVL-001
+    - AVL-002
+    - AVL-003
+    - AVL-004
+    - COMP-001
+    - COMP-002
+    - COST-001
+    - COST-002
+    - DATA-001
+    - DATA-002
+    - DATA-003
+    - DATA-004
+    - IAM-001
+    - IAM-002
+    - IAM-003
+    - NAME-001
+    - NET-001
+    - NET-002
+    - NET-003
+    - OBS-001
+    - OBS-002
+    - OBS-003
+    - OPS-001
+    - OPS-002
+    - OPS-003
+    - SEC-001
+    - SEC-002
+    - SEC-003
+    - SEC-004
+    - SEC-005
+    - VAL-001
+    - VAL-002
+    - VAL-003
+    - VAL-004
+    version: 1.0.0
+  problem_statement: Product core runs on sql-server 15.0 and is scheduled in Wave
+    2 - business critical. The recommended target is azure-sql-database.
+  rollback_considerations:
+  - Non-production work is reversible by deleting the target resource group.
+  - No production traffic moves under this issue.
+  scope:
+  - Prepare the azure-sql-database target for Product core in a non-production environment.
+  - Seed data and establish continuous replication.
+  - Rehearse the cutover and measure the actual window.
+  security_considerations:
+  - No credential, connection string, or customer identifier may appear in this issue
+    or in any artifact it produces.
+  source_evidence:
+  - ev-csv-inventory-wl-product-core-inventory--d7dab8f7
+  target_decision_id: td-wl-product-core
+  title: Implement azure-sql-database migration for Product core
+  validation_commands:
+  - dbmodernize validate-scenario scenarios
+  - az deployment group what-if --template-file infra/bicep/main.bicep
+  workload_ids:
+  - wl-product-core
+- acceptance_criteria:
+  - Non-production target is deployed from reviewed infrastructure as code.
+  - Replication reaches and holds zero lag.
+  - Cutover rehearsal produces a measured downtime figure.
+  - Rollback rehearsal completes inside the decision window.
+  approved_target: azure-sql-database-hyperscale
+  blocked_by: []
+  definition_of_done:
+  - Rehearsal evidence attached to the wave.
+  - Validation plan executed with observations recorded for every blocking check.
+  - No new blocking finding introduced.
+  dependencies:
+  - Wave 2 entry criteria are met.
+  engagement_id: eng-fabrikam-saas-fy27
+  id: issue-wave-2-business-critical-wl-product-events-implement
+  labels:
+  - azure-sql-database-hyperscale
+  - migrate
+  - wave-2
+  milestone: Wave 2 - business critical
+  out_of_scope:
+  - Production cutover, which requires a separate recorded approval from all five
+    owner roles.
+  - Decommissioning the source system.
+  owner_role: database-owner
+  playbook:
+    commit: null
+    path: C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default
+    policy_ids:
+    - AVL-001
+    - AVL-002
+    - AVL-003
+    - AVL-004
+    - COMP-001
+    - COMP-002
+    - COST-001
+    - COST-002
+    - DATA-001
+    - DATA-002
+    - DATA-003
+    - DATA-004
+    - IAM-001
+    - IAM-002
+    - IAM-003
+    - NAME-001
+    - NET-001
+    - NET-002
+    - NET-003
+    - OBS-001
+    - OBS-002
+    - OBS-003
+    - OPS-001
+    - OPS-002
+    - OPS-003
+    - SEC-001
+    - SEC-002
+    - SEC-003
+    - SEC-004
+    - SEC-005
+    - VAL-001
+    - VAL-002
+    - VAL-003
+    - VAL-004
+    version: 1.0.0
+  problem_statement: Product events runs on sql-server 15.0 and is scheduled in Wave
+    2 - business critical. The recommended target is azure-sql-database-hyperscale.
+  rollback_considerations:
+  - Non-production work is reversible by deleting the target resource group.
+  - No production traffic moves under this issue.
+  scope:
+  - Prepare the azure-sql-database-hyperscale target for Product events in a non-production
+    environment.
+  - Seed data and establish continuous replication.
+  - Rehearse the cutover and measure the actual window.
+  security_considerations:
+  - No credential, connection string, or customer identifier may appear in this issue
+    or in any artifact it produces.
+  source_evidence:
+  - ev-csv-inventory-wl-product-events-inventor-d0657a84
+  target_decision_id: td-wl-product-events
+  title: Implement azure-sql-database-hyperscale migration for Product events
+  validation_commands:
+  - dbmodernize validate-scenario scenarios
+  - az deployment group what-if --template-file infra/bicep/main.bicep
+  workload_ids:
+  - wl-product-events
+- acceptance_criteria:
+  - Non-production target is deployed from reviewed infrastructure as code.
+  - Replication reaches and holds zero lag.
+  - Cutover rehearsal produces a measured downtime figure.
+  - Rollback rehearsal completes inside the decision window.
+  approved_target: azure-sql-database
+  blocked_by: []
+  definition_of_done:
+  - Rehearsal evidence attached to the wave.
+  - Validation plan executed with observations recorded for every blocking check.
+  - No new blocking finding introduced.
+  dependencies:
+  - Wave 2 entry criteria are met.
+  engagement_id: eng-fabrikam-saas-fy27
+  id: issue-wave-2-business-critical-wl-tenant-metadata-implement
+  labels:
+  - azure-sql-database
+  - migrate
+  - wave-2
+  milestone: Wave 2 - business critical
+  out_of_scope:
+  - Production cutover, which requires a separate recorded approval from all five
+    owner roles.
+  - Decommissioning the source system.
+  owner_role: database-owner
+  playbook:
+    commit: null
+    path: C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default
+    policy_ids:
+    - AVL-001
+    - AVL-002
+    - AVL-003
+    - AVL-004
+    - COMP-001
+    - COMP-002
+    - COST-001
+    - COST-002
+    - DATA-001
+    - DATA-002
+    - DATA-003
+    - DATA-004
+    - IAM-001
+    - IAM-002
+    - IAM-003
+    - NAME-001
+    - NET-001
+    - NET-002
+    - NET-003
+    - OBS-001
+    - OBS-002
+    - OBS-003
+    - OPS-001
+    - OPS-002
+    - OPS-003
+    - SEC-001
+    - SEC-002
+    - SEC-003
+    - SEC-004
+    - SEC-005
+    - VAL-001
+    - VAL-002
+    - VAL-003
+    - VAL-004
+    version: 1.0.0
+  problem_statement: Tenant metadata runs on sql-server 15.0 and is scheduled in Wave
+    2 - business critical. The recommended target is azure-sql-database.
+  rollback_considerations:
+  - Non-production work is reversible by deleting the target resource group.
+  - No production traffic moves under this issue.
+  scope:
+  - Prepare the azure-sql-database target for Tenant metadata in a non-production
+    environment.
+  - Seed data and establish continuous replication.
+  - Rehearse the cutover and measure the actual window.
+  security_considerations:
+  - No credential, connection string, or customer identifier may appear in this issue
+    or in any artifact it produces.
+  source_evidence:
+  - ev-csv-inventory-wl-tenant-metadata-invento-82223d4e
+  target_decision_id: td-wl-tenant-metadata
+  title: Implement azure-sql-database migration for Tenant metadata
+  validation_commands:
+  - dbmodernize validate-scenario scenarios
+  - az deployment group what-if --template-file infra/bicep/main.bicep
+  workload_ids:
+  - wl-tenant-metadata
+- acceptance_criteria:
+  - Every blocking check has a recorded observation.
+  - The validation report is schema-valid and its outcome follows the evidence.
+  - All five owner roles have reviewed the report.
+  approved_target: null
+  blocked_by: []
+  definition_of_done:
+  - Validation report committed and schema-valid.
+  - Go / no-go decision recorded with the approving roles.
+  - Corrective issues created for every failure.
+  dependencies:
+  - All implementation issues for Wave 2 - business critical are complete.
+  engagement_id: eng-fabrikam-saas-fy27
+  id: issue-wave-2-business-critical-validate
+  labels:
+  - cutover
+  - validation
+  - wave-2
+  milestone: Wave 2 - business critical
+  out_of_scope:
+  - Executing the cutover itself.
+  owner_role: delivery-lead
+  playbook:
+    commit: null
+    path: C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default
+    policy_ids:
+    - AVL-001
+    - AVL-002
+    - AVL-003
+    - AVL-004
+    - COMP-001
+    - COMP-002
+    - COST-001
+    - COST-002
+    - DATA-001
+    - DATA-002
+    - DATA-003
+    - DATA-004
+    - IAM-001
+    - IAM-002
+    - IAM-003
+    - NAME-001
+    - NET-001
+    - NET-002
+    - NET-003
+    - OBS-001
+    - OBS-002
+    - OBS-003
+    - OPS-001
+    - OPS-002
+    - OPS-003
+    - SEC-001
+    - SEC-002
+    - SEC-003
+    - SEC-004
+    - SEC-005
+    - VAL-001
+    - VAL-002
+    - VAL-003
+    - VAL-004
+    version: 1.0.0
+  problem_statement: Wave 2 - business critical needs an evidence-backed go / no-go
+    decision before any production cutover. A blocking failure forces a no-go; an
+    un-run blocking check forbids a go.
+  rollback_considerations:
+  - A no-go triggers the documented rollback path.
+  - Evidence is preserved before any rollback, so the failure can be analysed.
+  scope:
+  - Execute every check in the wave validation plan.
+  - Record the observed value against the tolerance for each check.
+  - Produce the validation report artifact.
+  security_considerations:
+  - Security configuration, identity, network isolation, encryption, and auditing
+    checks are blocking and cannot be waived without an approved policy exception.
+  source_evidence: []
+  target_decision_id: null
+  title: Execute validation and decide go / no-go for Wave 2 - business critical
+  validation_commands:
+  - dbmodernize render-report --help
+  workload_ids:
+  - wl-product-core
+  - wl-product-events
+  - wl-tenant-metadata

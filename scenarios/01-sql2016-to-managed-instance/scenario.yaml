@@ -1,0 +1,69 @@
+﻿title: SQL Server 2016 to Azure SQL Managed Instance
+engagement: input/engagement.yaml
+evidence_dir: input
+playbook: playbooks/default
+
+# Acceptance criteria state what this scenario is *for*. Snapshot comparison catches drift;
+# these catch a snapshot that was regenerated to make a failure disappear.
+acceptance:
+  # Unknown consumers are a blocker, not a footnote. No destination may be proposed for a
+  # workload whose blast radius is unknown -- but leaving it ungoverned meanwhile is a
+  # separate, avoidable failure, so Arc is offered as an interim posture.
+  - kind: workload_blocked
+    workload: wl-store-operations
+  - kind: recommended_target
+    workload: wl-store-operations
+    target: azure-arc-enabled-sql-server
+  - kind: option_not_recommended
+    workload: wl-store-operations
+    target: azure-sql-managed-instance
+  - kind: workload_deferred
+    workload: wl-store-operations
+  - kind: issue_matching
+    id_contains: wl-store-operations
+
+  # Instance-scoped features in use make Managed Instance the fit, and database scope not.
+  - kind: recommended_target
+    workload: wl-payments-core
+    target: azure-sql-managed-instance
+  - kind: option_not_recommended
+    workload: wl-payments-core
+    target: azure-sql-database
+  - kind: option_not_recommended
+    workload: wl-payments-core
+    target: sql-server-on-azure-vm
+
+  # A workload with no instance-scoped dependency lands at database scope. Not every
+  # workload goes to the same place.
+  - kind: recommended_target
+    workload: wl-customer-portal
+    target: azure-sql-database
+
+  # A pilot that is not small de-risks nothing.
+  - kind: pilot_max_workloads
+    value: 2
+
+  # Downtime language stays honest until a rehearsal has measured it.
+  - kind: text_absent
+    file: target-decision.md
+    value: zero downtime
+  - kind: text_present
+    file: target-decision.md
+    value: short-planned
+
+  # Arc must appear as a considered option for an estate with unproven inventory, and must
+  # never be described as completed modernization.
+  - kind: option_not_recommended
+    workload: wl-payments-core
+    target: azure-arc-enabled-sql-server
+  - kind: text_present
+    file: target-decision.md
+    value: not a completed modernization
+
+  # Rollback and client connectivity are planned, not assumed.
+  - kind: text_present
+    file: rollback-plan-1.md
+    value: data reconciliation
+  - kind: text_present
+    file: validation-plan-1.md
+    value: connect to the target

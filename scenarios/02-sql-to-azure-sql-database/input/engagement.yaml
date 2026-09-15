@@ -1,0 +1,113 @@
+id: eng-fabrikam-saas-fy27
+artifact_type: engagement
+engagement_id: eng-fabrikam-saas-fy27
+schema_version: 1.0.0
+as_of: 2026-04-13
+created_at: 2026-04-13T00:00:00Z
+updated_at: 2026-04-13T00:00:00Z
+author: engagement-lead-b
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+customer_alias: fabrikam-saas
+
+primary_trigger: application-modernization
+secondary_triggers:
+  - operational-scale
+  - ai-or-analytics-requirement
+renewal_date: null
+target_first_workload_live: 2026-11-30
+
+desired_outcomes:
+  - Ship product changes weekly instead of monthly, without a database change becoming the bottleneck.
+  - Stop over-provisioning for a peak that happens four times a year.
+  - Give the product team a data foundation they can build features on without asking for infrastructure.
+
+business_context: >-
+  A software product company whose application was written in the last three years and holds
+  no instance-scoped database dependencies. Growth is uneven and the current fixed
+  provisioning is sized for the worst week of the year.
+
+scope:
+  in_scope:
+    - Product application databases
+    - Tenant metadata database
+  out_of_scope:
+    - Billing, which is a third-party service
+  estate_summary: Four databases behind one application, all on one instance.
+  estimated_workload_count: 4
+  estimated_count_is_assumption: false
+
+constraints:
+  - id: c-tenant-isolation
+    category: technical
+    statement: Tenant data must remain separable at database level for contractual reasons.
+    hard: true
+    source: Application owner, architecture review
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-b
+    responsibility: Owns the product roadmap and the platform budget.
+    decision_rights:
+      - Business case acceptance
+      - Cutover approval
+  - role: application-owner
+    alias: app-owner-b
+    responsibility: Owns the product application and its release cadence.
+    decision_rights:
+      - Application impact
+      - Cutover approval
+  - role: database-owner
+    alias: dba-b
+    responsibility: Owns the database platform.
+    decision_rights:
+      - Workload classification
+      - Cutover approval
+  - role: security-owner
+    alias: security-owner-b
+    responsibility: Owns posture and tenant isolation controls.
+    decision_rights:
+      - Cutover approval
+  - role: operations-owner
+    alias: ops-owner-b
+    responsibility: Owns run-state and on-call.
+    decision_rights:
+      - Cutover approval
+
+success_measures:
+  - id: sm-release-cadence
+    statement: Database changes stop blocking the weekly release.
+    baseline: Monthly
+    target: Weekly
+    measured_by: Release pipeline records
+    baseline_known: true
+  - id: sm-peak-headroom
+    statement: Peak capacity is available without provisioning for it year-round.
+    baseline: null
+    target: null
+    measured_by: Consumption reporting during the seasonal peak
+    baseline_known: false
+
+cadence:
+  - label: T-6
+    objective: Assess readiness and model target options.
+    target_date: 2026-05-31
+    owner_role: architect
+    complete: false
+  - label: T-0
+    objective: First workload live under an approved cutover.
+    target_date: 2026-11-30
+    owner_role: delivery-lead
+    complete: false
+
+evidence_refs: []
+assumptions: []
+open_questions: []
+risk_ids: []
+approvals: []
+workload_ids: []

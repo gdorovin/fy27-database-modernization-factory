@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/github-issue.schema.json",
+  "title": "GitHub issue definition",
+  "description": "One actionable unit of work, traceable back to evidence and a target decision. Generated to disk. Creating live issues is a separate, explicitly confirmed step.",
+  "type": "object",
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "engagement_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "workload_ids": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/identifier" }
+    },
+    "problem_statement": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "source_evidence": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/identifier" }
+    },
+    "approved_target": {
+      "type": ["string", "null"],
+      "description": "Null when the issue precedes an approved target decision. Naming a target here requires target_decision_id."
+    },
+    "target_decision_id": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/identifier" }, { "type": "null" }]
+    },
+    "playbook": { "$ref": "common.schema.json#/$defs/playbookRef" },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "scope": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "out_of_scope": { "type": "array", "items": { "type": "string" } },
+    "acceptance_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "validation_commands": { "type": "array", "items": { "type": "string" } },
+    "security_considerations": { "type": "array", "items": { "type": "string" } },
+    "rollback_considerations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Required when the issue carries a label implying an environment change."
+    },
+    "owner_role": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "labels": { "type": "array", "items": { "type": "string" } },
+    "milestone": { "type": ["string", "null"], "description": "Usually the wave name." },
+    "blocked_by": { "type": "array", "items": { "type": "string" } },
+    "definition_of_done": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  },
+  "required": [
+    "id",
+    "title",
+    "engagement_id",
+    "problem_statement",
+    "playbook",
+    "scope",
+    "acceptance_criteria",
+    "owner_role",
+    "definition_of_done"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "issue-wl-store-ops-dependency-mapping",
+      "title": "Complete dependency mapping for Store operations",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "workload_ids": ["wl-store-ops"],
+      "problem_statement": "Consumers of the Store operations database are unknown, which blocks a target recommendation and makes the cutover blast radius unknowable.",
+      "source_evidence": ["ev-inventory-store-ops"],
+      "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+      "scope": [
+        "Enumerate inbound and outbound dependencies.",
+        "Confirm each consumer with its application owner."
+      ],
+      "out_of_scope": ["Remediating any dependency found."],
+      "acceptance_criteria": [
+        "Every dependency is recorded with confirmed=true or an explicit open question.",
+        "dependency_discovery_complete is true for the workload."
+      ],
+      "validation_commands": ["dbmodernize assess --engagement eng-contoso-retail-fy27"],
+      "owner_role": "application-owner",
+      "labels": ["assessment", "blocked-target-decision"],
+      "definition_of_done": [
+        "Workload artifact updated and re-validated.",
+        "Blocking finding f-deps-unknown closed or downgraded with evidence."
+      ]
+    }
+  ]
+}

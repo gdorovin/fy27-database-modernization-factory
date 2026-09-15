@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/risk.schema.json",
+  "title": "Risk",
+  "description": "A risk register entry. Severity is derived from likelihood and impact; high and blocker risks require a contingency, not only a mitigation, and acceptance must name who accepted it and when.",
+  "type": "object",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/artifactBase" }],
+  "properties": {
+    "artifact_type": { "const": "risk" },
+    "title": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "description": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "technical",
+        "data",
+        "application",
+        "security",
+        "compliance",
+        "operational",
+        "commercial",
+        "schedule",
+        "people"
+      ]
+    },
+    "likelihood": { "$ref": "common.schema.json#/$defs/likelihood" },
+    "impact": { "$ref": "common.schema.json#/$defs/likelihood" },
+    "owner_role": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "mitigation": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "contingency": {
+      "type": ["string", "null"],
+      "description": "What happens if the mitigation fails. Required when likelihood x impact scores 6 or more."
+    },
+    "trigger": {
+      "type": ["string", "null"],
+      "description": "The observable condition that means the risk has materialised."
+    },
+    "risk_status": { "type": "string", "enum": ["open", "mitigating", "accepted", "closed"] },
+    "due_date": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }]
+    },
+    "accepted_by_role": { "type": ["string", "null"] },
+    "accepted_on": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }]
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "category",
+    "likelihood",
+    "impact",
+    "owner_role",
+    "mitigation"
+  ],
+  "unevaluatedProperties": false,
+  "examples": [
+    {
+      "id": "risk-unknown-consumers",
+      "artifact_type": "risk",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "workload_ids": ["wl-store-ops"],
+      "created_at": "2026-02-05T10:00:00Z",
+      "updated_at": "2026-02-05T10:00:00Z",
+      "author": "agent:estate-assessor",
+      "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+      "title": "Unknown database consumers",
+      "description": "Dependency discovery is incomplete, so an unidentified consumer may break at cutover.",
+      "category": "application",
+      "likelihood": "high",
+      "impact": "high",
+      "owner_role": "application-owner",
+      "mitigation": "Complete dependency mapping and confirm consumers with each application owner before wave entry.",
+      "contingency": "Hold the workload out of the wave and extend the parallel-run window.",
+      "trigger": "Dependency mapping is still incomplete at the wave entry gate.",
+      "risk_status": "open",
+      "evidence_refs": ["ev-inventory-store-ops"]
+    }
+  ]
+}

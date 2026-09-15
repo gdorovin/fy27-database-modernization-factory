@@ -1,0 +1,55 @@
+﻿title: Azure Arc as a governed bridge for an estate with unproven inventory
+engagement: input/engagement.yaml
+evidence_dir: input
+playbook: playbooks/default
+
+acceptance:
+  # Sources disagree about the size of the legacy warehouse. The repository records the
+  # disagreement and refuses to pick a winner.
+  - kind: evidence_conflict
+    attribute: data_size_gb
+  - kind: workload_blocked
+    workload: wl-legacy-warehouse
+  - kind: text_present
+    file: assessment-summary.md
+    value: sources disagree
+
+  # Workloads that cannot move yet are still governed. Arc is the bridge.
+  - kind: recommended_target
+    workload: wl-legacy-warehouse
+    target: azure-arc-enabled-sql-server
+  - kind: recommended_target
+    workload: wl-acquired-unit-b-sales
+    target: azure-arc-enabled-sql-server
+
+  # Arc is never counted as modernization. The workload has not moved.
+  - kind: text_present
+    file: target-decision.md
+    value: not a completed modernization
+  - kind: text_present
+    file: target-decision.md
+    value: interim posture
+  - kind: workload_deferred
+    workload: wl-legacy-warehouse
+  - kind: workload_deferred
+    workload: wl-acquired-unit-b-sales
+
+  # Workloads with complete evidence still get a real destination, so the programme moves.
+  - kind: recommended_target
+    workload: wl-group-finance
+    target: azure-sql-managed-instance
+  - kind: recommended_target
+    workload: wl-shared-services
+    target: azure-sql-database
+
+  # Inventory completeness is evidenced, and its weakness is stated rather than glossed.
+  - kind: text_present
+    file: assessment-summary.md
+    value: inventory completeness
+  - kind: text_present
+    file: executive-brief.md
+    value: awaiting evidence
+
+  # A stalled programme restarts with a small pilot, not an estate-wide phase.
+  - kind: pilot_max_workloads
+    value: 2

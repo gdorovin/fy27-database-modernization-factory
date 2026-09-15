@@ -1,0 +1,151 @@
+id: eng-northwind-retail-fy27
+artifact_type: engagement
+engagement_id: eng-northwind-retail-fy27
+schema_version: 1.0.0
+as_of: 2026-03-02
+created_at: 2026-03-02T00:00:00Z
+updated_at: 2026-03-02T00:00:00Z
+author: engagement-lead-a
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+customer_alias: northwind-retail
+
+primary_trigger: license-or-ea-renewal
+secondary_triggers:
+  - end-of-support
+  - availability-or-dr-gap
+renewal_date: 2027-03-31
+target_first_workload_live: 2026-09-30
+
+desired_outcomes:
+  - Remove unsupported database versions from the payment path before the next audit cycle.
+  - Stop losing two database engineers to weekend patching every month.
+  - Recover from a database failure inside the hour the business has always assumed but never tested.
+
+business_context: >-
+  A retail estate running on an engine version that no longer receives security fixes, with a
+  renewal twelve months out and an open audit finding. Nobody currently has a confirmed list
+  of which applications read from the payment database.
+
+scope:
+  in_scope:
+    - Store operations and payment databases
+    - Customer portal database
+    - Reporting sandbox used for development
+  out_of_scope:
+    - Point-of-sale terminal software
+    - The warehouse management product, which is vendor-hosted
+  estate_summary: >-
+    Believed to be around twelve SQL Server instances across two data centres. The count has
+    not been proven and is treated as an assumption.
+  estimated_workload_count: 12
+  estimated_count_is_assumption: true
+
+constraints:
+  - id: c-payment-window
+    category: operational
+    statement: The payment database may only be taken offline inside an agreed low-traffic window.
+    hard: true
+    source: Operations owner, intake workshop
+  - id: c-residency-eu
+    category: regulatory
+    statement: Cardholder data must remain within the EU.
+    hard: true
+    source: Security owner, audit finding 2026-01
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-a
+    responsibility: Owns the retail platform outcome and the budget.
+    decision_rights:
+      - Engagement scope
+      - Business case acceptance
+      - Cutover approval
+  - role: database-owner
+    alias: dba-a
+    responsibility: Owns the SQL estate and its operational health.
+    decision_rights:
+      - Workload classification
+      - Cutover approval
+  - role: application-owner
+    alias: app-owner-a
+    responsibility: Owns the payment and portal applications.
+    decision_rights:
+      - Application impact
+      - Cutover approval
+  - role: security-owner
+    alias: security-owner-a
+    responsibility: Owns posture and the open audit finding.
+    decision_rights:
+      - Policy exceptions
+      - Cutover approval
+  - role: operations-owner
+    alias: ops-owner-a
+    responsibility: Owns run-state and incident response.
+    decision_rights:
+      - Availability design
+      - Cutover approval
+
+success_measures:
+  - id: sm-unsupported-versions
+    statement: No unsupported database version remains in the payment path.
+    baseline: null
+    target: "0"
+    measured_by: Estate inventory report
+    baseline_known: false
+  - id: sm-weekend-effort
+    statement: Weekend maintenance effort falls measurably.
+    baseline: null
+    target: null
+    measured_by: Operations time recording
+    baseline_known: false
+  - id: sm-recovery-time
+    statement: A recovery test completes inside the agreed RTO.
+    baseline: null
+    target: 60 minutes
+    measured_by: Controlled failover test
+    baseline_known: false
+
+cadence:
+  - label: T-12
+    objective: Discover the estate, engage stakeholders, and agree the outcome.
+    target_date: 2026-03-31
+    owner_role: engagement-lead
+    complete: true
+  - label: T-9
+    objective: Assess readiness and model target options.
+    target_date: 2026-06-30
+    owner_role: architect
+    complete: false
+  - label: T-3
+    objective: Agree delivery model, waves, owners, and acceptance criteria.
+    target_date: 2026-12-31
+    owner_role: delivery-lead
+    complete: false
+  - label: T-0
+    objective: First workload live under an approved cutover.
+    target_date: 2027-03-31
+    owner_role: delivery-lead
+    complete: false
+
+evidence_refs: []
+assumptions:
+  - id: a-estate-count
+    statement: The estate contains approximately twelve SQL Server instances.
+    owner_role: database-owner
+    validation_step: Reconcile the Arc-reported instance count against the CMDB.
+    impact_if_wrong: high
+open_questions:
+  - id: q-payment-consumers
+    question: Which applications and reports read from the payment database?
+    owner_role: application-owner
+    blocking: false
+    needed_by: 2026-05-01
+risk_ids: []
+approvals: []
+workload_ids: []

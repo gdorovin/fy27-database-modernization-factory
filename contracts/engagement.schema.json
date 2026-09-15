@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/engagement.schema.json",
+  "title": "Engagement",
+  "description": "Intake artifact. Captures the customer outcome, why the conversation is happening now, constraints, stakeholders, success measures, and the renewal-oriented cadence. Everything downstream references its engagement_id.",
+  "type": "object",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/artifactBase" }],
+  "properties": {
+    "artifact_type": { "const": "engagement" },
+    "customer_alias": {
+      "$ref": "common.schema.json#/$defs/nonEmptyString",
+      "description": "Pseudonym such as 'contoso-retail'. Never a real customer name."
+    },
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/isoDate",
+      "description": "Date the engagement state was captured. Renderers use this instead of the wall clock so generated documents are reproducible."
+    },
+    "primary_trigger": { "$ref": "#/$defs/trigger" },
+    "secondary_triggers": { "type": "array", "items": { "$ref": "#/$defs/trigger" } },
+    "desired_outcomes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Business outcomes in the customer's words. Naming a product here is a validation error; targets are decided later from evidence."
+    },
+    "business_context": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "scope": { "$ref": "#/$defs/scope" },
+    "constraints": { "type": "array", "items": { "$ref": "#/$defs/constraint" } },
+    "stakeholders": { "type": "array", "items": { "$ref": "#/$defs/stakeholder" } },
+    "success_measures": { "type": "array", "items": { "$ref": "#/$defs/successMeasure" } },
+    "renewal_date": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }],
+      "description": "Required when primary_trigger is license-or-ea-renewal. If genuinely unknown, record it as a blocking open question rather than guessing."
+    },
+    "target_first_workload_live": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }]
+    },
+    "cadence": { "type": "array", "items": { "$ref": "#/$defs/cadenceMilestone" } }
+  },
+  "required": [
+    "customer_alias",
+    "as_of",
+    "primary_trigger",
+    "desired_outcomes",
+    "business_context",
+    "scope"
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "trigger": {
+      "type": "string",
+      "description": "Common entry points into the same modernization journey. They differ in urgency, sponsor, and available evidence, not in destination.",
+      "enum": [
+        "license-or-ea-renewal",
+        "end-of-support",
+        "aging-hardware",
+        "security-or-compliance-finding",
+        "application-modernization",
+        "datacenter-exit",
+        "stalled-migration",
+        "ai-or-analytics-requirement",
+        "oracle-cost-or-audit-pressure",
+        "unsupported-open-source-version",
+        "competitive-cloud-pressure",
+        "availability-or-dr-gap",
+        "operational-scale",
+        "other"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "in_scope": { "type": "array", "items": { "type": "string" } },
+        "out_of_scope": { "type": "array", "items": { "type": "string" } },
+        "estate_summary": { "type": ["string", "null"] },
+        "estimated_workload_count": { "type": ["integer", "null"], "minimum": 0 },
+        "estimated_count_is_assumption": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "constraint": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "category": {
+          "type": "string",
+          "description": "regulatory | contractual | technical | operational | budget | calendar"
+        },
+        "statement": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "hard": { "type": "boolean", "description": "A hard constraint cannot be traded away." },
+        "source": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      },
+      "required": ["id", "category", "statement", "source"],
+      "additionalProperties": false
+    },
+    "stakeholder": {
+      "type": "object",
+      "properties": {
+        "role": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "alias": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString",
+          "description": "Pseudonym, never a real name or email."
+        },
+        "responsibility": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "decision_rights": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["role", "alias", "responsibility"],
+      "additionalProperties": false
+    },
+    "successMeasure": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "statement": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "baseline": { "type": ["string", "null"] },
+        "target": { "type": ["string", "null"] },
+        "measured_by": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "baseline_known": {
+          "type": "boolean",
+          "description": "False means the measure cannot yet prove improvement. Say so rather than inventing a baseline."
+        }
+      },
+      "required": ["id", "statement", "measured_by"],
+      "additionalProperties": false
+    },
+    "cadenceMilestone": {
+      "type": "object",
+      "description": "One entry in the renewal-oriented cadence. Configurable guidance, not a fixed schedule.",
+      "properties": {
+        "label": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString",
+          "description": "For example 'T-12', 'T-3', 'T+90'."
+        },
+        "objective": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "target_date": {
+          "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }]
+        },
+        "owner_role": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "complete": { "type": "boolean" }
+      },
+      "required": ["label", "objective", "owner_role"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "id": "eng-contoso-retail-fy27",
+      "artifact_type": "engagement",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "created_at": "2026-02-02T09:00:00Z",
+      "updated_at": "2026-02-02T09:00:00Z",
+      "author": "engagement-lead-a",
+      "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+      "customer_alias": "contoso-retail",
+      "as_of": "2026-02-02",
+      "primary_trigger": "license-or-ea-renewal",
+      "renewal_date": "2027-02-28",
+      "desired_outcomes": [
+        "Remove unsupported database versions from the payment path before the audit window.",
+        "Cut the weekend patching effort that currently consumes two DBAs every month."
+      ],
+      "business_context": "Retail estate with a February renewal and an open audit finding on unsupported database versions.",
+      "scope": {
+        "in_scope": ["Store operations databases", "Reporting databases"],
+        "out_of_scope": ["Point-of-sale terminals"],
+        "estimated_workload_count": 14,
+        "estimated_count_is_assumption": true
+      },
+      "confidence": "low",
+      "status": "draft"
+    }
+  ]
+}

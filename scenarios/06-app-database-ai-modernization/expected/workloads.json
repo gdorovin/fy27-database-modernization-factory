@@ -1,0 +1,379 @@
+{
+  "completeness_basis": "No estate-level coverage evidence was supplied, so completeness is unproven. Sources: csv-inventory.",
+  "engagement_id": "eng-woodgrove-services-fy27",
+  "inventory_completeness": "low",
+  "workloads": [
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [
+        "GDPR"
+      ],
+      "confidence": "high",
+      "created_at": "2026-08-10T00:00:00Z",
+      "criticality": "high",
+      "data_residency": "uk-south",
+      "dependencies": [
+        {
+          "confirmed": false,
+          "direction": "unknown",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-case-management-invento-63b6a2aa"
+          ],
+          "id": "wl-case-management-dep-0",
+          "kind": "application",
+          "name": "Customer master"
+        }
+      ],
+      "dependency_discovery_complete": true,
+      "edition": "Standard",
+      "engagement_id": "eng-woodgrove-services-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-case-management-invento-63b6a2aa"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "security",
+          "evidence_class": "user-provided",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-case-management-invento-63b6a2aa"
+          ],
+          "id": "wl-case-management-r-compliance-scope",
+          "remediation": "Confirm control requirements with the security owner.",
+          "severity": "medium",
+          "statement": "The workload is in scope for GDPR, so landing-zone controls and evidence collection must be agreed before migration."
+        },
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-case-management-invento-63b6a2aa"
+          ],
+          "id": "wl-case-management-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 13.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        }
+      ],
+      "host_alias": "host-case-a",
+      "id": "wl-case-management",
+      "instance_features": [],
+      "name": "Case management",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.9% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 90,
+        "rpo_minutes": 15,
+        "rto_minutes": 60,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 16.0,
+        "cpu_cores": 8,
+        "data_size_gb": 310.0,
+        "largest_table_gb": 120.0,
+        "measured": true,
+        "memory_gb": 64.0,
+        "peak_concurrent_sessions": 260,
+        "peak_iops": 2900
+      },
+      "source_platform": "sql-server",
+      "source_version": "13.0",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-08-10T00:00:00Z",
+      "workload_ids": [
+        "wl-case-management"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [
+        "GDPR"
+      ],
+      "confidence": "high",
+      "created_at": "2026-08-10T00:00:00Z",
+      "criticality": "critical",
+      "data_residency": "uk-south",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Standard",
+      "engagement_id": "eng-woodgrove-services-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-customer-master-invento-9768c3a2"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "security",
+          "evidence_class": "user-provided",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-customer-master-invento-9768c3a2"
+          ],
+          "id": "wl-customer-master-r-compliance-scope",
+          "remediation": "Confirm control requirements with the security owner.",
+          "severity": "medium",
+          "statement": "The workload is in scope for GDPR, so landing-zone controls and evidence collection must be agreed before migration."
+        },
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-customer-master-invento-9768c3a2"
+          ],
+          "id": "wl-customer-master-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 13.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        }
+      ],
+      "host_alias": "host-case-a",
+      "id": "wl-customer-master",
+      "instance_features": [],
+      "name": "Customer master",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.95% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 45,
+        "rpo_minutes": 5,
+        "rto_minutes": 30,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 10.0,
+        "cpu_cores": 8,
+        "data_size_gb": 95.0,
+        "largest_table_gb": 40.0,
+        "measured": true,
+        "memory_gb": 64.0,
+        "peak_concurrent_sessions": 300,
+        "peak_iops": 1600
+      },
+      "source_platform": "sql-server",
+      "source_version": "13.0",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-08-10T00:00:00Z",
+      "workload_ids": [
+        "wl-customer-master"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "high",
+      "created_at": "2026-08-10T00:00:00Z",
+      "criticality": "low",
+      "data_residency": "uk-south",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Standard",
+      "engagement_id": "eng-woodgrove-services-fy27",
+      "environment": "pre-production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-reporting-copy-inventor-dceef091"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-reporting-copy-inventor-dceef091"
+          ],
+          "id": "wl-reporting-copy-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 13.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        }
+      ],
+      "host_alias": "host-rpt-a",
+      "id": "wl-reporting-copy",
+      "instance_features": [],
+      "name": "Reporting copy",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "None stated",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 480,
+        "rpo_minutes": 1440,
+        "rto_minutes": 2880,
+        "stated_by": "database-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 16.0,
+        "cpu_cores": 4,
+        "data_size_gb": 340.0,
+        "largest_table_gb": 130.0,
+        "measured": true,
+        "memory_gb": 32.0,
+        "peak_concurrent_sessions": 40,
+        "peak_iops": 700
+      },
+      "source_platform": "sql-server",
+      "source_version": "13.0",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-08-10T00:00:00Z",
+      "workload_ids": [
+        "wl-reporting-copy"
+      ]
+    }
+  ]
+}

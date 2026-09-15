@@ -1,0 +1,51 @@
+# Code owners
+#
+# REPLACE-ME: every team below is a placeholder. Substitute real GitHub teams before
+# enabling branch protection, or reviews will be requested from teams that do not exist.
+#
+# Governance areas deliberately require two distinct owners, so that no single reviewer
+# can change the rules and approve the change.
+
+# Default
+*                                   @REPLACE-ME-ORG/dbmf-maintainers
+
+# Canonical instructions and compatibility layers
+/.github/copilot-instructions.md    @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security
+/AGENTS.md                          @REPLACE-ME-ORG/dbmf-architects
+/CLAUDE.md                          @REPLACE-ME-ORG/dbmf-architects
+
+# Governance surface. Two owners required.
+/GOVERNANCE.md                      @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security
+/SECURITY.md                        @REPLACE-ME-ORG/dbmf-security
+/playbooks/                         @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security
+/contracts/                         @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security
+/docs/governance/                   @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security
+
+# Agents and skills define what the system is permitted to do.
+/.github/agents/                    @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security
+/.github/skills/                    @REPLACE-ME-ORG/dbmf-architects
+/.github/instructions/              @REPLACE-ME-ORG/dbmf-architects
+
+# Implementation
+/src/dbmodernize/models/            @REPLACE-ME-ORG/dbmf-architects
+/src/dbmodernize/validators/        @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security
+/src/dbmodernize/adapters/          @REPLACE-ME-ORG/dbmf-engineers @REPLACE-ME-ORG/dbmf-security
+/src/dbmodernize/scoring/           @REPLACE-ME-ORG/dbmf-architects
+/src/dbmodernize/                   @REPLACE-ME-ORG/dbmf-engineers
+
+# Safety-critical surfaces
+/src/dbmodernize/utils/safe_paths.py @REPLACE-ME-ORG/dbmf-security
+/src/dbmodernize/utils/redaction.py  @REPLACE-ME-ORG/dbmf-security
+/src/dbmodernize/evidence/injection.py @REPLACE-ME-ORG/dbmf-security
+
+# Build, release, and supply chain
+/.github/workflows/                 @REPLACE-ME-ORG/dbmf-engineers @REPLACE-ME-ORG/dbmf-security
+/pyproject.toml                     @REPLACE-ME-ORG/dbmf-engineers
+/.pre-commit-config.yaml            @REPLACE-ME-ORG/dbmf-engineers
+
+# Scenarios are the regression surface for the whole product.
+/scenarios/                         @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-engineers
+/tests/                             @REPLACE-ME-ORG/dbmf-engineers
+
+# Infrastructure reference. What-if only; never applied from this repository.
+/infra/                             @REPLACE-ME-ORG/dbmf-architects @REPLACE-ME-ORG/dbmf-security

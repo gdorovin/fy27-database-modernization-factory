@@ -1,0 +1,88 @@
+{
+  "id": "plan-invalid-ungated-mutation",
+  "artifact_type": "migration-plan",
+  "schema_version": "1.0.0",
+  "engagement_id": "eng-fixture",
+  "workload_ids": ["wl-fixture"],
+  "created_at": "2026-03-02T00:00:00Z",
+  "updated_at": "2026-03-02T00:00:00Z",
+  "author": "agent:migration-planner",
+  "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+  "wave_id": "wave-1-pilot",
+  "target_decision_ids": ["td-wl-fixture"],
+  "phases": [
+    {
+      "name": "Validate",
+      "objective": "Produce evidence.",
+      "tasks": [
+        {
+          "id": "t-validate",
+          "title": "Execute the validation plan",
+          "kind": "validate",
+          "description": "Run every check and record observations.",
+          "owner_role": "delivery-lead",
+          "changes_environment": false,
+          "approval_required": false
+        },
+        {
+          "id": "t-cutover",
+          "title": "Execute the cutover",
+          "kind": "cutover",
+          "description": "Switch production traffic with no approval gate and no rollback note.",
+          "owner_role": "delivery-lead",
+          "changes_environment": true,
+          "approval_required": false
+        }
+      ]
+    }
+  ],
+  "cutover": {
+    "freeze_start": "T-2h",
+    "replication_method": "Continuous replication.",
+    "go_no_go_criteria": [
+      {
+        "id": "gng",
+        "statement": "Validation passed.",
+        "verification_method": "Report",
+        "owner_role": "delivery-lead",
+        "automated": true
+      }
+    ],
+    "communication_plan": ["Tell people."],
+    "required_approval_roles": [
+      "business-owner",
+      "application-owner",
+      "database-owner",
+      "security-owner",
+      "operations-owner"
+    ],
+    "execution_window": "Overnight.",
+    "owner_role": "delivery-lead"
+  },
+  "rollback": {
+    "triggers": [
+      {
+        "id": "rb",
+        "statement": "Performance regresses beyond tolerance.",
+        "verification_method": "Baseline comparison",
+        "owner_role": "database-owner",
+        "automated": true
+      }
+    ],
+    "method": "Return to the source.",
+    "maximum_decision_window": "Window minus measured rollback duration.",
+    "data_reconciliation_note": "Replay in-window writes.",
+    "owner_role": "operations-owner",
+    "rehearsed": false,
+    "evidence_preservation": "Capture logs and metrics first."
+  },
+  "acceptance_criteria": [
+    {
+      "id": "acc",
+      "statement": "Tests pass.",
+      "verification_method": "Test results",
+      "owner_role": "application-owner",
+      "automated": true
+    }
+  ]
+}

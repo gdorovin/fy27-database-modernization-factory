@@ -1,0 +1,75 @@
+# Migration wave
+#
+# Rules the schema and models enforce:
+#   - Waves may not share workloads.
+#   - A wave may not depend on a wave that runs later.
+#   - A pilot is sequence 1 and holds at most three workloads. A larger "pilot"
+#     de-risks nothing.
+#   - Exit criteria are testable. Prose that cannot be checked is not a criterion.
+#
+# Validated against contracts/migration-wave.schema.json.
+
+id: wave-1-pilot
+artifact_type: migration-wave
+schema_version: 1.0.0
+engagement_id: REPLACE-ENGAGEMENT-ID
+workload_ids:
+  - wl-example-nonprod
+created_at: 2026-01-01T00:00:00Z
+updated_at: 2026-01-01T00:00:00Z
+author: agent:migration-planner
+status: draft
+confidence: medium
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+name: Wave 1 - pilot
+sequence: 1
+objective: >-
+  Prove the migration method, the validation gate, and the rollback path on the lowest-risk
+  workloads before anything else moves.
+is_pilot: true
+depends_on_wave_ids: []
+rollback_required: true
+
+prerequisites:
+  - Landing zone readiness check passes for the subscriptions in scope.
+  - A non-production environment exists that mirrors the target configuration.
+
+owner_roles:
+  - delivery-lead
+  - database-owner
+  - application-owner
+
+entry_criteria:
+  - id: wave-1-entry-decisions-approved
+    statement: Every workload in the wave has an approved target decision.
+    verification_method: Approval ledger check against each target decision artifact
+    owner_role: architect
+    automated: true
+  - id: wave-1-entry-rollback-rehearsed
+    statement: The rollback path has been rehearsed in a non-production environment.
+    verification_method: Rehearsal record attached to the wave as evidence
+    owner_role: operations-owner
+    automated: false
+
+exit_criteria:
+  - id: wave-1-exit-validation-pass
+    statement: All blocking validation checks pass and none is left un-run.
+    verification_method: Validation report for the wave
+    owner_role: delivery-lead
+    automated: true
+  - id: wave-1-exit-business-acceptance
+    statement: Business and application owners have accepted the outcome.
+    verification_method: Approval artifacts recorded in the ledger
+    owner_role: business-owner
+    automated: true
+
+planned_start: null
+planned_end: null
+evidence_refs: []
+assumptions: []
+open_questions: []
+risk_ids: []
+approvals: []

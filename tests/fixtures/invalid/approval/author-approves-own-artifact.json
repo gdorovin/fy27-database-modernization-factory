@@ -1,0 +1,15 @@
+{
+  "id": "ap-invalid-self-approval",
+  "artifact_type": "approval",
+  "schema_version": "1.0.0",
+  "engagement_id": "eng-fixture",
+  "approved_artifact_id": "td-wl-fixture",
+  "approved_artifact_type": "target-decision",
+  "artifact_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "role": "architect",
+  "approver_principal": "agent:target-architect",
+  "artifact_author": "agent:target-architect",
+  "decision": "approved",
+  "approved_at": "2026-03-02T14:30:00Z",
+  "scope": "The author signing their own work."
+}

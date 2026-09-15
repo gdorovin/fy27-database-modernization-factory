@@ -1,0 +1,26 @@
+{
+  "id": "wave-3-pilot",
+  "artifact_type": "migration-wave",
+  "schema_version": "1.0.0",
+  "engagement_id": "eng-fixture",
+  "workload_ids": ["wl-a", "wl-b", "wl-c", "wl-d", "wl-e"],
+  "created_at": "2026-03-02T00:00:00Z",
+  "updated_at": "2026-03-02T00:00:00Z",
+  "author": "agent:migration-planner",
+  "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+  "name": "Wave 3 - pilot",
+  "sequence": 3,
+  "objective": "A pilot in name only: five workloads, running third.",
+  "is_pilot": true,
+  "owner_roles": ["delivery-lead"],
+  "exit_criteria": [
+    {
+      "id": "ec-validation",
+      "statement": "Validation passes.",
+      "verification_method": "Validation report",
+      "owner_role": "delivery-lead",
+      "automated": true
+    }
+  ],
+  "rollback_required": true
+}

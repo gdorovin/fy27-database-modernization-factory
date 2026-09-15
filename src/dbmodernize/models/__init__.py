@@ -1,0 +1,196 @@
+"""Pydantic models mirroring the JSON Schemas in ``contracts/``.
+
+The schemas are the portable contract; these models are the in-process contract.
+``tests/contract/test_schema_model_alignment.py`` fails if the two drift apart.
+"""
+
+from __future__ import annotations
+
+from dbmodernize.models.approval import (
+    Approval,
+    ApprovalDecision,
+    ApprovalLedger,
+    PolicyException,
+)
+from dbmodernize.models.base import (
+    CUTOVER_REQUIRED_ROLES,
+    ApprovalRef,
+    ApprovalRole,
+    ArtifactBase,
+    ArtifactStatus,
+    Assumption,
+    AzureTarget,
+    Classification,
+    Confidence,
+    Disposition,
+    DowntimeClass,
+    EvidenceClass,
+    Likelihood,
+    OpenQuestion,
+    PlaybookRef,
+    Severity,
+    SourcePlatform,
+    StrictModel,
+)
+from dbmodernize.models.decision import (
+    ConsideredOption,
+    CostInput,
+    DowntimeApproach,
+    OptionVerdict,
+    TargetDecision,
+    TargetDecisionSet,
+)
+from dbmodernize.models.engagement import (
+    CadenceMilestone,
+    Constraint,
+    Engagement,
+    EngagementScope,
+    EngagementTrigger,
+    Stakeholder,
+    SuccessMeasure,
+)
+from dbmodernize.models.evidence import (
+    EvidenceBundle,
+    EvidenceConflict,
+    EvidenceManifestEntry,
+    EvidenceRecord,
+    EvidenceSource,
+    InjectionFinding,
+)
+from dbmodernize.models.issue import GithubIssue, IssueSet
+from dbmodernize.models.planning import (
+    Criterion,
+    CutoverPlan,
+    MigrationPlan,
+    MigrationWave,
+    PlanPhase,
+    PlanTask,
+    RollbackPlan,
+    TaskKind,
+    WavePlan,
+)
+from dbmodernize.models.risk import Risk, RiskCategory, RiskRegister, RiskStatus
+from dbmodernize.models.validation import (
+    BusinessAcceptance,
+    CheckCategory,
+    CheckResult,
+    Outcome,
+    ValidationCheck,
+    ValidationReport,
+)
+from dbmodernize.models.workload import (
+    AssessmentFinding,
+    Criticality,
+    Dependency,
+    EnvironmentKind,
+    FindingCategory,
+    ServiceLevelRequirement,
+    SupportStatus,
+    Workload,
+    WorkloadInventory,
+    WorkloadSizing,
+)
+
+#: Maps ``artifact_type`` to the model that validates it. Used by the CLI and by
+#: contract tests so that adding an artifact type without a model fails loudly.
+ARTIFACT_MODELS: dict[str, type[StrictModel]] = {
+    "engagement": Engagement,
+    "workload": Workload,
+    "target-decision": TargetDecision,
+    "risk": Risk,
+    "migration-wave": MigrationWave,
+    "migration-plan": MigrationPlan,
+    "approval": Approval,
+    "validation-report": ValidationReport,
+}
+
+#: Maps a contract file stem to its model, for schema/model alignment tests.
+SCHEMA_MODELS: dict[str, type[StrictModel]] = {
+    "engagement": Engagement,
+    "workload": Workload,
+    "evidence": EvidenceRecord,
+    "target-decision": TargetDecision,
+    "risk": Risk,
+    "migration-wave": MigrationWave,
+    "migration-plan": MigrationPlan,
+    "approval": Approval,
+    "validation-report": ValidationReport,
+    "github-issue": GithubIssue,
+}
+
+__all__ = [
+    "ARTIFACT_MODELS",
+    "CUTOVER_REQUIRED_ROLES",
+    "SCHEMA_MODELS",
+    "Approval",
+    "ApprovalDecision",
+    "ApprovalLedger",
+    "ApprovalRef",
+    "ApprovalRole",
+    "ArtifactBase",
+    "ArtifactStatus",
+    "AssessmentFinding",
+    "Assumption",
+    "AzureTarget",
+    "BusinessAcceptance",
+    "CadenceMilestone",
+    "CheckCategory",
+    "CheckResult",
+    "Classification",
+    "Confidence",
+    "ConsideredOption",
+    "Constraint",
+    "CostInput",
+    "Criterion",
+    "Criticality",
+    "CutoverPlan",
+    "Dependency",
+    "Disposition",
+    "DowntimeApproach",
+    "DowntimeClass",
+    "Engagement",
+    "EngagementScope",
+    "EngagementTrigger",
+    "EnvironmentKind",
+    "EvidenceBundle",
+    "EvidenceClass",
+    "EvidenceConflict",
+    "EvidenceManifestEntry",
+    "EvidenceRecord",
+    "EvidenceSource",
+    "FindingCategory",
+    "GithubIssue",
+    "InjectionFinding",
+    "IssueSet",
+    "Likelihood",
+    "MigrationPlan",
+    "MigrationWave",
+    "OpenQuestion",
+    "OptionVerdict",
+    "Outcome",
+    "PlanPhase",
+    "PlanTask",
+    "PlaybookRef",
+    "PolicyException",
+    "Risk",
+    "RiskCategory",
+    "RiskRegister",
+    "RiskStatus",
+    "RollbackPlan",
+    "ServiceLevelRequirement",
+    "Severity",
+    "SourcePlatform",
+    "Stakeholder",
+    "StrictModel",
+    "SuccessMeasure",
+    "SupportStatus",
+    "TargetDecision",
+    "TargetDecisionSet",
+    "TaskKind",
+    "ValidationCheck",
+    "ValidationReport",
+    "WavePlan",
+    "Workload",
+    "WorkloadInventory",
+    "WorkloadSizing",
+]

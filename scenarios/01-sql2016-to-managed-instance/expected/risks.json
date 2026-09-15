@@ -1,0 +1,82 @@
+{
+  "engagement_id": "eng-northwind-retail-fy27",
+  "risks": [
+    {
+      "accepted_by_role": null,
+      "accepted_on": null,
+      "approvals": [],
+      "artifact_type": "risk",
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "category": "application",
+      "confidence": "medium",
+      "contingency": "Defer the workload to a later wave and keep it out of the current cutover scope.",
+      "created_at": "2026-03-02T00:00:00Z",
+      "description": "Dependency discovery is incomplete, so the consumers of this database and the blast radius of a cutover are unknown.",
+      "due_date": null,
+      "engagement_id": "eng-northwind-retail-fy27",
+      "evidence_refs": [
+        "ev-arc-sql-wl-store-operations-arc-inventor-101d0af9",
+        "ev-csv-inventory-wl-store-operations-invent-65706cdf"
+      ],
+      "id": "risk-wl-store-operations-r-dependencies-unknown",
+      "impact": "high",
+      "likelihood": "high",
+      "mitigation": "Run dependency mapping and confirm every consumer with its application owner.",
+      "open_questions": [],
+      "owner_role": "application-owner",
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "risk_status": "open",
+      "schema_version": "1.0.0",
+      "status": "draft",
+      "supersedes": null,
+      "title": "Store operations: dependency blocker",
+      "trigger": "Finding wl-store-operations-r-dependencies-unknown is still open at the wave entry gate.",
+      "updated_at": "2026-03-02T00:00:00Z",
+      "workload_ids": [
+        "wl-store-operations"
+      ]
+    }
+  ]
+}

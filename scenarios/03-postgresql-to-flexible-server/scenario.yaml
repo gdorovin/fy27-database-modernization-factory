@@ -1,0 +1,53 @@
+﻿title: Self-managed PostgreSQL to Azure Database for PostgreSQL Flexible Server
+engagement: input/engagement.yaml
+evidence_dir: input
+playbook: playbooks/default
+
+acceptance:
+  # The managed flexible server is the default candidate for this engine family.
+  - kind: recommended_target
+    workload: wl-routing-engine
+    target: azure-database-for-postgresql-flexible-server
+  - kind: recommended_target
+    workload: wl-partner-integration
+    target: azure-database-for-postgresql-flexible-server
+
+  # SQL Server targets must not appear as options for a PostgreSQL workload.
+  - kind: option_not_recommended
+    workload: wl-routing-engine
+    target: sql-server-on-azure-vm
+
+  # Extensions are inventoried and flagged for per-version verification. This is the whole
+  # point of the scenario: a lift-and-shift narrative hides exactly this work.
+  - kind: text_present
+    file: assessment-summary.md
+    value: postgis
+  - kind: text_present
+    file: target-decision.md
+    value: verified per extension and per version
+  - kind: text_present
+    file: validation-plan-1.md
+    value: required extensions are present
+
+  # Unsupported versions are surfaced as a support-lifecycle finding.
+  - kind: text_present
+    file: assessment-summary.md
+    value: past end of support
+
+  # High availability, backup, networking, and identity are all planned, not assumed.
+  - kind: text_present
+    file: validation-plan-1.md
+    value: failover behaves as designed
+  - kind: text_present
+    file: validation-plan-1.md
+    value: a restore from backup succeeds
+  - kind: text_present
+    file: validation-plan-1.md
+    value: network isolation is enforced
+  - kind: text_present
+    file: validation-plan-1.md
+    value: authentication and authorization work as designed
+
+  - kind: text_absent
+    file: target-decision.md
+    value: lift and shift

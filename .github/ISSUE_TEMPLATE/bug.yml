@@ -1,0 +1,74 @@
+name: Bug
+description: Something in the repository behaves incorrectly.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not paste customer data, exports, credentials, or real identifiers.**
+        Reduce the problem to a synthetic reproduction first —
+        `python scripts/redact_fixture.py` helps.
+
+        If this is a security vulnerability, do not open an issue. See `SECURITY.md`.
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Include the rule id and artifact path from the failure message.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Exact commands, against a synthetic fixture or a committed scenario.
+      render: shell
+      placeholder: |
+        dbmodernize validate-scenario scenarios/01-sql2016-to-managed-instance
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - contracts and models
+        - playbook validation
+        - evidence and adapters
+        - scoring and target comparison
+        - wave and plan generation
+        - rendering and templates
+        - issue generation
+        - CLI
+        - skills or agents
+        - scenarios
+        - documentation
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `dbmodernize version`.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety
+      options:
+        - label: This issue contains no customer data, credentials, or real identifiers.
+          required: true

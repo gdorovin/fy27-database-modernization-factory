@@ -1,0 +1,53 @@
+{
+  "project": "litware-oracle-assessment",
+  "convertedOn": "2026-06-05",
+  "schemas": [
+    {
+      "workloadName": "Order management",
+      "sourceSchema": "OMS",
+      "sourcePlatform": "oracle",
+      "targetPlatform": "azure-database-for-postgresql-flexible-server",
+      "objects": { "tables": 412, "views": 88, "procedures": 260, "packages": 74, "triggers": 131 },
+      "conversionSummary": { "automatic": 812, "manual": 133, "errors": 20 },
+      "manualEffortHours": 640,
+      "topIssues": [
+        {
+          "category": "plsql",
+          "description": "Package-level state has no direct equivalent and must be redesigned.",
+          "occurrences": 41
+        },
+        {
+          "category": "datatype",
+          "description": "NUMBER columns without precision need an explicit target type decision.",
+          "occurrences": 188
+        },
+        {
+          "category": "sql",
+          "description": "Hierarchical queries require rewriting as recursive common table expressions.",
+          "occurrences": 27
+        }
+      ]
+    },
+    {
+      "workloadName": "Finance ledger",
+      "sourceSchema": "FIN",
+      "sourcePlatform": "oracle",
+      "targetPlatform": "azure-sql-managed-instance",
+      "objects": { "tables": 260, "views": 51, "procedures": 174, "packages": 39, "triggers": 62 },
+      "conversionSummary": { "automatic": 498, "manual": 76, "errors": 12 },
+      "manualEffortHours": 410,
+      "topIssues": [
+        {
+          "category": "plsql",
+          "description": "Autonomous transactions used in audit logging need a different pattern.",
+          "occurrences": 18
+        },
+        {
+          "category": "sequence",
+          "description": "Sequence usage inside triggers requires review against target semantics.",
+          "occurrences": 44
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "collectedOn": "2026-07-06",
+  "instances": [
+    {
+      "name": "instance-fin-a",
+      "hostAlias": "host-fin-a",
+      "version": "14.0",
+      "edition": "Enterprise",
+      "patchLevel": "CU31",
+      "supportStatus": "extended-support",
+      "environment": "production",
+      "features": ["sql-agent", "linked-servers"],
+      "securityFindings": ["Auditing is enabled but retention is undefined"],
+      "databases": [{ "name": "Group finance", "sizeInGb": 540, "environment": "production" }]
+    },
+    {
+      "name": "instance-shr-a",
+      "hostAlias": "host-shr-a",
+      "version": "14.0",
+      "edition": "Standard",
+      "patchLevel": "CU31",
+      "supportStatus": "extended-support",
+      "environment": "production",
+      "features": [],
+      "securityFindings": [],
+      "databases": [{ "name": "Shared services", "sizeInGb": 150, "environment": "production" }]
+    },
+    {
+      "name": "instance-leg-a",
+      "hostAlias": "host-leg-a",
+      "version": "11.0",
+      "edition": "Standard",
+      "patchLevel": "SP4",
+      "supportStatus": "end-of-support",
+      "environment": "production",
+      "features": ["sql-agent", "polybase"],
+      "securityFindings": [
+        "No transparent data encryption",
+        "Local administrator accounts in use for service startup",
+        "No audit destination configured"
+      ],
+      "databases": [
+        { "name": "Legacy warehouse", "sizeInGb": 980, "environment": "production" }
+      ]
+    }
+  ],
+  "enrollmentCoverage": {
+    "estimatedTotalInstances": 55,
+    "basis": "CMDB record count. Network discovery suggests a higher figure, and the two have not been reconciled."
+  }
+}

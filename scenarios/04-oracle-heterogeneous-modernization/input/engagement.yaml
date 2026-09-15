@@ -1,0 +1,126 @@
+id: eng-litware-manufacturing-fy27
+artifact_type: engagement
+engagement_id: eng-litware-manufacturing-fy27
+schema_version: 1.0.0
+as_of: 2026-06-08
+created_at: 2026-06-08T00:00:00Z
+updated_at: 2026-06-08T00:00:00Z
+author: engagement-lead-d
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+customer_alias: litware-manufacturing
+
+primary_trigger: oracle-cost-or-audit-pressure
+secondary_triggers:
+  - aging-hardware
+  - application-modernization
+renewal_date: 2027-06-30
+target_first_workload_live: null
+
+desired_outcomes:
+  - Reduce the annual cost and audit exposure of the current database estate.
+  - Keep the plant running; nothing here is worth a production stoppage.
+  - Understand which systems can realistically move, and which should be left alone.
+
+business_context: >-
+  A manufacturer under licensing and audit pressure on its Oracle estate. Several schemas
+  carry substantial PL/SQL, and the plant systems are supported by a vendor whose terms have
+  not been reviewed. The customer wants an honest disposition per system, not a programme
+  that assumes everything moves.
+
+scope:
+  in_scope:
+    - Order management
+    - Finance ledger
+    - Plant maintenance
+  out_of_scope:
+    - Shop-floor control systems, which are safety-certified
+  estate_summary: Three Oracle schemas of differing complexity on shared infrastructure.
+  estimated_workload_count: 3
+  estimated_count_is_assumption: false
+
+constraints:
+  - id: c-no-plant-stoppage
+    category: operational
+    statement: No change may risk a production line stoppage.
+    hard: true
+    source: Business owner, intake workshop
+  - id: c-vendor-support
+    category: contractual
+    statement: Plant maintenance is vendor-supported and the support terms have not been reviewed.
+    hard: true
+    source: Application owner
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-d
+    responsibility: Owns manufacturing operations and the licensing budget.
+    decision_rights:
+      - Business case acceptance
+      - Disposition per system
+      - Cutover approval
+  - role: database-owner
+    alias: dba-d
+    responsibility: Owns the Oracle estate.
+    decision_rights:
+      - Workload classification
+      - Cutover approval
+  - role: application-owner
+    alias: app-owner-d
+    responsibility: Owns the order management and finance applications.
+    decision_rights:
+      - Application impact
+      - Cutover approval
+  - role: security-owner
+    alias: security-owner-d
+    responsibility: Owns posture and audit response.
+    decision_rights:
+      - Cutover approval
+  - role: operations-owner
+    alias: ops-owner-d
+    responsibility: Owns plant IT run-state.
+    decision_rights:
+      - Cutover approval
+
+success_measures:
+  - id: sm-licensing-exposure
+    statement: Annual licensing and audit exposure falls.
+    baseline: null
+    target: null
+    measured_by: Finance reporting, once the baseline is supplied
+    baseline_known: false
+  - id: sm-no-stoppage
+    statement: No production line stoppage is attributable to this programme.
+    baseline: "0"
+    target: "0"
+    measured_by: Plant incident records
+    baseline_known: true
+
+cadence:
+  - label: T-12
+    objective: Assess each schema independently and agree a disposition per system.
+    target_date: 2026-06-30
+    owner_role: architect
+    complete: false
+  - label: T-6
+    objective: Scope conversion and application remediation for systems that will move.
+    target_date: 2026-12-31
+    owner_role: delivery-lead
+    complete: false
+
+evidence_refs: []
+assumptions: []
+open_questions:
+  - id: q-vendor-terms
+    question: What do the plant maintenance vendor's support terms permit?
+    owner_role: application-owner
+    blocking: false
+    needed_by: 2026-09-01
+risk_ids: []
+approvals: []
+workload_ids: []

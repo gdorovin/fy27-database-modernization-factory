@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/approval.schema.json",
+  "title": "Approval",
+  "description": "One role's signature against one artifact version. artifact_hash pins the exact content approved, so editing the artifact afterwards invalidates the approval instead of silently carrying it forward. The approver must differ from the artifact author, and an agent can never approve an agent-authored artifact.",
+  "type": "object",
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "schema_version": { "type": "string" },
+    "artifact_type": { "const": "approval" },
+    "engagement_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "approved_artifact_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "approved_artifact_type": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "artifact_hash": { "$ref": "common.schema.json#/$defs/sha256" },
+    "role": { "$ref": "common.schema.json#/$defs/approvalRole" },
+    "approver_principal": {
+      "$ref": "common.schema.json#/$defs/nonEmptyString",
+      "description": "Pseudonymous principal, e.g. 'security-owner-a'. Never a real email address."
+    },
+    "artifact_author": {
+      "$ref": "common.schema.json#/$defs/nonEmptyString",
+      "description": "Copied from the approved artifact so that self-approval is detectable by inspection."
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["approved", "approved-with-conditions", "rejected"]
+    },
+    "approved_at": { "$ref": "common.schema.json#/$defs/isoDateTime" },
+    "conditions": { "type": "array", "items": { "type": "string" } },
+    "scope": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "expires_on": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }]
+    },
+    "comments": { "type": ["string", "null"] }
+  },
+  "required": [
+    "id",
+    "engagement_id",
+    "approved_artifact_id",
+    "approved_artifact_type",
+    "artifact_hash",
+    "role",
+    "approver_principal",
+    "artifact_author",
+    "decision",
+    "approved_at",
+    "scope"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "decision": { "const": "approved-with-conditions" } },
+        "required": ["decision"]
+      },
+      "then": { "properties": { "conditions": { "minItems": 1 } }, "required": ["conditions"] }
+    }
+  ],
+  "examples": [
+    {
+      "id": "ap-td-wl-store-ops-architect",
+      "artifact_type": "approval",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "approved_artifact_id": "td-wl-store-ops",
+      "approved_artifact_type": "target-decision",
+      "artifact_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "architect",
+      "approver_principal": "architect-a",
+      "artifact_author": "agent:target-architect",
+      "decision": "approved-with-conditions",
+      "approved_at": "2026-02-12T14:30:00Z",
+      "conditions": ["Re-run the comparison once dependency mapping completes."],
+      "scope": "Target decision for workload wl-store-ops only."
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+id: eng-tailwind-logistics-fy27
+artifact_type: engagement
+engagement_id: eng-tailwind-logistics-fy27
+schema_version: 1.0.0
+as_of: 2026-05-11
+created_at: 2026-05-11T00:00:00Z
+updated_at: 2026-05-11T00:00:00Z
+author: engagement-lead-c
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+customer_alias: tailwind-logistics
+
+primary_trigger: unsupported-open-source-version
+secondary_triggers:
+  - security-or-compliance-finding
+  - availability-or-dr-gap
+renewal_date: null
+target_first_workload_live: 2026-10-31
+
+desired_outcomes:
+  - Get off database versions that no longer receive security fixes.
+  - Have a failover story that has actually been tested rather than assumed.
+  - Stop the team maintaining replication scripts that only two people understand.
+
+business_context: >-
+  Self-managed PostgreSQL on virtual machines, several versions behind, with high
+  availability implemented by in-house scripting. A recent security review flagged both the
+  version and the absence of tested recovery.
+
+scope:
+  in_scope:
+    - Routing and tracking databases
+    - Partner integration database
+  out_of_scope:
+    - The telematics time-series store, which needs its own assessment
+  estate_summary: Three PostgreSQL clusters on self-managed virtual machines.
+  estimated_workload_count: 3
+  estimated_count_is_assumption: false
+
+constraints:
+  - id: c-extension-dependency
+    category: technical
+    statement: The routing application depends on geospatial and scheduling extensions.
+    hard: true
+    source: Application owner, intake workshop
+  - id: c-private-networking
+    category: regulatory
+    statement: Partner integration data must not traverse the public internet.
+    hard: true
+    source: Security owner
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-c
+    responsibility: Owns the logistics platform and its availability commitments.
+    decision_rights:
+      - Business case acceptance
+      - Cutover approval
+  - role: database-owner
+    alias: dba-c
+    responsibility: Owns the PostgreSQL estate.
+    decision_rights:
+      - Workload classification
+      - Cutover approval
+  - role: application-owner
+    alias: app-owner-c
+    responsibility: Owns the routing and partner integration applications.
+    decision_rights:
+      - Application impact
+      - Cutover approval
+  - role: security-owner
+    alias: security-owner-c
+    responsibility: Owns the security review findings.
+    decision_rights:
+      - Policy exceptions
+      - Cutover approval
+  - role: operations-owner
+    alias: ops-owner-c
+    responsibility: Owns run-state and the current replication scripting.
+    decision_rights:
+      - Availability design
+      - Cutover approval
+
+success_measures:
+  - id: sm-supported-versions
+    statement: Every database runs a version that receives security fixes.
+    baseline: "0 of 3"
+    target: "3 of 3"
+    measured_by: Estate inventory report
+    baseline_known: true
+  - id: sm-tested-failover
+    statement: A failover test has been performed and the recovery time recorded.
+    baseline: Never tested
+    target: Tested quarterly
+    measured_by: Failover test records
+    baseline_known: true
+
+cadence:
+  - label: T-6
+    objective: Assess extension and version compatibility, and model target options.
+    target_date: 2026-06-30
+    owner_role: architect
+    complete: false
+  - label: T-0
+    objective: First workload live under an approved cutover.
+    target_date: 2026-10-31
+    owner_role: delivery-lead
+    complete: false
+
+evidence_refs: []
+assumptions: []
+open_questions:
+  - id: q-extension-versions
+    question: Which exact extension versions are in use, and are they available on the managed service?
+    owner_role: database-owner
+    blocking: false
+    needed_by: 2026-06-15
+risk_ids: []
+approvals: []
+workload_ids: []

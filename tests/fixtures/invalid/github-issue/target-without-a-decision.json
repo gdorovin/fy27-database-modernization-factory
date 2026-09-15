@@ -1,0 +1,17 @@
+{
+  "id": "issue-invalid-unsourced-target",
+  "title": "Migrate the fixture workload to its approved target",
+  "engagement_id": "eng-fixture",
+  "workload_ids": ["wl-fixture"],
+  "problem_statement": "The issue names an approved target but references no decision that approved it.",
+  "source_evidence": ["ev-fixture"],
+  "approved_target": "azure-sql-managed-instance",
+  "target_decision_id": null,
+  "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+  "scope": ["Migrate the workload."],
+  "acceptance_criteria": ["The workload runs on the target."],
+  "owner_role": "database-owner",
+  "labels": ["migrate"],
+  "rollback_considerations": ["Return to the source."],
+  "definition_of_done": ["Validation passes."]
+}

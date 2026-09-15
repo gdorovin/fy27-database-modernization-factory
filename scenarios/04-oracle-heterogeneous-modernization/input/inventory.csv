@@ -1,0 +1,4 @@
+name,platform,version,edition,environment,criticality,host,size_gb,largest_table_gb,cpu_cores,memory_gb,peak_iops,peak_sessions,growth_percent,rpo_minutes,rto_minutes,max_downtime_minutes,availability_target,sla_stated_by,dependencies,deps_confirmed,compliance,data_residency,measured,notes
+Order management,oracle,19.3,Enterprise,production,high,host-ora-a,720,210,16,128,5600,340,10,15,120,180,99.9% monthly,business-owner,,true,,us-east,true,Substantial PL/SQL. Conversion assessed against PostgreSQL Flexible Server.
+Finance ledger,oracle,19.3,Enterprise,production,critical,host-ora-b,480,140,16,128,4800,260,8,5,60,60,99.95% monthly,business-owner,,true,SOX,us-east,true,Conversion assessed against Azure SQL Managed Instance.
+Plant maintenance,oracle,12.2,Standard,production,high,host-ora-c,210,70,8,64,1600,120,6,30,240,240,99.5% monthly,business-owner,,true,,us-east,true,Vendor-supported application. No conversion assessment has been performed.

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/evidence.schema.json",
+  "title": "Evidence record",
+  "description": "One normalized fact with its provenance intact. Evidence records are inputs to reasoning; they can never themselves be a recommendation or an approved decision.",
+  "type": "object",
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "engagement_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "subject_type": {
+      "type": "string",
+      "description": "workload | application | host | estate | policy"
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "Identifier of the subject, or 'estate' for estate-wide facts."
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "azure-migrate",
+        "arc-enabled-sql",
+        "data-migration-service",
+        "ssma",
+        "csv-inventory",
+        "stakeholder-interview",
+        "monitoring",
+        "manual-inspection",
+        "other"
+      ]
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/nonEmptyString",
+      "description": "Where the fact came from: a file name, an export ID, or an interview reference. Never a credentialed URL."
+    },
+    "collected_on": { "$ref": "common.schema.json#/$defs/isoDate" },
+    "evidence_class": {
+      "allOf": [{ "$ref": "common.schema.json#/$defs/evidenceClass" }],
+      "not": { "enum": ["recommendation", "approved-decision"] },
+      "description": "Evidence is observed, user-provided, derived, or an assumption. Recommendations belong in a target decision; approvals belong in an approval artifact."
+    },
+    "classification": { "$ref": "common.schema.json#/$defs/classification" },
+    "confidence": { "$ref": "common.schema.json#/$defs/confidence" },
+    "attributes": {
+      "type": "object",
+      "description": "Normalized key/value facts. Keys are snake_case and stable across adapters.",
+      "additionalProperties": true
+    },
+    "notes": { "type": ["string", "null"] },
+    "injection_findings": {
+      "type": "array",
+      "description": "Directive-like content detected inside imported text. Recorded, never obeyed.",
+      "items": { "$ref": "#/$defs/injectionFinding" }
+    },
+    "superseded_by": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/identifier" }, { "type": "null" }]
+    }
+  },
+  "required": [
+    "id",
+    "engagement_id",
+    "subject_type",
+    "subject_id",
+    "source",
+    "source_ref",
+    "collected_on",
+    "evidence_class"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "injectionFinding": {
+      "type": "object",
+      "properties": {
+        "pattern": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "excerpt": { "type": "string", "minLength": 1, "maxLength": 280 },
+        "field_name": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      },
+      "required": ["pattern", "excerpt", "field_name"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "id": "ev-inventory-store-ops",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "subject_type": "workload",
+      "subject_id": "wl-store-ops",
+      "source": "csv-inventory",
+      "source_ref": "input/inventory.csv#row=2",
+      "collected_on": "2026-02-03",
+      "evidence_class": "observed",
+      "classification": "internal",
+      "confidence": "high",
+      "attributes": {
+        "source_platform": "sql-server",
+        "source_version": "13.0",
+        "data_size_gb": 640.0,
+        "environment": "production"
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "name": "fy27-database-modernization-factory",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bash scripts/bootstrap.sh",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "DBMODERNIZE_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker",
+        "DavidAnson.vscode-markdownlint",
+        "redhat.vscode-yaml",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-azuretools.vscode-bicep",
+        "bierner.markdown-mermaid"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.testing.pytestEnabled": true,
+        "editor.formatOnSave": true,
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true,
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "yaml.schemas": {
+          "./contracts/migration-wave.schema.json": ["templates/migration-wave.yaml"],
+          "./contracts/engagement.schema.json": ["templates/engagement-intake.yaml"]
+        }
+      }
+    }
+  }
+}

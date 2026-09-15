@@ -1,0 +1,411 @@
+{
+  "completeness_basis": "No estate-level coverage evidence was supplied, so completeness is unproven. Sources: csv-inventory.",
+  "engagement_id": "eng-tailwind-logistics-fy27",
+  "inventory_completeness": "low",
+  "workloads": [
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [
+        "GDPR"
+      ],
+      "confidence": "high",
+      "created_at": "2026-05-11T00:00:00Z",
+      "criticality": "high",
+      "data_residency": "eu-north",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Community",
+      "engagement_id": "eng-tailwind-logistics-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+      ],
+      "extensions": [
+        "pg_stat_statements",
+        "pgcrypto"
+      ],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "security",
+          "evidence_class": "user-provided",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+          ],
+          "id": "wl-partner-integration-r-compliance-scope",
+          "remediation": "Confirm control requirements with the security owner.",
+          "severity": "medium",
+          "statement": "The workload is in scope for GDPR, so landing-zone controls and evidence collection must be agreed before migration."
+        },
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+          ],
+          "id": "wl-partner-integration-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 12.4 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-partner-integration-inv-cbf84850"
+          ],
+          "id": "wl-partner-integration-r-extensions-unverified",
+          "remediation": "Check each extension against the managed service's supported list.",
+          "severity": "high",
+          "statement": "Extensions or plugins are in use (pg_stat_statements, pgcrypto). Availability on the managed service must be verified per extension and per version; it cannot be assumed."
+        }
+      ],
+      "host_alias": "host-pg-c",
+      "id": "wl-partner-integration",
+      "instance_features": [],
+      "name": "Partner integration",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.9% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 90,
+        "rpo_minutes": 15,
+        "rto_minutes": 60,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 12.0,
+        "cpu_cores": 4,
+        "data_size_gb": 95.0,
+        "largest_table_gb": 30.0,
+        "measured": true,
+        "memory_gb": 32.0,
+        "peak_concurrent_sessions": 90,
+        "peak_iops": 900
+      },
+      "source_platform": "postgresql",
+      "source_version": "12.4",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-05-11T00:00:00Z",
+      "workload_ids": [
+        "wl-partner-integration"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "high",
+      "created_at": "2026-05-11T00:00:00Z",
+      "criticality": "critical",
+      "data_residency": "eu-north",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Community",
+      "engagement_id": "eng-tailwind-logistics-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-routing-engine-inventor-2fe4c575"
+      ],
+      "extensions": [
+        "pg_cron",
+        "pg_stat_statements",
+        "postgis"
+      ],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-routing-engine-inventor-2fe4c575"
+          ],
+          "id": "wl-routing-engine-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 11.9 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-routing-engine-inventor-2fe4c575"
+          ],
+          "id": "wl-routing-engine-r-extensions-unverified",
+          "remediation": "Check each extension against the managed service's supported list.",
+          "severity": "high",
+          "statement": "Extensions or plugins are in use (pg_cron, pg_stat_statements, postgis). Availability on the managed service must be verified per extension and per version; it cannot be assumed."
+        }
+      ],
+      "host_alias": "host-pg-a",
+      "id": "wl-routing-engine",
+      "instance_features": [],
+      "name": "Routing engine",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.95% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 45,
+        "rpo_minutes": 5,
+        "rto_minutes": 30,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 18.0,
+        "cpu_cores": 16,
+        "data_size_gb": 410.0,
+        "largest_table_gb": 150.0,
+        "measured": true,
+        "memory_gb": 96.0,
+        "peak_concurrent_sessions": 300,
+        "peak_iops": 5200
+      },
+      "source_platform": "postgresql",
+      "source_version": "11.9",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-05-11T00:00:00Z",
+      "workload_ids": [
+        "wl-routing-engine"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "high",
+      "created_at": "2026-05-11T00:00:00Z",
+      "criticality": "medium",
+      "data_residency": "eu-north",
+      "dependencies": [
+        {
+          "confirmed": false,
+          "direction": "unknown",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+          ],
+          "id": "wl-tracking-history-dep-0",
+          "kind": "application",
+          "name": "Routing engine"
+        }
+      ],
+      "dependency_discovery_complete": true,
+      "edition": "Community",
+      "engagement_id": "eng-tailwind-logistics-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+      ],
+      "extensions": [
+        "pg_partman",
+        "pg_stat_statements"
+      ],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+          ],
+          "id": "wl-tracking-history-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 11.9 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-tracking-history-invent-a97e4782"
+          ],
+          "id": "wl-tracking-history-r-extensions-unverified",
+          "remediation": "Check each extension against the managed service's supported list.",
+          "severity": "high",
+          "statement": "Extensions or plugins are in use (pg_partman, pg_stat_statements). Availability on the managed service must be verified per extension and per version; it cannot be assumed."
+        }
+      ],
+      "host_alias": "host-pg-b",
+      "id": "wl-tracking-history",
+      "instance_features": [],
+      "name": "Tracking history",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.5% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 180,
+        "rpo_minutes": 30,
+        "rto_minutes": 120,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 55.0,
+        "cpu_cores": 8,
+        "data_size_gb": 1900.0,
+        "largest_table_gb": 1100.0,
+        "measured": true,
+        "memory_gb": 64.0,
+        "peak_concurrent_sessions": 180,
+        "peak_iops": 4100
+      },
+      "source_platform": "postgresql",
+      "source_version": "11.9",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-05-11T00:00:00Z",
+      "workload_ids": [
+        "wl-tracking-history"
+      ]
+    }
+  ]
+}

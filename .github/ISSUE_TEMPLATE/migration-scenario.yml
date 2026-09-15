@@ -1,0 +1,68 @@
+name: Migration scenario
+description: Add or change an executable scenario fixture under scenarios/.
+title: "[scenario] "
+labels: ["scenario"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Scenarios are the regression surface for the whole product. A scenario proves a
+        behaviour that would otherwise erode silently.
+
+        All inputs must be synthetic.
+
+  - type: input
+    id: scenario
+    attributes:
+      label: Scenario directory
+      placeholder: scenarios/08-example
+    validations:
+      required: true
+
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: What behaviour does this scenario protect?
+      description: >
+        Name the mistake it would catch. "Covers PostgreSQL" is not a behaviour;
+        "extensions are flagged for per-version verification rather than assumed available"
+        is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria to add
+      description: >
+        The declarative criteria for scenario.yaml. Snapshots catch drift; these catch a
+        snapshot regenerated to hide a failure.
+      placeholder: |
+        - kind: recommended_target
+          workload: wl-example
+          target: azure-sql-database
+        - kind: text_absent
+          file: target-decision.md
+          value: fully compatible
+    validations:
+      required: true
+
+  - type: dropdown
+    id: negative
+    attributes:
+      label: Does this include an adversarial or negative case?
+      options:
+        - "Yes"
+        - "No, and here is why not"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety
+      options:
+        - label: Every input file is synthetic. No customer data, hostnames, or identifiers.
+          required: true
+        - label: Expectations will be reviewed line by line, not regenerated blind.
+          required: true

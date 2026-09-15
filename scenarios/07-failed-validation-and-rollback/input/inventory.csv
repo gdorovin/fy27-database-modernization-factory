@@ -1,0 +1,4 @@
+name,platform,version,edition,environment,criticality,host,size_gb,largest_table_gb,cpu_cores,memory_gb,peak_iops,peak_sessions,growth_percent,rpo_minutes,rto_minutes,max_downtime_minutes,availability_target,sla_stated_by,features,dependencies,deps_confirmed,compliance,data_residency,measured,notes
+Billing engine,sql-server,14.0,Enterprise,production,critical,host-bill-a,480,170,16,128,5200,210,11,5,60,60,99.95% monthly,business-owner,,,true,,us-west,true,Overnight batch run is the binding constraint.
+Billing history,sql-server,14.0,Enterprise,production,high,host-bill-a,1450,890,16,128,3800,80,20,15,120,120,99.9% monthly,business-owner,,Billing engine,true,,us-west,true,Archive queried by the billing run and by finance reporting.
+Billing sandbox,sql-server,14.0,Developer,test,low,host-bill-dev,80,30,4,16,500,20,8,1440,2880,480,None stated,database-owner,,,true,,us-west,true,Rehearsal copy used to prove the method.

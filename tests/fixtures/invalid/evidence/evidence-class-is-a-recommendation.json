@@ -1,0 +1,13 @@
+{
+  "id": "ev-invalid-recommendation",
+  "engagement_id": "eng-fixture",
+  "subject_type": "workload",
+  "subject_id": "wl-fixture",
+  "source": "csv-inventory",
+  "source_ref": "inventory.csv#row=2",
+  "collected_on": "2026-03-02",
+  "evidence_class": "recommendation",
+  "classification": "internal",
+  "confidence": "high",
+  "attributes": { "recommended_target": "azure-sql-database" }
+}

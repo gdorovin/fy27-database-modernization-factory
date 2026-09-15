@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Working output. Generated artifacts belong in an engagement folder, not in Git,
+# unless they are a committed scenario expectation.
+/out/
+/engagements/
+*.local.yaml
+*.local.json
+
+# Never commit customer evidence. Synthetic fixtures live under tests/fixtures/
+# and scenarios/*/input/ and are explicitly allowed by the negated rules below.
+*.customer.*
+*-customer-export.*
+*.pii.*
+
+!tests/fixtures/**
+!scenarios/**/input/**
+
+# Credentials of any kind
+*.pem
+*.pfx
+*.key
+.env
+.env.*
+!.env.example

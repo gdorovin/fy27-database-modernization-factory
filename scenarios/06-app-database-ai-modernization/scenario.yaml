@@ -1,0 +1,53 @@
+﻿title: Application, database, and conditional AI attachment
+engagement: input/engagement.yaml
+evidence_dir: input
+playbook: playbooks/default
+
+acceptance:
+  # The database modernization itself is unremarkable, and that is the point: the hard part
+  # of this scenario is what the customer is told about the AI ambition.
+  - kind: recommended_target
+    workload: wl-customer-master
+    target: azure-sql-database
+  - kind: recommended_target
+    workload: wl-case-management
+    target: azure-sql-database
+
+  # Dependent workloads move together rather than being split across waves.
+  - kind: wave_count
+    value: 2
+
+  # Compliance scope drives control evidence rather than a note in a slide. The regulated
+  # workloads are in wave 2; the pilot is the unregulated reporting copy.
+  - kind: text_present
+    file: assessment-summary.md
+    value: gdpr
+  - kind: text_present
+    file: validation-plan-2.md
+    value: controls for gdpr
+
+  # Application change is assessed explicitly, in both directions.
+  - kind: text_present
+    file: target-decision.md
+    value: connection strings, retry logic, and driver versions
+
+  # Nothing in the generated output may promise an AI outcome. Readiness is assessed
+  # separately, and this scenario exists to prove the factory does not get carried away.
+  - kind: text_absent
+    file: executive-brief.md
+    value: ai-ready
+  - kind: text_absent
+    file: target-decision.md
+    value: copilot
+  - kind: text_absent
+    file: executive-brief.md
+    value: vector search
+  - kind: text_absent
+    file: migration-plan-1.md
+    value: fabric
+
+  # Data ownership is still an open question, and the brief must surface the gap rather
+  # than present the estate as ready.
+  - kind: text_present
+    file: executive-brief.md
+    value: has not been measured

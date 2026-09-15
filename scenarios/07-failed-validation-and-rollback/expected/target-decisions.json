@@ -1,0 +1,480 @@
+{
+  "decisions": [
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "No compatibility obstacle was found in the available evidence."
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-engine-inventor-77a09311"
+          ],
+          "rationale": "Scored 40 against 75 for azure-sql-database. Evidence is already sufficient to choose a destination, so a bridge adds a step without adding information (-15); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+          "score": 40.0,
+          "target": "azure-arc-enabled-sql-server",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-engine-inventor-77a09311"
+          ],
+          "rationale": "No instance-scoped dependencies, so database-level isolation fits (+15); Managed operations remove patching and backup toil (+10)",
+          "score": 75.0,
+          "target": "azure-sql-database",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-engine-inventor-77a09311"
+          ],
+          "rationale": "Scored 30 against 75 for azure-sql-database. Neither size nor growth justifies Hyperscale; choosing it here would add capability nobody asked for (-25); Managed operations remove patching and backup toil (+5)",
+          "score": 30.0,
+          "target": "azure-sql-database-hyperscale",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-engine-inventor-77a09311"
+          ],
+          "rationale": "Scored 65 against 75 for azure-sql-database. No instance-scoped dependency was found, so instance scope is more surface area than this workload needs (-5); Broad engine compatibility limits application change (+12); Managed operations remove patching and backup toil (+8)",
+          "score": 65.0,
+          "target": "azure-sql-managed-instance",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-engine-inventor-77a09311"
+          ],
+          "rationale": "Scored 30 against 75 for azure-sql-database. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-engine-inventor-77a09311"
+          ],
+          "rationale": "Scored 37 against 75 for azure-sql-database. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5)",
+          "score": 37.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-09-07T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 60 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-proseware-billing-fy27",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-billing-engine-inventor-77a09311"
+      ],
+      "id": "td-wl-billing-engine",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-sql-database scored highest (75) for Billing engine on the published comparison. No instance-scoped dependencies, so database-level isolation fits (+15); Managed operations remove patching and backup toil (+10). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-sql-database",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as us-west."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-09-07T00:00:00Z",
+      "workload_id": "wl-billing-engine",
+      "workload_ids": [
+        "wl-billing-engine"
+      ]
+    },
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "No compatibility obstacle was found in the available evidence."
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-history-invento-28073f4b"
+          ],
+          "rationale": "Scored 40 against 75 for azure-sql-database-hyperscale. Evidence is already sufficient to choose a destination, so a bridge adds a step without adding information (-15); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+          "score": 40.0,
+          "target": "azure-arc-enabled-sql-server",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-history-invento-28073f4b"
+          ],
+          "rationale": "Scored 55 against 75 for azure-sql-database-hyperscale. No instance-scoped dependencies, so database-level isolation fits (+15); Managed operations remove patching and backup toil (+10); Data size 1450 GB is above the point where Hyperscale is the fairer comparison (-20)",
+          "score": 55.0,
+          "target": "azure-sql-database",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-history-invento-28073f4b"
+          ],
+          "rationale": "Data size 1450 GB is in the range Hyperscale exists to serve (+20); Managed operations remove patching and backup toil (+5)",
+          "score": 75.0,
+          "target": "azure-sql-database-hyperscale",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-history-invento-28073f4b"
+          ],
+          "rationale": "Scored 65 against 75 for azure-sql-database-hyperscale. No instance-scoped dependency was found, so instance scope is more surface area than this workload needs (-5); Broad engine compatibility limits application change (+12); Managed operations remove patching and backup toil (+8)",
+          "score": 65.0,
+          "target": "azure-sql-managed-instance",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-history-invento-28073f4b"
+          ],
+          "rationale": "Scored 30 against 75 for azure-sql-database-hyperscale. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-history-invento-28073f4b"
+          ],
+          "rationale": "Scored 42 against 75 for azure-sql-database-hyperscale. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
+          "score": 42.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-09-07T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 120 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-proseware-billing-fy27",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-billing-history-invento-28073f4b"
+      ],
+      "id": "td-wl-billing-history",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-sql-database-hyperscale scored highest (75) for Billing history on the published comparison. Data size 1450 GB is in the range Hyperscale exists to serve (+20); Managed operations remove patching and backup toil (+5). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-sql-database-hyperscale",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as us-west."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-09-07T00:00:00Z",
+      "workload_id": "wl-billing-history",
+      "workload_ids": [
+        "wl-billing-history"
+      ]
+    },
+    {
+      "application_impact": [
+        "No application change is implied by the target itself.",
+        "Connection strings, retry logic, and driver versions must be reviewed."
+      ],
+      "approvals": [],
+      "artifact_type": "target-decision",
+      "assumptions": [],
+      "author": "agent:target-architect",
+      "compatibility_notes": [
+        "No compatibility obstacle was found in the available evidence."
+      ],
+      "confidence": "medium",
+      "considered_options": [
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-sandbox-invento-b6aab38f"
+          ],
+          "rationale": "Scored 40 against 75 for azure-sql-database. Evidence is already sufficient to choose a destination, so a bridge adds a step without adding information (-15); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
+          "score": 40.0,
+          "target": "azure-arc-enabled-sql-server",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-sandbox-invento-b6aab38f"
+          ],
+          "rationale": "No instance-scoped dependencies, so database-level isolation fits (+15); Managed operations remove patching and backup toil (+10)",
+          "score": 75.0,
+          "target": "azure-sql-database",
+          "verdict": "recommended"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-sandbox-invento-b6aab38f"
+          ],
+          "rationale": "Scored 30 against 75 for azure-sql-database. Neither size nor growth justifies Hyperscale; choosing it here would add capability nobody asked for (-25); Managed operations remove patching and backup toil (+5)",
+          "score": 30.0,
+          "target": "azure-sql-database-hyperscale",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-sandbox-invento-b6aab38f"
+          ],
+          "rationale": "Scored 65 against 75 for azure-sql-database. No instance-scoped dependency was found, so instance scope is more surface area than this workload needs (-5); Broad engine compatibility limits application change (+12); Managed operations remove patching and backup toil (+8)",
+          "score": 65.0,
+          "target": "azure-sql-managed-instance",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-sandbox-invento-b6aab38f"
+          ],
+          "rationale": "Scored 30 against 75 for azure-sql-database. Retaining the workload leaves every current risk in place (-20)",
+          "score": 30.0,
+          "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-billing-sandbox-invento-b6aab38f"
+          ],
+          "rationale": "Scored 42 against 75 for azure-sql-database. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
+          "score": 42.0,
+          "target": "sql-server-on-azure-vm",
+          "verdict": "rejected"
+        }
+      ],
+      "conversion_required": false,
+      "cost_inputs": [],
+      "created_at": "2026-09-07T00:00:00Z",
+      "disposition": "replatform",
+      "downtime_approach": {
+        "basis": "A budget of 480 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
+        "expected_class": "short-planned",
+        "measured": false,
+        "method": "Continuous replication with a planned application cutover window."
+      },
+      "engagement_id": "eng-proseware-billing-fy27",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-billing-sandbox-invento-b6aab38f"
+      ],
+      "id": "td-wl-billing-sandbox",
+      "open_questions": [],
+      "operational_notes": [
+        "Platform-managed patching, backup, and high availability reduce operational load.",
+        "Monitoring and alerting still need to be configured and owned."
+      ],
+      "performance_notes": [
+        "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
+      ],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "rationale": "azure-sql-database scored highest (75) for Billing sandbox on the published comparison. No instance-scoped dependencies, so database-level isolation fits (+15); Managed operations remove patching and backup toil (+10). This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "azure-sql-database",
+      "requires_application_change": false,
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "security_notes": [
+        "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
+      ],
+      "sovereignty_notes": [
+        "Data residency requirement recorded as us-west."
+      ],
+      "status": "recommended",
+      "supersedes": null,
+      "updated_at": "2026-09-07T00:00:00Z",
+      "workload_id": "wl-billing-sandbox",
+      "workload_ids": [
+        "wl-billing-sandbox"
+      ]
+    }
+  ],
+  "engagement_id": "eng-proseware-billing-fy27",
+  "unresolved_workload_ids": []
+}

@@ -1,0 +1,147 @@
+{
+  "id": "vr-wave-2-business-critical",
+  "artifact_type": "validation-report",
+  "schema_version": "1.0.0",
+  "engagement_id": "eng-proseware-billing-fy27",
+  "workload_ids": ["wl-billing-engine", "wl-billing-history"],
+  "created_at": "2026-09-07T06:30:00Z",
+  "updated_at": "2026-09-07T06:30:00Z",
+  "author": "agent:validation-engineer",
+  "status": "validating",
+  "confidence": "high",
+  "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+  "evidence_refs": [],
+  "wave_id": "wave-2-business-critical",
+  "migration_plan_id": "plan-wave-2-business-critical",
+  "executed_on": "2026-09-07 01:10 to 05:50",
+  "outcome": "no-go",
+  "rollback_triggered": true,
+  "rollback_reason": "Billing run latency regression exceeded the agreed tolerance and one blocking integration test failed. Data reconciliation had not completed when the rollback decision window closed.",
+  "corrective_issue_ids": [
+    "issue-wave-2-billing-latency-regression",
+    "issue-wave-2-invoice-dispatch-integration-failure",
+    "issue-wave-2-history-reconciliation-incomplete"
+  ],
+  "business_acceptance": {
+    "business_owner_accepted": false,
+    "application_owner_accepted": false,
+    "accepted_on": null,
+    "conditions": [
+      "Acceptance is withheld until the billing run completes inside the overnight window on the target."
+    ]
+  },
+  "checks": [
+    {
+      "id": "vc-schema-reconciliation",
+      "category": "schema",
+      "name": "Schema objects reconcile between source and target",
+      "method": "Object count and definition comparison",
+      "tolerance": "Zero unexplained differences",
+      "baseline": "1,412 objects",
+      "observed": "1,412 objects, zero differences",
+      "result": "pass",
+      "blocking": true,
+      "generated_test": false
+    },
+    {
+      "id": "vc-connectivity",
+      "category": "connectivity",
+      "name": "Every confirmed consumer connects to the target",
+      "method": "Connection test from each application host using the production identity",
+      "tolerance": "All confirmed consumers connect",
+      "baseline": "6 consumers",
+      "observed": "6 of 6 consumers connected",
+      "result": "pass",
+      "blocking": true,
+      "generated_test": false
+    },
+    {
+      "id": "vc-security-configuration",
+      "category": "security-configuration",
+      "name": "Security configuration matches policy",
+      "method": "Comparison against playbook security policies",
+      "tolerance": "Zero deviations without an approved exception",
+      "baseline": "Policy set SEC-001 to SEC-005",
+      "observed": "Zero deviations",
+      "result": "pass",
+      "blocking": true,
+      "generated_test": false
+    },
+    {
+      "id": "vc-backup-restore",
+      "category": "backup-restore",
+      "name": "Restore from backup succeeds",
+      "method": "Restore into an isolated environment and verify",
+      "tolerance": "Restore completes and row counts reconcile",
+      "baseline": "Restore in 42 minutes on source",
+      "observed": "Restore completed in 38 minutes, counts reconciled",
+      "result": "pass",
+      "blocking": true,
+      "generated_test": false
+    },
+    {
+      "id": "vc-billing-run-performance",
+      "category": "performance",
+      "name": "Overnight billing run completes within tolerance of baseline",
+      "method": "Execute the billing run against the target and compare elapsed time",
+      "tolerance": "Within 10% of the recorded baseline",
+      "baseline": "3 h 40 m, completing at 04:40",
+      "observed": "5 h 25 m, completing at 06:25, a 48% regression past the 06:00 constraint",
+      "result": "fail",
+      "blocking": true,
+      "generated_test": false,
+      "notes": "The regression concentrates in the history archive queries. Root cause not established at the time of the decision."
+    },
+    {
+      "id": "vc-invoice-dispatch-integration",
+      "category": "integration",
+      "name": "Invoice dispatch integration succeeds end to end",
+      "method": "Exercise the dispatch integration with the agreed test set",
+      "tolerance": "Every confirmed dependency succeeds",
+      "baseline": "14 of 14 passing on source",
+      "observed": "13 of 14 passing; dispatch acknowledgement callback timed out",
+      "result": "fail",
+      "blocking": true,
+      "generated_test": false
+    },
+    {
+      "id": "vc-history-reconciliation",
+      "category": "data-reconciliation",
+      "name": "Billing history row counts and checksums reconcile",
+      "method": "Per-table row count and column checksum comparison",
+      "tolerance": "Zero unreconciled tables",
+      "baseline": "1.2 billion rows across 38 tables",
+      "observed": null,
+      "result": "not-run",
+      "blocking": true,
+      "generated_test": false,
+      "notes": "Comparison had completed 22 of 38 tables when the rollback decision window closed. Partial reconciliation is not reconciliation."
+    },
+    {
+      "id": "vc-generated-unit-tests",
+      "category": "programmability",
+      "name": "Generated procedure comparison suite",
+      "method": "Auto-generated comparison of stored procedure outputs",
+      "tolerance": "Identical results for every generated case",
+      "baseline": "412 generated cases",
+      "observed": "412 of 412 matched",
+      "result": "pass",
+      "blocking": false,
+      "generated_test": true,
+      "notes": "Supporting evidence only. A generated suite cannot substitute for the business validation that was not reached."
+    },
+    {
+      "id": "vc-business-acceptance",
+      "category": "business-acceptance",
+      "name": "Business owner accepts the outcome",
+      "method": "Formal acceptance recorded as an approval artifact",
+      "tolerance": "Approval recorded by the business owner",
+      "baseline": null,
+      "observed": null,
+      "result": "not-run",
+      "blocking": true,
+      "generated_test": false,
+      "notes": "Not reached. The rollback decision was taken before acceptance was sought."
+    }
+  ]
+}

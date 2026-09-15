@@ -1,0 +1,593 @@
+{
+  "completeness_basis": "Compared enrolled instances (3) with the stated estate total (55). Sources: arc-enabled-sql, csv-inventory.",
+  "engagement_id": "eng-adatum-group-fy27",
+  "inventory_completeness": "low",
+  "workloads": [
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "low",
+      "created_at": "2026-07-06T00:00:00Z",
+      "criticality": "high",
+      "data_residency": "us-central",
+      "dependencies": [],
+      "dependency_discovery_complete": false,
+      "edition": "Standard",
+      "engagement_id": "eng-adatum-group-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": true,
+          "category": "dependency",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "id": "wl-acquired-unit-b-sales-r-dependencies-unknown",
+          "remediation": "Run dependency mapping and confirm every consumer with its application owner.",
+          "severity": "blocker",
+          "statement": "Dependency discovery is incomplete, so the consumers of this database and the blast radius of a cutover are unknown."
+        },
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "id": "wl-acquired-unit-b-sales-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 12.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "id": "wl-acquired-unit-b-sales-r-instance-scoped-features",
+          "remediation": "Confirm each feature is genuinely required, then weigh it in target selection.",
+          "severity": "high",
+          "statement": "Instance-scoped features are in use (sql-agent). A database-scoped target would require application change."
+        },
+        {
+          "blocking": false,
+          "category": "availability",
+          "evidence_class": "assumption",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "id": "wl-acquired-unit-b-sales-r-no-stated-rpo-rto",
+          "remediation": "Agree RPO and RTO with the business owner and record who stated them.",
+          "severity": "high",
+          "statement": "No RPO or RTO has been stated, so no availability design can be justified and no rollback window can be sized."
+        },
+        {
+          "blocking": false,
+          "category": "performance",
+          "evidence_class": "assumption",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86"
+          ],
+          "id": "wl-acquired-unit-b-sales-r-sizing-estimated",
+          "remediation": "Collect a performance baseline over a representative period.",
+          "severity": "medium",
+          "statement": "Sizing figures are estimates rather than measurements, so they cannot support a capacity or cost commitment."
+        }
+      ],
+      "host_alias": "host-acq-a",
+      "id": "wl-acquired-unit-b-sales",
+      "instance_features": [
+        "sql-agent"
+      ],
+      "name": "Acquired unit b sales",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": null,
+        "is_assumption": true,
+        "max_planned_downtime_minutes": null,
+        "rpo_minutes": null,
+        "rto_minutes": null,
+        "stated_by": null
+      },
+      "sizing": {
+        "annual_growth_percent": 13.0,
+        "cpu_cores": 8,
+        "data_size_gb": 300.0,
+        "largest_table_gb": 110.0,
+        "measured": false,
+        "memory_gb": 64.0,
+        "peak_concurrent_sessions": 190,
+        "peak_iops": 2200
+      },
+      "source_platform": "sql-server",
+      "source_version": "12.0",
+      "status": "draft",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_ids": [
+        "wl-acquired-unit-b-sales"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [
+        "SOX"
+      ],
+      "confidence": "high",
+      "created_at": "2026-07-06T00:00:00Z",
+      "criticality": "critical",
+      "data_residency": "us-central",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Enterprise",
+      "engagement_id": "eng-adatum-group-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+        "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "security",
+          "evidence_class": "user-provided",
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "id": "wl-group-finance-r-compliance-scope",
+          "remediation": "Confirm control requirements with the security owner.",
+          "severity": "medium",
+          "statement": "The workload is in scope for SOX, so landing-zone controls and evidence collection must be agreed before migration."
+        },
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "id": "wl-group-finance-r-extended-support",
+          "remediation": null,
+          "severity": "medium",
+          "statement": "Engine version 14.0 is in extended support; the window is finite and should anchor the modernization date."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+            "ev-csv-inventory-wl-group-finance-inventory-579278e0"
+          ],
+          "id": "wl-group-finance-r-instance-scoped-features",
+          "remediation": "Confirm each feature is genuinely required, then weigh it in target selection.",
+          "severity": "high",
+          "statement": "Instance-scoped features are in use (linked-servers, sql-agent). A database-scoped target would require application change."
+        }
+      ],
+      "host_alias": "host-fin-a",
+      "id": "wl-group-finance",
+      "instance_features": [
+        "linked-servers",
+        "sql-agent"
+      ],
+      "name": "Group finance",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.95% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 60,
+        "rpo_minutes": 5,
+        "rto_minutes": 60,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 9.0,
+        "cpu_cores": 16,
+        "data_size_gb": 540.0,
+        "largest_table_gb": 160.0,
+        "measured": true,
+        "memory_gb": 128.0,
+        "peak_concurrent_sessions": 300,
+        "peak_iops": 4600
+      },
+      "source_platform": "sql-server",
+      "source_version": "14.0",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "extended-support",
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_ids": [
+        "wl-group-finance"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "low",
+      "created_at": "2026-07-06T00:00:00Z",
+      "criticality": "medium",
+      "data_residency": "us-central",
+      "dependencies": [],
+      "dependency_discovery_complete": false,
+      "edition": "Standard",
+      "engagement_id": "eng-adatum-group-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+        "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": true,
+          "category": "dependency",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "id": "wl-legacy-warehouse-r-dependencies-unknown",
+          "remediation": "Run dependency mapping and confirm every consumer with its application owner.",
+          "severity": "blocker",
+          "statement": "Dependency discovery is incomplete, so the consumers of this database and the blast radius of a cutover are unknown."
+        },
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "id": "wl-legacy-warehouse-r-end-of-support",
+          "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
+          "severity": "high",
+          "statement": "Engine version 11.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        },
+        {
+          "blocking": true,
+          "category": "data-quality",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "id": "wl-legacy-warehouse-r-evidence-conflict",
+          "remediation": "Have the database owner reconcile the sources and record the decision.",
+          "severity": "blocker",
+          "statement": "Evidence sources disagree about: data_size_gb. The repository will not choose between them."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "id": "wl-legacy-warehouse-r-instance-scoped-features",
+          "remediation": "Confirm each feature is genuinely required, then weigh it in target selection.",
+          "severity": "high",
+          "statement": "Instance-scoped features are in use (polybase, sql-agent). A database-scoped target would require application change."
+        },
+        {
+          "blocking": false,
+          "category": "availability",
+          "evidence_class": "assumption",
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "id": "wl-legacy-warehouse-r-no-stated-rpo-rto",
+          "remediation": "Agree RPO and RTO with the business owner and record who stated them.",
+          "severity": "medium",
+          "statement": "No RPO or RTO has been stated, so no availability design can be justified and no rollback window can be sized."
+        }
+      ],
+      "host_alias": "host-leg-a",
+      "id": "wl-legacy-warehouse",
+      "instance_features": [
+        "polybase",
+        "sql-agent"
+      ],
+      "name": "Legacy warehouse",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": null,
+        "is_assumption": true,
+        "max_planned_downtime_minutes": null,
+        "rpo_minutes": null,
+        "rto_minutes": null,
+        "stated_by": null
+      },
+      "sizing": {
+        "annual_growth_percent": 4.0,
+        "cpu_cores": 8,
+        "data_size_gb": null,
+        "largest_table_gb": 700.0,
+        "measured": true,
+        "memory_gb": 64.0,
+        "peak_concurrent_sessions": 90,
+        "peak_iops": 3000
+      },
+      "source_platform": "sql-server",
+      "source_version": "11.0",
+      "status": "draft",
+      "supersedes": null,
+      "support_status": "end-of-support",
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_ids": [
+        "wl-legacy-warehouse"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "high",
+      "created_at": "2026-07-06T00:00:00Z",
+      "criticality": "medium",
+      "data_residency": "us-central",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Standard",
+      "engagement_id": "eng-adatum-group-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+        "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+            "ev-csv-inventory-wl-shared-services-invento-92cb0bf9"
+          ],
+          "id": "wl-shared-services-r-extended-support",
+          "remediation": null,
+          "severity": "medium",
+          "statement": "Engine version 14.0 is in extended support; the window is finite and should anchor the modernization date."
+        }
+      ],
+      "host_alias": "host-shr-a",
+      "id": "wl-shared-services",
+      "instance_features": [],
+      "name": "Shared services",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.5% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 180,
+        "rpo_minutes": 30,
+        "rto_minutes": 120,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 7.0,
+        "cpu_cores": 8,
+        "data_size_gb": 150.0,
+        "largest_table_gb": 45.0,
+        "measured": true,
+        "memory_gb": 64.0,
+        "peak_concurrent_sessions": 140,
+        "peak_iops": 1400
+      },
+      "source_platform": "sql-server",
+      "source_version": "14.0",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "extended-support",
+      "updated_at": "2026-07-06T00:00:00Z",
+      "workload_ids": [
+        "wl-shared-services"
+      ]
+    }
+  ]
+}

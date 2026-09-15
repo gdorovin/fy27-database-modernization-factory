@@ -1,0 +1,97 @@
+name: Assessment gap
+description: A workload, estate, or evidence gap that blocks a recommendation or a wave.
+title: "[assessment] "
+labels: ["assessment"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for evidence gaps found during discovery or assessment.
+
+        **Never paste real customer data, exports, hostnames, credentials, or identifiers.**
+        Describe the shape of the problem and reference evidence by id.
+
+  - type: input
+    id: engagement
+    attributes:
+      label: Engagement id
+      placeholder: eng-example-fy27
+    validations:
+      required: true
+
+  - type: input
+    id: workload
+    attributes:
+      label: Workload id
+      placeholder: wl-example
+    validations:
+      required: false
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What is unknown, and what does that unknown prevent?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Finding category
+      options:
+        - compatibility
+        - performance
+        - availability
+        - security
+        - operations
+        - licensing
+        - dependency
+        - data-quality
+        - support-lifecycle
+        - cost
+    validations:
+      required: true
+
+  - type: dropdown
+    id: blocking
+    attributes:
+      label: Does this block a target recommendation?
+      options:
+        - "Yes, blocking"
+        - "No, but it affects confidence"
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence references
+      description: Evidence record ids. If there is none, say so — that is itself the finding.
+      placeholder: ev-example-0001
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: Owner role
+      placeholder: application-owner
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How will we know this is closed? Be specific enough to check.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety
+      options:
+        - label: This issue contains no customer data, credentials, or real identifiers.
+          required: true

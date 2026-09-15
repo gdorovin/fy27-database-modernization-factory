@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/migration-wave.schema.json",
+  "title": "Migration wave",
+  "description": "A dependency-aware group of workloads moved together. Waves are ordered, must not share workloads, and cannot depend on a wave that runs later. A pilot wave is sequence 1 and small enough to actually de-risk something.",
+  "type": "object",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/artifactBase" }],
+  "properties": {
+    "artifact_type": { "const": "migration-wave" },
+    "name": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "objective": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "is_pilot": { "type": "boolean" },
+    "depends_on_wave_ids": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/identifier" }
+    },
+    "prerequisites": { "type": "array", "items": { "type": "string" } },
+    "entry_criteria": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/criterion" } },
+    "exit_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/criterion" }
+    },
+    "owner_roles": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "planned_start": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }]
+    },
+    "planned_end": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/isoDate" }, { "type": "null" }]
+    },
+    "rollback_required": { "type": "boolean" }
+  },
+  "required": ["name", "sequence", "objective", "exit_criteria", "owner_roles"],
+  "unevaluatedProperties": false,
+  "examples": [
+    {
+      "id": "wave-1-pilot",
+      "artifact_type": "migration-wave",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "workload_ids": ["wl-reporting-dev"],
+      "created_at": "2026-02-14T10:00:00Z",
+      "updated_at": "2026-02-14T10:00:00Z",
+      "author": "agent:migration-planner",
+      "playbook": { "path": "playbooks/default", "version": "1.0.0" },
+      "name": "Wave 1 - pilot",
+      "sequence": 1,
+      "objective": "Prove the migration method and the validation gate on the lowest-criticality workload.",
+      "is_pilot": true,
+      "owner_roles": ["delivery-lead", "database-owner"],
+      "exit_criteria": [
+        {
+          "id": "ec-validation-pass",
+          "statement": "All blocking validation checks pass and the business owner accepts.",
+          "verification_method": "dbmodernize render-report against the wave validation report",
+          "owner_role": "delivery-lead",
+          "automated": true
+        }
+      ],
+      "rollback_required": true
+    }
+  ]
+}

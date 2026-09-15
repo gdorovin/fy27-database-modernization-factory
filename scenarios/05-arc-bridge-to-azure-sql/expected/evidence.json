@@ -1,0 +1,308 @@
+{
+  "conflicts": [
+    {
+      "attribute": "data_size_gb",
+      "evidence_refs": [
+        "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+        "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+      ],
+      "id": "conflict-wl-legacy-warehouse-data-size-gb-997d7d41",
+      "resolution": null,
+      "resolution_owner_role": "database-owner",
+      "resolved": false,
+      "subject_id": "wl-legacy-warehouse",
+      "values": [
+        "1250.0",
+        "980"
+      ]
+    }
+  ],
+  "engagement_id": "eng-adatum-group-fy27",
+  "generated_at": "2026-07-06T00:00:00Z",
+  "generator": "dbmodernize normalize-evidence",
+  "manifest": [],
+  "records": [
+    {
+      "attributes": {
+        "arc_enrolled_instances": 3,
+        "coverage_basis": "CMDB record count. Network discovery suggests a higher figure, and the two have not been reconciled.",
+        "estimated_total_instances": 55
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "medium",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "derived",
+      "id": "ev-arc-sql-estate-arc-inventory-json-enroll-211f11d5",
+      "injection_findings": [],
+      "notes": "Arc reports only enrolled instances. Anything not enrolled is invisible to this evidence and must not be assumed absent.",
+      "source": "arc-enabled-sql",
+      "source_ref": "arc-inventory.json#enrollmentCoverage",
+      "subject_id": "estate",
+      "subject_type": "estate",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "annual_growth_percent": 13.0,
+        "cpu_cores": 8,
+        "criticality": "high",
+        "data_residency": "us-central",
+        "data_size_gb": 300.0,
+        "dependency_discovery_complete": false,
+        "edition": "Standard",
+        "environment": "production",
+        "host_alias": "host-acq-a",
+        "instance_features": [
+          "sql-agent"
+        ],
+        "largest_table_gb": 110.0,
+        "measured": false,
+        "memory_gb": 64.0,
+        "name": "Acquired unit b sales",
+        "peak_concurrent_sessions": 190,
+        "peak_iops": 2200,
+        "source_platform": "sql-server",
+        "source_version": "12.0"
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "low",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "user-provided",
+      "id": "ev-csv-inventory-wl-acquired-unit-b-sales-i-83530d86",
+      "injection_findings": [],
+      "notes": "Acquired estate. Documentation is incomplete and consumers are unknown.",
+      "source": "csv-inventory",
+      "source_ref": "inventory.csv#row=4",
+      "subject_id": "wl-acquired-unit-b-sales",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "arc_enrolled": true,
+        "data_size_gb": 540,
+        "edition": "Enterprise",
+        "environment": "production",
+        "host_alias": "host-fin-a",
+        "instance_features": [
+          "linked-servers",
+          "sql-agent"
+        ],
+        "measured": true,
+        "name": "Group finance",
+        "patch_level": "CU31",
+        "security_findings": [
+          "Auditing is enabled but retention is undefined"
+        ],
+        "source_platform": "sql-server",
+        "source_version": "14.0",
+        "support_status": "extended-support"
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "high",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "observed",
+      "id": "ev-arc-sql-wl-group-finance-arc-inventory-j-8ca5ffc2",
+      "injection_findings": [],
+      "notes": null,
+      "source": "arc-enabled-sql",
+      "source_ref": "arc-inventory.json#instances[0].databases[0]",
+      "subject_id": "wl-group-finance",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "annual_growth_percent": 9.0,
+        "availability_target": "99.95% monthly",
+        "compliance_scopes": [
+          "SOX"
+        ],
+        "cpu_cores": 16,
+        "criticality": "critical",
+        "data_residency": "us-central",
+        "data_size_gb": 540.0,
+        "dependency_discovery_complete": true,
+        "edition": "Enterprise",
+        "environment": "production",
+        "host_alias": "host-fin-a",
+        "instance_features": [
+          "linked-servers",
+          "sql-agent"
+        ],
+        "largest_table_gb": 160.0,
+        "max_planned_downtime_minutes": 60,
+        "measured": true,
+        "memory_gb": 128.0,
+        "name": "Group finance",
+        "peak_concurrent_sessions": 300,
+        "peak_iops": 4600,
+        "rpo_minutes": 5,
+        "rto_minutes": 60,
+        "service_level_stated_by": "business-owner",
+        "source_platform": "sql-server",
+        "source_version": "14.0"
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "medium",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "observed",
+      "id": "ev-csv-inventory-wl-group-finance-inventory-579278e0",
+      "injection_findings": [],
+      "notes": "Linked servers confirmed in use by the database owner.",
+      "source": "csv-inventory",
+      "source_ref": "inventory.csv#row=2",
+      "subject_id": "wl-group-finance",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "arc_enrolled": true,
+        "data_size_gb": 980,
+        "edition": "Standard",
+        "environment": "production",
+        "host_alias": "host-leg-a",
+        "instance_features": [
+          "polybase",
+          "sql-agent"
+        ],
+        "measured": true,
+        "name": "Legacy warehouse",
+        "patch_level": "SP4",
+        "security_findings": [
+          "No transparent data encryption",
+          "Local administrator accounts in use for service startup",
+          "No audit destination configured"
+        ],
+        "source_platform": "sql-server",
+        "source_version": "11.0",
+        "support_status": "end-of-support"
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "high",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "observed",
+      "id": "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+      "injection_findings": [],
+      "notes": null,
+      "source": "arc-enabled-sql",
+      "source_ref": "arc-inventory.json#instances[2].databases[0]",
+      "subject_id": "wl-legacy-warehouse",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "annual_growth_percent": 4.0,
+        "cpu_cores": 8,
+        "criticality": "medium",
+        "data_residency": "us-central",
+        "data_size_gb": 1250.0,
+        "dependency_discovery_complete": false,
+        "edition": "Standard",
+        "environment": "production",
+        "host_alias": "host-leg-a",
+        "instance_features": [
+          "polybase",
+          "sql-agent"
+        ],
+        "largest_table_gb": 700.0,
+        "measured": false,
+        "memory_gb": 64.0,
+        "name": "Legacy warehouse",
+        "peak_concurrent_sessions": 90,
+        "peak_iops": 3000,
+        "source_platform": "sql-server",
+        "source_version": "11.0"
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "low",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "user-provided",
+      "id": "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73",
+      "injection_findings": [],
+      "notes": "Nobody currently owns this system. Discovered during network scanning.",
+      "source": "csv-inventory",
+      "source_ref": "inventory.csv#row=5",
+      "subject_id": "wl-legacy-warehouse",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "arc_enrolled": true,
+        "data_size_gb": 150,
+        "edition": "Standard",
+        "environment": "production",
+        "host_alias": "host-shr-a",
+        "instance_features": [],
+        "measured": true,
+        "name": "Shared services",
+        "patch_level": "CU31",
+        "security_findings": [],
+        "source_platform": "sql-server",
+        "source_version": "14.0",
+        "support_status": "extended-support"
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "high",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "observed",
+      "id": "ev-arc-sql-wl-shared-services-arc-inventory-5e7d3c63",
+      "injection_findings": [],
+      "notes": null,
+      "source": "arc-enabled-sql",
+      "source_ref": "arc-inventory.json#instances[1].databases[0]",
+      "subject_id": "wl-shared-services",
+      "subject_type": "workload",
+      "superseded_by": null
+    },
+    {
+      "attributes": {
+        "annual_growth_percent": 7.0,
+        "availability_target": "99.5% monthly",
+        "cpu_cores": 8,
+        "criticality": "medium",
+        "data_residency": "us-central",
+        "data_size_gb": 150.0,
+        "dependency_discovery_complete": true,
+        "edition": "Standard",
+        "environment": "production",
+        "host_alias": "host-shr-a",
+        "largest_table_gb": 45.0,
+        "max_planned_downtime_minutes": 180,
+        "measured": true,
+        "memory_gb": 64.0,
+        "name": "Shared services",
+        "peak_concurrent_sessions": 140,
+        "peak_iops": 1400,
+        "rpo_minutes": 30,
+        "rto_minutes": 120,
+        "service_level_stated_by": "business-owner",
+        "source_platform": "sql-server",
+        "source_version": "14.0"
+      },
+      "classification": "internal",
+      "collected_on": "2026-07-06",
+      "confidence": "medium",
+      "engagement_id": "eng-adatum-group-fy27",
+      "evidence_class": "observed",
+      "id": "ev-csv-inventory-wl-shared-services-invento-92cb0bf9",
+      "injection_findings": [],
+      "notes": "Straightforward workload used to prove the method.",
+      "source": "csv-inventory",
+      "source_ref": "inventory.csv#row=3",
+      "subject_id": "wl-shared-services",
+      "subject_type": "workload",
+      "superseded_by": null
+    }
+  ]
+}

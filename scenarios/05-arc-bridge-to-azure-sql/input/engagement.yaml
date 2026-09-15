@@ -1,0 +1,130 @@
+id: eng-adatum-group-fy27
+artifact_type: engagement
+engagement_id: eng-adatum-group-fy27
+schema_version: 1.0.0
+as_of: 2026-07-06
+created_at: 2026-07-06T00:00:00Z
+updated_at: 2026-07-06T00:00:00Z
+author: engagement-lead-e
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+customer_alias: adatum-group
+
+primary_trigger: security-or-compliance-finding
+secondary_triggers:
+  - stalled-migration
+  - operational-scale
+renewal_date: null
+target_first_workload_live: null
+
+desired_outcomes:
+  - Know what database estate actually exists, with evidence rather than a spreadsheet.
+  - Bring the whole estate under one security and governance baseline, including the parts that cannot move yet.
+  - Restart a migration programme that stalled because nobody could agree on scope.
+
+business_context: >-
+  A group with databases across several business units and two acquisitions. A previous
+  migration attempt stalled when the inventory turned out to be wrong. The security team has
+  an open finding covering the estate as a whole, and it cannot be closed for systems nobody
+  can enumerate.
+
+scope:
+  in_scope:
+    - All SQL Server instances across the group
+  out_of_scope:
+    - Acquired business unit C, still on a transitional services agreement
+  estate_summary: >-
+    Somewhere between forty and seventy instances. The disagreement between those two
+    numbers is the reason the last programme stalled.
+  estimated_workload_count: 55
+  estimated_count_is_assumption: true
+
+constraints:
+  - id: c-no-big-bang
+    category: operational
+    statement: No estate-wide change may be attempted in a single programme phase.
+    hard: true
+    source: Business owner, lessons learned from the stalled attempt
+  - id: c-governance-baseline
+    category: regulatory
+    statement: Every database must report against one security baseline, whether or not it has moved.
+    hard: true
+    source: Security owner, open finding
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-e
+    responsibility: Owns the group technology budget.
+    decision_rights:
+      - Business case acceptance
+      - Cutover approval
+  - role: security-owner
+    alias: security-owner-e
+    responsibility: Owns the open estate-wide finding.
+    decision_rights:
+      - Policy exceptions
+      - Cutover approval
+  - role: database-owner
+    alias: dba-e
+    responsibility: Owns the SQL estate across business units.
+    decision_rights:
+      - Workload classification
+      - Cutover approval
+  - role: application-owner
+    alias: app-owner-e
+    responsibility: Owns the consuming applications, where they are known.
+    decision_rights:
+      - Application impact
+      - Cutover approval
+  - role: operations-owner
+    alias: ops-owner-e
+    responsibility: Owns run-state across business units.
+    decision_rights:
+      - Cutover approval
+
+success_measures:
+  - id: sm-inventory-confidence
+    statement: Inventory completeness is evidenced rather than estimated.
+    baseline: Estimated only
+    target: Evidenced
+    measured_by: Enrolled instance count reconciled against the CMDB
+    baseline_known: true
+  - id: sm-governance-coverage
+    statement: Every database reports against the security baseline.
+    baseline: null
+    target: 100%
+    measured_by: Posture reporting coverage
+    baseline_known: false
+
+cadence:
+  - label: T-12
+    objective: Establish continuous inventory and governance across the estate.
+    target_date: 2026-09-30
+    owner_role: security-owner
+    complete: false
+  - label: T-9
+    objective: Prioritise modernization waves from evidenced inventory.
+    target_date: 2026-12-31
+    owner_role: architect
+    complete: false
+
+evidence_refs: []
+assumptions:
+  - id: a-estate-size
+    statement: The estate contains between forty and seventy instances.
+    owner_role: database-owner
+    validation_step: Reconcile enrolled instance count against the CMDB and network discovery.
+    impact_if_wrong: high
+open_questions:
+  - id: q-bu-c-scope
+    question: When does business unit C leave transitional services and enter scope?
+    owner_role: business-owner
+    blocking: false
+risk_ids: []
+approvals: []
+workload_ids: []

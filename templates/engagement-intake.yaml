@@ -1,0 +1,123 @@
+# Engagement intake
+#
+# Fill this in with the customer. Record unknowns as open questions rather than guesses:
+# a guessed renewal date or workload count propagates into every downstream artifact.
+#
+# Validated against contracts/engagement.schema.json.
+
+id: REPLACE-ENGAGEMENT-ID
+artifact_type: engagement
+engagement_id: REPLACE-ENGAGEMENT-ID
+schema_version: 1.0.0
+
+# The date this state was captured. Renderers use it instead of the wall clock so that
+# generated documents are reproducible.
+as_of: 2026-01-01
+
+created_at: 2026-01-01T00:00:00Z
+updated_at: 2026-01-01T00:00:00Z
+author: engagement-lead-a
+status: draft
+confidence: low
+
+playbook:
+  path: playbooks/default
+  version: 1.0.0
+
+# Pseudonym only. Never a real customer name.
+customer_alias: example-customer
+
+# Why the conversation is happening now. See contracts/engagement.schema.json for the
+# full list; all of these lead into the same journey.
+primary_trigger: end-of-support
+secondary_triggers: []
+
+# Required when primary_trigger is license-or-ea-renewal.
+renewal_date: null
+target_first_workload_live: null
+
+# Business outcomes in the customer's words. Naming a product here is a validation error:
+# the target is decided later, from evidence.
+desired_outcomes:
+  - Remove unsupported database versions from the regulated estate before the audit window.
+  - Reduce the weekend maintenance effort that currently falls on the database team.
+
+business_context: >-
+  One or two sentences on what is driving this now, in the customer's framing rather than
+  a product framing.
+
+scope:
+  in_scope:
+    - Describe the systems in scope.
+  out_of_scope:
+    - Describe what is explicitly excluded, and why.
+  estate_summary: null
+  estimated_workload_count: null
+  estimated_count_is_assumption: true
+
+constraints:
+  - id: c-regulatory-residency
+    category: regulatory
+    statement: Data must remain within the stated jurisdiction.
+    hard: true
+    source: Security owner, intake workshop
+
+stakeholders:
+  - role: business-owner
+    alias: sponsor-a
+    responsibility: Owns the business outcome and accepts the result.
+    decision_rights:
+      - Engagement scope
+      - Business case acceptance
+  - role: database-owner
+    alias: dba-a
+    responsibility: Owns the database estate and its operational health.
+    decision_rights:
+      - Workload classification
+
+success_measures:
+  - id: sm-unsupported-versions
+    statement: No unsupported database version remains in the regulated estate.
+    baseline: null
+    target: "0"
+    measured_by: Estate inventory report
+    baseline_known: false
+
+# Configurable cadence. Adjust the labels and dates to the engagement; this is guidance,
+# not a fixed schedule.
+cadence:
+  - label: T-12
+    objective: Discover the estate, engage stakeholders, and agree the outcome.
+    owner_role: engagement-lead
+    complete: false
+  - label: T-9
+    objective: Assess readiness and model target options.
+    owner_role: architect
+    complete: false
+  - label: T-6
+    objective: Agree architecture and secure sponsorship.
+    owner_role: architect
+    complete: false
+  - label: T-3
+    objective: Agree delivery model, funding path, waves, owners, and acceptance criteria.
+    owner_role: delivery-lead
+    complete: false
+  - label: T-0
+    objective: Execute an approved cutover, or have the first workload live.
+    owner_role: delivery-lead
+    complete: false
+  - label: T+90
+    objective: Stabilize, optimize, retire legacy components, and activate the roadmap.
+    owner_role: operations-owner
+    complete: false
+
+evidence_refs: []
+assumptions: []
+open_questions:
+  - id: q-renewal-date
+    question: What is the exact renewal or support expiry date?
+    owner_role: business-owner
+    blocking: false
+risk_ids: []
+approvals: []
+workload_ids: []

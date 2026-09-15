@@ -1,0 +1,350 @@
+{
+  "completeness_basis": "No estate-level coverage evidence was supplied, so completeness is unproven. Sources: csv-inventory, ssma.",
+  "engagement_id": "eng-litware-manufacturing-fy27",
+  "inventory_completeness": "low",
+  "workloads": [
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [
+        "azure-sql-managed-instance"
+      ],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [
+        "SOX"
+      ],
+      "confidence": "high",
+      "created_at": "2026-06-08T00:00:00Z",
+      "criticality": "critical",
+      "data_residency": "us-east",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Enterprise",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-finance-ledger-inventor-53689ee7",
+        "ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "security",
+          "evidence_class": "user-provided",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-finance-ledger-inventor-53689ee7",
+            "ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4"
+          ],
+          "id": "wl-finance-ledger-r-compliance-scope",
+          "remediation": "Confirm control requirements with the security owner.",
+          "severity": "medium",
+          "statement": "The workload is in scope for SOX, so landing-zone controls and evidence collection must be agreed before migration."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-finance-ledger-inventor-53689ee7",
+            "ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4"
+          ],
+          "id": "wl-finance-ledger-r-conversion-effort",
+          "remediation": "Scope the manual conversion work and plan application regression testing.",
+          "severity": "high",
+          "statement": "Schema and code conversion is required: 76 object(s) need manual work and 12 failed to convert. Automatic conversion covered 85.0% of objects. A conversion percentage is not a compatibility verdict; converted code still has to be tested against the application."
+        }
+      ],
+      "host_alias": "host-ora-b",
+      "id": "wl-finance-ledger",
+      "instance_features": [],
+      "name": "Finance ledger",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.95% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 60,
+        "rpo_minutes": 5,
+        "rto_minutes": 60,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 8.0,
+        "cpu_cores": 16,
+        "data_size_gb": 480.0,
+        "largest_table_gb": 140.0,
+        "measured": true,
+        "memory_gb": 128.0,
+        "peak_concurrent_sessions": 260,
+        "peak_iops": 4800
+      },
+      "source_platform": "oracle",
+      "source_version": "19.3",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "unknown",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "workload_ids": [
+        "wl-finance-ledger"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [
+        "azure-database-for-postgresql-flexible-server"
+      ],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "high",
+      "created_at": "2026-06-08T00:00:00Z",
+      "criticality": "high",
+      "data_residency": "us-east",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Enterprise",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-order-management-invent-6a4e1f19",
+        "ev-ssma-wl-order-management-ssma-conversion-cad17b4a"
+      ],
+      "extensions": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-order-management-invent-6a4e1f19",
+            "ev-ssma-wl-order-management-ssma-conversion-cad17b4a"
+          ],
+          "id": "wl-order-management-r-conversion-effort",
+          "remediation": "Scope the manual conversion work and plan application regression testing.",
+          "severity": "high",
+          "statement": "Schema and code conversion is required: 133 object(s) need manual work and 20 failed to convert. Automatic conversion covered 84.1% of objects. A conversion percentage is not a compatibility verdict; converted code still has to be tested against the application."
+        }
+      ],
+      "host_alias": "host-ora-a",
+      "id": "wl-order-management",
+      "instance_features": [],
+      "name": "Order management",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.9% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 180,
+        "rpo_minutes": 15,
+        "rto_minutes": 120,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 10.0,
+        "cpu_cores": 16,
+        "data_size_gb": 720.0,
+        "largest_table_gb": 210.0,
+        "measured": true,
+        "memory_gb": 128.0,
+        "peak_concurrent_sessions": 340,
+        "peak_iops": 5600
+      },
+      "source_platform": "oracle",
+      "source_version": "19.3",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "unknown",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "workload_ids": [
+        "wl-order-management"
+      ]
+    },
+    {
+      "approvals": [],
+      "artifact_type": "workload",
+      "assessed_targets": [],
+      "assumptions": [],
+      "author": "agent:estate-assessor",
+      "classification": "internal",
+      "compliance_scopes": [],
+      "confidence": "high",
+      "created_at": "2026-06-08T00:00:00Z",
+      "criticality": "high",
+      "data_residency": "us-east",
+      "dependencies": [],
+      "dependency_discovery_complete": true,
+      "edition": "Standard",
+      "engagement_id": "eng-litware-manufacturing-fy27",
+      "environment": "production",
+      "evidence_refs": [
+        "ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b"
+      ],
+      "extensions": [],
+      "findings": [],
+      "host_alias": "host-ora-c",
+      "id": "wl-plant-maintenance",
+      "instance_features": [],
+      "name": "Plant maintenance",
+      "open_questions": [],
+      "playbook": {
+        "commit": null,
+        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "policy_ids": [
+          "AVL-001",
+          "AVL-002",
+          "AVL-003",
+          "AVL-004",
+          "COMP-001",
+          "COMP-002",
+          "COST-001",
+          "COST-002",
+          "DATA-001",
+          "DATA-002",
+          "DATA-003",
+          "DATA-004",
+          "IAM-001",
+          "IAM-002",
+          "IAM-003",
+          "NAME-001",
+          "NET-001",
+          "NET-002",
+          "NET-003",
+          "OBS-001",
+          "OBS-002",
+          "OBS-003",
+          "OPS-001",
+          "OPS-002",
+          "OPS-003",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "SEC-004",
+          "SEC-005",
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004"
+        ],
+        "version": "1.0.0"
+      },
+      "risk_ids": [],
+      "schema_version": "1.0.0",
+      "service_level": {
+        "availability_target": "99.5% monthly",
+        "is_assumption": false,
+        "max_planned_downtime_minutes": 240,
+        "rpo_minutes": 30,
+        "rto_minutes": 240,
+        "stated_by": "business-owner"
+      },
+      "sizing": {
+        "annual_growth_percent": 6.0,
+        "cpu_cores": 8,
+        "data_size_gb": 210.0,
+        "largest_table_gb": 70.0,
+        "measured": true,
+        "memory_gb": 64.0,
+        "peak_concurrent_sessions": 120,
+        "peak_iops": 1600
+      },
+      "source_platform": "oracle",
+      "source_version": "12.2",
+      "status": "evidence-complete",
+      "supersedes": null,
+      "support_status": "unknown",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "workload_ids": [
+        "wl-plant-maintenance"
+      ]
+    }
+  ]
+}

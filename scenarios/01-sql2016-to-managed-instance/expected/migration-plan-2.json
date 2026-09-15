@@ -1,0 +1,444 @@
+{
+  "acceptance_criteria": [
+    {
+      "automated": true,
+      "id": "wave-2-business-critical-acc-functional",
+      "owner_role": "application-owner",
+      "statement": "Agreed functional and integration tests pass against the target.",
+      "verification_method": "Test results attached to the validation report"
+    },
+    {
+      "automated": true,
+      "id": "wave-2-business-critical-acc-performance",
+      "owner_role": "database-owner",
+      "statement": "Performance is within the agreed tolerance of the recorded baseline.",
+      "verification_method": "Baseline comparison in the validation report"
+    },
+    {
+      "automated": true,
+      "id": "wave-2-business-critical-acc-security",
+      "owner_role": "security-owner",
+      "statement": "Security configuration, identity, network isolation, and auditing match policy.",
+      "verification_method": "Security checks in the validation report"
+    },
+    {
+      "automated": false,
+      "id": "wave-2-business-critical-acc-business",
+      "owner_role": "business-owner",
+      "statement": "The business owner accepts the outcome against the engagement success measures.",
+      "verification_method": "Approval artifact recorded in the ledger"
+    }
+  ],
+  "approvals": [],
+  "artifact_type": "migration-plan",
+  "assumptions": [],
+  "author": "agent:migration-planner",
+  "confidence": "medium",
+  "created_at": "2026-03-02T00:00:00Z",
+  "cutover": {
+    "communication_plan": [
+      "Notify affected application owners and the service desk at freeze start.",
+      "Post status at each checkpoint inside the window.",
+      "Announce the go / no-go decision explicitly, including a no-go.",
+      "Confirm completion or rollback, with the reason, to all stakeholders."
+    ],
+    "execution_window": "An agreed low-traffic window, sized from the measured rehearsal.",
+    "freeze_start": "T-2h relative to the agreed window start",
+    "go_no_go_criteria": [
+      {
+        "automated": true,
+        "id": "wave-2-business-critical-gng-validation",
+        "owner_role": "delivery-lead",
+        "statement": "No blocking validation check has failed and none is un-run.",
+        "verification_method": "Validation report for the wave"
+      },
+      {
+        "automated": true,
+        "id": "wave-2-business-critical-gng-replication-lag",
+        "owner_role": "database-owner",
+        "statement": "Replication lag has reached zero and stayed there for the agreed period.",
+        "verification_method": "Replication monitoring output captured as evidence"
+      },
+      {
+        "automated": false,
+        "id": "wave-2-business-critical-gng-rollback-ready",
+        "owner_role": "operations-owner",
+        "statement": "The rollback path is rehearsed, staffed, and available for the window.",
+        "verification_method": "Rehearsal record plus named on-call roster"
+      },
+      {
+        "automated": true,
+        "id": "wave-2-business-critical-gng-approvals",
+        "owner_role": "delivery-lead",
+        "statement": "All five owner roles have recorded an approval for this cutover.",
+        "verification_method": "Approval ledger for the migration plan"
+      }
+    ],
+    "owner_role": "delivery-lead",
+    "replication_method": "Continuous replication drained to zero lag before the switch.",
+    "required_approval_roles": [
+      "business-owner",
+      "application-owner",
+      "database-owner",
+      "security-owner",
+      "operations-owner"
+    ]
+  },
+  "engagement_id": "eng-northwind-retail-fy27",
+  "evidence_refs": [
+    "ev-arc-sql-wl-payments-core-arc-inventory-j-4e50fc1d",
+    "ev-csv-inventory-wl-customer-portal-invento-d137d37c",
+    "ev-csv-inventory-wl-payments-core-inventory-00ccb289"
+  ],
+  "id": "plan-wave-2-business-critical",
+  "open_questions": [],
+  "phases": [
+    {
+      "name": "Prepare",
+      "objective": "Establish readiness and close every entry criterion before anything moves.",
+      "tasks": [
+        {
+          "approval_required": false,
+          "changes_environment": false,
+          "depends_on": [],
+          "description": "Verify subscription, identity, network, private connectivity, DNS, policy, logging, backup, and disaster-recovery ownership for the target scope.",
+          "dry_run_command": "dbmodernize validate-playbook playbooks/default",
+          "id": "wave-2-business-critical-t-landing-zone",
+          "kind": "prepare",
+          "owner_role": "architect",
+          "policy_ids": [
+            "IAM-001",
+            "IAM-002",
+            "IAM-003",
+            "NET-001",
+            "NET-002",
+            "NET-003",
+            "SEC-001",
+            "SEC-002",
+            "SEC-003",
+            "SEC-004",
+            "SEC-005"
+          ],
+          "rollback_note": null,
+          "title": "Confirm landing zone readiness"
+        },
+        {
+          "approval_required": false,
+          "changes_environment": false,
+          "depends_on": [],
+          "description": "Record query latency, throughput, concurrency, and error rates over a representative period. Without this baseline, no post-migration comparison can be made and no regression can be proven.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-baseline",
+          "kind": "prepare",
+          "owner_role": "database-owner",
+          "policy_ids": [],
+          "rollback_note": null,
+          "title": "Capture the source performance and behaviour baseline"
+        },
+        {
+          "approval_required": false,
+          "changes_environment": false,
+          "depends_on": [
+            "wave-2-business-critical-t-landing-zone"
+          ],
+          "description": "Walk the dependency list with each application owner and record confirmation. Unconfirmed consumers are the usual cause of a failed cutover.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-dependency-confirm",
+          "kind": "prepare",
+          "owner_role": "application-owner",
+          "policy_ids": [],
+          "rollback_note": null,
+          "title": "Confirm application dependencies with their owners"
+        }
+      ]
+    },
+    {
+      "name": "Build",
+      "objective": "Stand up the target and make the application able to use it.",
+      "tasks": [
+        {
+          "approval_required": true,
+          "changes_environment": true,
+          "depends_on": [
+            "wave-2-business-critical-t-landing-zone"
+          ],
+          "description": "Deploy the target configuration to a non-production subscription using infrastructure as code, reviewing the what-if output before applying.",
+          "dry_run_command": "az deployment group what-if --template-file infra/bicep/main.bicep",
+          "id": "wave-2-business-critical-t-provision-nonprod",
+          "kind": "build",
+          "owner_role": "architect",
+          "policy_ids": [
+            "IAM-001",
+            "IAM-002",
+            "IAM-003",
+            "SEC-001",
+            "SEC-002",
+            "SEC-003",
+            "SEC-004",
+            "SEC-005"
+          ],
+          "rollback_note": "Delete the non-production resource group. No production system is affected at this step.",
+          "title": "Provision the non-production target environment"
+        }
+      ]
+    },
+    {
+      "name": "Migrate",
+      "objective": "Move data into the non-production target and rehearse the cutover.",
+      "tasks": [
+        {
+          "approval_required": true,
+          "changes_environment": true,
+          "depends_on": [
+            "wave-2-business-critical-t-provision-nonprod"
+          ],
+          "description": "Perform an initial data load and start continuous replication.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-seed-nonprod",
+          "kind": "migrate",
+          "owner_role": "database-owner",
+          "policy_ids": [],
+          "rollback_note": "Stop replication and drop the non-production target databases.",
+          "title": "Seed the non-production target"
+        },
+        {
+          "approval_required": true,
+          "changes_environment": true,
+          "depends_on": [
+            "wave-2-business-critical-t-seed-nonprod"
+          ],
+          "description": "Run the full cutover sequence against non-production and measure the actual downtime. Until this produces a number, downtime expectations stay at short-planned rather than near-zero.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-rehearse-cutover",
+          "kind": "migrate",
+          "owner_role": "delivery-lead",
+          "policy_ids": [],
+          "rollback_note": "Restore the non-production target from the pre-rehearsal snapshot.",
+          "title": "Rehearse the cutover and measure the window"
+        },
+        {
+          "approval_required": true,
+          "changes_environment": true,
+          "depends_on": [
+            "wave-2-business-critical-t-rehearse-cutover"
+          ],
+          "description": "Execute the documented rollback against non-production and confirm the source returns to service within the decision window.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-rehearse-rollback",
+          "kind": "migrate",
+          "owner_role": "operations-owner",
+          "policy_ids": [],
+          "rollback_note": "This task is the rollback rehearsal; failure means the plan is not ready.",
+          "title": "Rehearse the rollback"
+        }
+      ]
+    },
+    {
+      "name": "Validate",
+      "objective": "Produce the evidence a go / no-go decision will rest on.",
+      "tasks": [
+        {
+          "approval_required": false,
+          "changes_environment": false,
+          "depends_on": [
+            "wave-2-business-critical-t-rehearse-rollback"
+          ],
+          "description": "Run every check in the validation plan and record the observed value against its tolerance. A check with no recorded observation counts as not run, not as a pass.",
+          "dry_run_command": "dbmodernize render-report --wave wave-2-business-critical",
+          "id": "wave-2-business-critical-t-run-validation",
+          "kind": "validate",
+          "owner_role": "delivery-lead",
+          "policy_ids": [
+            "VAL-001",
+            "VAL-002",
+            "VAL-003",
+            "VAL-004"
+          ],
+          "rollback_note": null,
+          "title": "Execute the validation plan"
+        },
+        {
+          "approval_required": false,
+          "changes_environment": false,
+          "depends_on": [
+            "wave-2-business-critical-t-run-validation"
+          ],
+          "description": "Review the validation report with all five approval roles. A blocking failure forces a no-go; an un-run blocking check forbids a go.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-review-validation",
+          "kind": "validate",
+          "owner_role": "architect",
+          "policy_ids": [],
+          "rollback_note": null,
+          "title": "Review validation evidence and decide go / no-go"
+        }
+      ]
+    },
+    {
+      "name": "Cutover",
+      "objective": "Move production traffic, with an explicit decision point before doing so.",
+      "tasks": [
+        {
+          "approval_required": true,
+          "changes_environment": true,
+          "depends_on": [
+            "wave-2-business-critical-t-review-validation"
+          ],
+          "description": "Deploy the reviewed infrastructure to production after a what-if review. Requires the recorded approval of all five owner roles.",
+          "dry_run_command": "az deployment group what-if --template-file infra/bicep/main.bicep",
+          "id": "wave-2-business-critical-t-production-provision",
+          "kind": "cutover",
+          "owner_role": "architect",
+          "policy_ids": [],
+          "rollback_note": "Leave the source serving traffic and remove the unused production target. No traffic has moved at this point.",
+          "title": "Provision the production target"
+        },
+        {
+          "approval_required": true,
+          "changes_environment": true,
+          "depends_on": [
+            "wave-2-business-critical-t-production-provision"
+          ],
+          "description": "Apply the write freeze, drain replication, switch the application, and verify the smoke tests inside the agreed window.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-execute-cutover",
+          "kind": "cutover",
+          "owner_role": "delivery-lead",
+          "policy_ids": [],
+          "rollback_note": "Invoke the documented rollback: restore application configuration to the source, confirm write availability, and reconcile any data written to the target during the window.",
+          "title": "Execute the cutover"
+        }
+      ]
+    },
+    {
+      "name": "Stabilize",
+      "objective": "Hold the workload under observation before anything is decommissioned.",
+      "tasks": [
+        {
+          "approval_required": false,
+          "changes_environment": false,
+          "depends_on": [
+            "wave-2-business-critical-t-execute-cutover"
+          ],
+          "description": "Monitor performance, errors, and cost against baseline for the agreed period, with the rollback path still available throughout.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-hypercare",
+          "kind": "stabilize",
+          "owner_role": "operations-owner",
+          "policy_ids": [],
+          "rollback_note": null,
+          "title": "Run the hypercare period"
+        },
+        {
+          "approval_required": false,
+          "changes_environment": false,
+          "depends_on": [
+            "wave-2-business-critical-t-hypercare"
+          ],
+          "description": "Only after hypercare completes and business acceptance is recorded. This repository never decommissions anything; the decision and the execution are both human.",
+          "dry_run_command": null,
+          "id": "wave-2-business-critical-t-decommission-decision",
+          "kind": "decommission",
+          "owner_role": "business-owner",
+          "policy_ids": [],
+          "rollback_note": null,
+          "title": "Decide whether to decommission the source"
+        }
+      ]
+    }
+  ],
+  "playbook": {
+    "commit": null,
+    "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+    "policy_ids": [
+      "AVL-001",
+      "AVL-002",
+      "AVL-003",
+      "AVL-004",
+      "COMP-001",
+      "COMP-002",
+      "COST-001",
+      "COST-002",
+      "DATA-001",
+      "DATA-002",
+      "DATA-003",
+      "DATA-004",
+      "IAM-001",
+      "IAM-002",
+      "IAM-003",
+      "NAME-001",
+      "NET-001",
+      "NET-002",
+      "NET-003",
+      "OBS-001",
+      "OBS-002",
+      "OBS-003",
+      "OPS-001",
+      "OPS-002",
+      "OPS-003",
+      "SEC-001",
+      "SEC-002",
+      "SEC-003",
+      "SEC-004",
+      "SEC-005",
+      "VAL-001",
+      "VAL-002",
+      "VAL-003",
+      "VAL-004"
+    ],
+    "version": "1.0.0"
+  },
+  "risk_ids": [],
+  "rollback": {
+    "data_reconciliation_note": "Writes accepted by the target during the window must be identified, extracted, and replayed or formally written off with business-owner agreement. Rollback is not complete until this is settled.",
+    "evidence_preservation": "Before rolling back, capture logs, metrics, failed test output, and replication state. Rolling back without evidence guarantees the same failure next attempt.",
+    "maximum_decision_window": "The rollback decision is taken no later than the agreed window minus the measured rollback duration.",
+    "method": "Return application configuration to the source, confirm write availability, then reconcile anything written to the target during the window.",
+    "owner_role": "operations-owner",
+    "rehearsed": false,
+    "triggers": [
+      {
+        "automated": true,
+        "id": "wave-2-business-critical-rb-performance",
+        "owner_role": "database-owner",
+        "statement": "Post-cutover performance regresses beyond the agreed tolerance against baseline.",
+        "verification_method": "Baseline comparison from the validation report"
+      },
+      {
+        "automated": true,
+        "id": "wave-2-business-critical-rb-integration-failure",
+        "owner_role": "application-owner",
+        "statement": "Any blocking application integration test fails after cutover.",
+        "verification_method": "Integration test results captured as evidence"
+      },
+      {
+        "automated": true,
+        "id": "wave-2-business-critical-rb-data-reconciliation",
+        "owner_role": "database-owner",
+        "statement": "Data reconciliation is incomplete or shows an unexplained difference.",
+        "verification_method": "Row count and checksum comparison"
+      },
+      {
+        "automated": false,
+        "id": "wave-2-business-critical-rb-window-exceeded",
+        "owner_role": "delivery-lead",
+        "statement": "The cutover exceeds the agreed window with no clear path to completion.",
+        "verification_method": "Elapsed time against the window"
+      }
+    ]
+  },
+  "schema_version": "1.0.0",
+  "status": "draft",
+  "supersedes": null,
+  "target_decision_ids": [
+    "td-wl-customer-portal",
+    "td-wl-payments-core"
+  ],
+  "updated_at": "2026-03-02T00:00:00Z",
+  "validation_plan_ref": "validation-plan-2.md",
+  "wave_id": "wave-2-business-critical",
+  "workload_ids": [
+    "wl-customer-portal",
+    "wl-payments-core"
+  ]
+}

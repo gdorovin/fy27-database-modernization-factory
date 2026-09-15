@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fy27-dbmf.example/contracts/target-decision.schema.json",
+  "title": "Target decision",
+  "description": "A per-workload Azure target recommendation with its rejected alternatives attached. A comparison with only one option is not a decision, so at least two considered options and at least one rejection are required.",
+  "type": "object",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/artifactBase" }],
+  "properties": {
+    "artifact_type": { "const": "target-decision" },
+    "workload_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "recommended_target": { "$ref": "common.schema.json#/$defs/azureTarget" },
+    "disposition": { "$ref": "common.schema.json#/$defs/disposition" },
+    "rationale": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "considered_options": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/consideredOption" },
+      "description": "Exactly one option is 'recommended', and at least one is 'rejected' or 'blocked'."
+    },
+    "compatibility_notes": { "type": "array", "items": { "type": "string" } },
+    "operational_notes": { "type": "array", "items": { "type": "string" } },
+    "security_notes": { "type": "array", "items": { "type": "string" } },
+    "performance_notes": { "type": "array", "items": { "type": "string" } },
+    "sovereignty_notes": { "type": "array", "items": { "type": "string" } },
+    "application_impact": { "type": "array", "items": { "type": "string" } },
+    "cost_inputs": { "type": "array", "items": { "$ref": "#/$defs/costInput" } },
+    "downtime_approach": { "$ref": "#/$defs/downtimeApproach" },
+    "requires_application_change": { "type": "boolean" },
+    "conversion_required": {
+      "type": "boolean",
+      "description": "True for heterogeneous migrations needing schema or code conversion. Must be true when disposition is refactor, rearchitect, or rebuild."
+    }
+  },
+  "required": [
+    "workload_id",
+    "recommended_target",
+    "disposition",
+    "rationale",
+    "considered_options",
+    "downtime_approach"
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "consideredOption": {
+      "type": "object",
+      "properties": {
+        "target": { "$ref": "common.schema.json#/$defs/azureTarget" },
+        "verdict": { "type": "string", "enum": ["recommended", "viable", "rejected", "blocked"] },
+        "score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "rationale": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/identifier" }
+        }
+      },
+      "required": ["target", "verdict", "score", "rationale"],
+      "additionalProperties": false
+    },
+    "costInput": {
+      "type": "object",
+      "description": "A cost figure supplied by a human. The repository never invents one.",
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "label": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+        "period": { "type": "string", "enum": ["one-off", "monthly", "annual"] },
+        "source": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "is_estimate": { "type": "boolean" }
+      },
+      "required": ["id", "label", "amount", "currency", "period", "source"],
+      "additionalProperties": false
+    },
+    "downtimeApproach": {
+      "type": "object",
+      "description": "Downtime expectations must name the method that justifies them. 'near-zero-planned' additionally requires a measured rehearsal.",
+      "properties": {
+        "method": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "expected_class": { "$ref": "common.schema.json#/$defs/downtimeClass" },
+        "basis": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString",
+          "description": "Why this class is credible for this workload, or 'not yet measured'."
+        },
+        "measured": { "type": "boolean" }
+      },
+      "required": ["method", "basis"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "id": "td-wl-store-ops",
+      "artifact_type": "target-decision",
+      "engagement_id": "eng-contoso-retail-fy27",
+      "workload_ids": ["wl-store-ops"],
+      "created_at": "2026-02-10T10:00:00Z",
+      "updated_at": "2026-02-10T10:00:00Z",
+      "author": "agent:target-architect",
+      "playbook": { "path": "playbooks/default", "version": "1.0.0", "policy_ids": ["SEC-001"] },
+      "evidence_refs": ["ev-inventory-store-ops", "ev-features-store-ops"],
+      "workload_id": "wl-store-ops",
+      "recommended_target": "azure-sql-managed-instance",
+      "disposition": "replatform",
+      "rationale": "Instance-scoped features are in use and the application cannot be changed in this window.",
+      "considered_options": [
+        {
+          "target": "azure-sql-managed-instance",
+          "verdict": "recommended",
+          "score": 82.0,
+          "rationale": "Supports the instance-scoped features observed in evidence."
+        },
+        {
+          "target": "azure-sql-database",
+          "verdict": "rejected",
+          "score": 41.0,
+          "rationale": "Observed cross-database queries and SQL Agent jobs are not available at database scope.",
+          "blockers": ["cross-database-queries", "sql-agent"]
+        }
+      ],
+      "downtime_approach": {
+        "method": "Log replay with a short application cutover window.",
+        "expected_class": "short-planned",
+        "basis": "No rehearsal has been run, so a near-zero claim is not yet supportable.",
+        "measured": false
+      },
+      "confidence": "medium",
+      "status": "recommended"
+    }
+  ]
+}
