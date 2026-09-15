@@ -33,21 +33,38 @@ Each is reversible.
 | A-008 | Confidence is an enum (`low`/`medium`/`high`), not a float | Avoids false precision in evidence handling | Medium |
 | A-009 | `near-zero planned downtime` is the strongest downtime claim permitted, and only with a cited method | Safety boundary in the brief | Low |
 | A-010 | Product/commercial claims live in dated reference blocks with a `verified_on` date | Facts age; the repository must show when | Low |
+| A-011 | Every text file is stored and checked out with LF endings, enforced by `.gitattributes` | Generated documents are compared byte for byte; a CRLF checkout would pass on Linux and fail on Windows | Low |
 
 ## Phase order and completion criteria
 
-| Phase | Content | Done when |
-| --- | --- | --- |
-| 0 | Inspection, plan, assumptions | This file exists and lists assumptions |
-| 1 | Packaging, dev container, lint/type/test config, CLI skeleton, global instructions | `dbmodernize --help` works; lint, types, smoke test pass |
-| 2 | JSON Schemas, Pydantic models, default playbook, playbook validator | Every schema has positive and negative fixtures; conflicting and duplicate policies fail |
-| 3 | Templates, renderers, evidence normalization, issue generation | Same input yields byte-identical output; overwrite protection works |
-| 4 | 17 Agent Skills | Every skill passes structural validation; invoke/do-not-invoke classified |
-| 5 | 8 agents | Least-privilege tools enforced; no self-approval |
-| 6 | 7 scenarios | Each runs offline against committed expectations; Scenario 07 yields no-go |
-| 7 | CI, security, evaluation workflows | Deterministic gates on PR; model evals separate |
-| 8 | Documentation and diagrams | Tree matches docs; commands verified |
-| 9 | Optional adapters and Bicep | Present, labelled optional, mockable, not required by core |
+All phases are complete. The "done when" column is retained because it is the standing
+regression criterion, not a one-time checklist: a change that breaks any row is a change that
+breaks the phase.
+
+| Phase | Content | Done when | Status |
+| --- | --- | --- | --- |
+| 0 | Inspection, plan, assumptions | This file exists and lists assumptions | Complete |
+| 1 | Packaging, dev container, lint/type/test config, CLI skeleton, global instructions | `dbmodernize --help` works; lint, types, smoke test pass | Complete |
+| 2 | JSON Schemas, Pydantic models, default playbook, playbook validator | Every schema has positive and negative fixtures; conflicting and duplicate policies fail | Complete |
+| 3 | Templates, renderers, evidence normalization, issue generation | Same input yields byte-identical output; overwrite protection works | Complete |
+| 4 | 17 Agent Skills | Every skill passes structural validation; invoke/do-not-invoke classified | Complete |
+| 5 | 8 agents | Least-privilege tools enforced; no self-approval | Complete |
+| 6 | 7 scenarios | Each runs offline against committed expectations; Scenario 07 yields no-go | Complete |
+| 7 | CI, security, evaluation workflows | Deterministic gates on PR; model evals separate | Complete |
+| 8 | Documentation and diagrams | Tree matches docs; commands verified | Complete |
+| 9 | Optional adapters and Bicep | Present, labelled optional, mockable, not required by core | Complete |
+
+## Design changes made during implementation
+
+Four changes to the original design were forced by building it. They are recorded here
+because the reasoning matters more than the outcome.
+
+| Change | Why the original was wrong |
+| --- | --- |
+| Blocked workloads receive an interim non-moving posture (Arc / retain / retire) instead of no decision at all | A workload with no decision falls out of every downstream artifact, so the estate's worst databases became the least governed. Refusing to recommend a move is correct; refusing to say anything is not. |
+| Plans render per wave (`migration-plan-2.md`, and so on) rather than once | A single rendered plan silently described wave 1 only. Waves 2+ existed in the JSON and in no document anyone would read. |
+| `Workload.assessed_targets` gates heterogeneous conversion evidence | Conversion effort measured against one target was being reused for another. A 92% automatic conversion to PostgreSQL says nothing about SQL Managed Instance. |
+| Agent privilege separates *editing* from *executing* (`NON_EDITING_AGENTS`) | "Read-only" conflated the two, which would have denied a reviewer the ability to run the very validators it reviews against. |
 
 ## Out of scope
 

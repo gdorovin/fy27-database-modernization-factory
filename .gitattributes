@@ -1,0 +1,36 @@
+# Normalize every text file to LF, in the working tree and in the index.
+#
+# Windows checks out CRLF by default, and this repository compares generated documents byte
+# for byte. A CRLF checkout would make every scenario expectation differ on a Windows machine
+# and match on Linux, which is the worst kind of failure: it depends on who ran it.
+#
+# The Python I/O layer already forces LF on write; this makes the same guarantee for files
+# that are edited by hand.
+
+* text=auto eol=lf
+
+*.md      text eol=lf
+*.py      text eol=lf
+*.json    text eol=lf
+*.yaml    text eol=lf
+*.yml     text eol=lf
+*.toml    text eol=lf
+*.cfg     text eol=lf
+*.csv     text eol=lf
+*.txt     text eol=lf
+*.bicep   text eol=lf
+*.bicepparam text eol=lf
+*.sh      text eol=lf
+*.ps1     text eol=lf
+Makefile  text eol=lf
+LICENSE   text eol=lf
+.gitignore text eol=lf
+.editorconfig text eol=lf
+
+# Committed scenario expectations are compared byte for byte. Never let a diff tool or an
+# editor decide their line endings.
+scenarios/**/expected/** text eol=lf -diff=auto
+
+*.png binary
+*.jpg binary
+*.zip binary
