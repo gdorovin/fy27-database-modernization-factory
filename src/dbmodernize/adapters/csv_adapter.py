@@ -17,7 +17,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar
 
-from dbmodernize.adapters.base import EvidenceAdapter
+from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE, EvidenceAdapter
 from dbmodernize.models.base import Confidence, EvidenceClass
 from dbmodernize.models.evidence import EvidenceRecord, EvidenceSource
 from dbmodernize.utils.io import read_csv_rows
@@ -150,7 +150,7 @@ class CsvInventoryAdapter(EvidenceAdapter):
             measured = bool(attributes.pop("measured", False))
             notes = attributes.pop("notes", None)
             if unmapped:
-                attributes["unmapped_columns"] = unmapped
+                attributes[UNMAPPED_ATTRIBUTE] = unmapped
             records.append(
                 self._record(
                     engagement_id=engagement_id,

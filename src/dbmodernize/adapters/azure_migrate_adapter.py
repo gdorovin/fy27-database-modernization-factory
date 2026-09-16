@@ -14,11 +14,31 @@ from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar
 
-from dbmodernize.adapters.base import EvidenceAdapter
+from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE, EvidenceAdapter
 from dbmodernize.errors import UsageError
 from dbmodernize.models.base import Confidence, EvidenceClass
 from dbmodernize.models.evidence import EvidenceRecord, EvidenceSource
 from dbmodernize.utils.io import read_json
+
+_DOCUMENT_KEYS = frozenset({"assessedOn", "assessmentName", "databases"})
+_DATABASE_KEYS = frozenset(
+    {
+        "databaseName",
+        "instanceName",
+        "sourcePlatform",
+        "version",
+        "edition",
+        "sizeInGb",
+        "environment",
+        "readiness",
+        "targetReadiness",
+        "blockingIssues",
+        "featuresInUse",
+        "performance",
+        "notes",
+    }
+)
+_PERFORMANCE_KEYS = frozenset({"measured", "iops", "cpuCores", "memoryGb", "peakSessions"})
 
 
 class AzureMigrateAdapter(EvidenceAdapter):
@@ -43,6 +63,7 @@ class AzureMigrateAdapter(EvidenceAdapter):
         assessed_on = self._parse_date(document.get("assessedOn"), collected_on)
         assessment = str(document.get("assessmentName", path.stem))
         records: list[EvidenceRecord] = []
+        unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
 
         for index, entry in enumerate(document.get("databases", [])):
             if not isinstance(entry, dict):
@@ -52,6 +73,8 @@ class AzureMigrateAdapter(EvidenceAdapter):
                 continue
 
             performance = entry.get("performance") or {}
+            unmapped |= self.unrecognised_keys(entry, _DATABASE_KEYS)
+            unmapped |= self.unrecognised_keys(performance, _PERFORMANCE_KEYS, "performance.")
             measured = bool(performance.get("measured", False))
             attributes: dict[str, Any] = {
                 "name": name,
@@ -80,6 +103,8 @@ class AzureMigrateAdapter(EvidenceAdapter):
                 attributes["cpu_cores"] = performance.get("cpuCores")
                 attributes["memory_gb"] = performance.get("memoryGb")
                 attributes["peak_concurrent_sessions"] = performance.get("peakSessions")
+            if unmapped:
+                attributes[UNMAPPED_ATTRIBUTE] = sorted(unmapped)
 
             records.append(
                 self._record(

@@ -8,13 +8,16 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- **Unrecognised input columns are reported instead of dropped.** The CSV adapter records
-  headers it could not map and raises a `r-unmapped-input` assessment finding. Discarding
-  `Recovery Point Objective (min)` in silence made the assessment state that no recovery
-  objective was given — a claim about the customer's estate that was really a fact about
-  our column map, and indistinguishable from the real thing downstream. Headers are also
-  normalized before lookup, so `Data Size (GB)`, `data-size-gb`, and `DATA_SIZE_GB` now
-  reach the same attribute.
+- **Unrecognised input is reported instead of dropped, in every adapter.** Each adapter
+  records fields it does not read as `unmapped_fields`, and a `r-unmapped-input`
+  assessment finding surfaces them. Discarding `Recovery Point Objective (min)` in silence
+  made the assessment state that no recovery objective was given — a claim about the
+  customer's estate that was really a fact about our column map, and indistinguishable
+  from the real thing downstream. The CSV adapter also normalizes headers before lookup,
+  so `Data Size (GB)`, `data-size-gb`, and `DATA_SIZE_GB` now reach the same attribute.
+  JSON adapters name the nesting level (`performance.queueDepth`) so the field can be
+  found in the source document. A parametrized test over the registry means a sixth
+  adapter cannot skip the behaviour.
 - **Cross-playbook tests** (`tests/snapshots/test_cross_playbook.py`). One estate, four
   playbooks. "Configuration-driven" was asserted in several documents and proved nowhere;
   validating the example playbooks showed only that they parse.

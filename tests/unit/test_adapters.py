@@ -5,10 +5,12 @@ from __future__ import annotations
 import json
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from dbmodernize.adapters import default_registry
+from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE
 from dbmodernize.adapters.csv_adapter import CsvInventoryAdapter
 from dbmodernize.errors import UsageError
 from dbmodernize.evidence.normalize import (
@@ -90,7 +92,7 @@ class TestCsvColumnCoverage:
 
         assert records[0].attributes["data_size_gb"] == 120.0
         assert records[0].attributes["rpo_minutes"] == 15
-        assert "unmapped_columns" not in records[0].attributes
+        assert UNMAPPED_ATTRIBUTE not in records[0].attributes
 
     def test_an_unrecognised_column_is_reported_on_every_row_it_affects(
         self, tmp_path: Path
@@ -106,14 +108,14 @@ class TestCsvColumnCoverage:
 
         assert len(records) == 2
         for record in records:
-            assert record.attributes["unmapped_columns"] == ["Encryption At Rest"]
+            assert record.attributes[UNMAPPED_ATTRIBUTE] == ["Encryption At Rest"]
 
     def test_the_reported_spelling_is_the_author_s_not_ours(self, tmp_path: Path) -> None:
         """A normalized name would send the reader looking for a column that is not there."""
         path = tmp_path / "extra.csv"
         path.write_text("name,engine,Backup Vendor\nExample,sql-server,acme\n", encoding="utf-8")
         records = CsvInventoryAdapter().extract(path, "eng-test", date(2026, 3, 2))
-        assert records[0].attributes["unmapped_columns"] == ["Backup Vendor"]
+        assert records[0].attributes[UNMAPPED_ATTRIBUTE] == ["Backup Vendor"]
 
     def test_deliberately_ignored_columns_are_not_reported(self, tmp_path: Path) -> None:
         """Discarding a cost centre on purpose is not the same as failing to read it."""
@@ -123,7 +125,83 @@ class TestCsvColumnCoverage:
             encoding="utf-8",
         )
         records = CsvInventoryAdapter().extract(path, "eng-test", date(2026, 3, 2))
-        assert "unmapped_columns" not in records[0].attributes
+        assert UNMAPPED_ATTRIBUTE not in records[0].attributes
+
+
+#: One minimal, valid document per adapter, plus where to plant an unread field.
+#: The CSV adapter is covered above; this table is the other four.
+_MINIMAL_DOCUMENTS: dict[str, dict[str, Any]] = {
+    "azure-migrate": {
+        "assessedOn": "2026-03-02",
+        "databases": [{"databaseName": "Example", "version": "15.0"}],
+    },
+    "arc-sql": {
+        "collectedOn": "2026-03-02",
+        "instances": [{"name": "host-a", "version": "15.0", "databases": [{"name": "Example"}]}],
+    },
+    "dms": {
+        "assessedOn": "2026-03-02",
+        "results": [{"databaseName": "Example", "targetPlatform": "azure-sql-database"}],
+    },
+    "ssma": {
+        "convertedOn": "2026-03-02",
+        "schemas": [{"workloadName": "Example", "sourcePlatform": "oracle"}],
+    },
+}
+
+
+class TestUnreadFieldsAreReportedByEveryAdapter:
+    """Every adapter reads a documented subset of its format and ignores the rest.
+
+    Ignoring is fine. Ignoring invisibly is not: a field we failed to read is
+    indistinguishable downstream from a field the customer never supplied, so the
+    assessment reports a gap in the estate that is really a gap in the adapter.
+
+    Parametrized over the registry rather than written out four times, so adding a sixth
+    adapter without this behaviour fails here instead of shipping quietly.
+    """
+
+    @pytest.mark.parametrize("name", sorted(_MINIMAL_DOCUMENTS))
+    def test_a_clean_document_reports_nothing(self, tmp_path: Path, name: str) -> None:
+        path = tmp_path / f"{name}.json"
+        path.write_text(json.dumps(_MINIMAL_DOCUMENTS[name]), encoding="utf-8")
+
+        records = default_registry().by_name(name).extract(path, "eng-test", date(2026, 3, 2))
+        assert records, f"{name} produced no records from its own minimal document"
+        assert UNMAPPED_ATTRIBUTE not in records[0].attributes
+
+    @pytest.mark.parametrize("name", sorted(_MINIMAL_DOCUMENTS))
+    def test_an_unread_top_level_field_is_reported(self, tmp_path: Path, name: str) -> None:
+        document = {**_MINIMAL_DOCUMENTS[name], "encryptionPosture": "tde"}
+        path = tmp_path / f"{name}.json"
+        path.write_text(json.dumps(document), encoding="utf-8")
+
+        records = default_registry().by_name(name).extract(path, "eng-test", date(2026, 3, 2))
+        assert "encryptionPosture" in records[0].attributes[UNMAPPED_ATTRIBUTE]
+
+    def test_the_nesting_level_is_named_so_the_field_can_be_found(self, tmp_path: Path) -> None:
+        """'iops' and 'performance.iops' send a reader to different places in the file."""
+        document = {
+            "assessedOn": "2026-03-02",
+            "databases": [
+                {
+                    "databaseName": "Example",
+                    "performance": {"measured": True, "queueDepth": 12},
+                }
+            ],
+        }
+        path = tmp_path / "migrate.json"
+        path.write_text(json.dumps(document), encoding="utf-8")
+
+        records = (
+            default_registry().by_name("azure-migrate").extract(path, "eng-test", date(2026, 3, 2))
+        )
+        assert "performance.queueDepth" in records[0].attributes[UNMAPPED_ATTRIBUTE]
+
+    def test_every_registered_adapter_is_covered_here(self) -> None:
+        """A sixth adapter must not be able to skip this class by simply not appearing."""
+        registered = set(default_registry().names)
+        assert registered == set(_MINIMAL_DOCUMENTS) | {"csv-inventory"}
 
 
 class TestAdapterSelection:

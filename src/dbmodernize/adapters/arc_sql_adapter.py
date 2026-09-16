@@ -12,11 +12,28 @@ from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar
 
-from dbmodernize.adapters.base import EvidenceAdapter
+from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE, EvidenceAdapter
 from dbmodernize.errors import UsageError
 from dbmodernize.models.base import Confidence, EvidenceClass
 from dbmodernize.models.evidence import EvidenceRecord, EvidenceSource
 from dbmodernize.utils.io import read_json
+
+_DOCUMENT_KEYS = frozenset({"collectedOn", "instances", "enrollmentCoverage"})
+_INSTANCE_KEYS = frozenset(
+    {
+        "name",
+        "version",
+        "edition",
+        "patchLevel",
+        "supportStatus",
+        "hostAlias",
+        "environment",
+        "features",
+        "securityFindings",
+        "databases",
+    }
+)
+_DATABASE_KEYS = frozenset({"name", "sizeInGb", "environment"})
 
 
 class ArcSqlAdapter(EvidenceAdapter):
@@ -41,6 +58,11 @@ class ArcSqlAdapter(EvidenceAdapter):
         collected = self._parse_date(document.get("collectedOn"), collected_on)
         instances = [i for i in document.get("instances", []) if isinstance(i, dict)]
         records: list[EvidenceRecord] = []
+        unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
+        for instance in instances:
+            unmapped |= self.unrecognised_keys(instance, _INSTANCE_KEYS)
+            for database in instance.get("databases", []):
+                unmapped |= self.unrecognised_keys(database, _DATABASE_KEYS, "databases.")
 
         for index, instance in enumerate(instances):
             instance_name = str(instance.get("name", "")).strip()
@@ -68,6 +90,8 @@ class ArcSqlAdapter(EvidenceAdapter):
                     "arc_enrolled": True,
                     "measured": True,
                 }
+                if unmapped:
+                    attributes[UNMAPPED_ATTRIBUTE] = sorted(unmapped)
                 records.append(
                     self._record(
                         engagement_id=engagement_id,

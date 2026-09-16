@@ -14,11 +14,26 @@ from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar
 
-from dbmodernize.adapters.base import EvidenceAdapter
+from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE, EvidenceAdapter
 from dbmodernize.errors import UsageError
 from dbmodernize.models.base import Confidence, EvidenceClass
 from dbmodernize.models.evidence import EvidenceRecord, EvidenceSource
 from dbmodernize.utils.io import read_json
+
+_DOCUMENT_KEYS = frozenset({"convertedOn", "project", "schemas"})
+_SCHEMA_KEYS = frozenset(
+    {
+        "workloadName",
+        "sourceSchema",
+        "sourcePlatform",
+        "targetPlatform",
+        "objects",
+        "conversionSummary",
+        "manualEffortHours",
+        "topIssues",
+    }
+)
+_SUMMARY_KEYS = frozenset({"automatic", "manual", "errors"})
 
 
 class SsmaAdapter(EvidenceAdapter):
@@ -43,6 +58,7 @@ class SsmaAdapter(EvidenceAdapter):
         converted_on = self._parse_date(document.get("convertedOn"), collected_on)
         project = str(document.get("project", path.stem))
         records: list[EvidenceRecord] = []
+        unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
 
         for index, schema in enumerate(document.get("schemas", [])):
             if not isinstance(schema, dict):
@@ -52,6 +68,8 @@ class SsmaAdapter(EvidenceAdapter):
                 continue
 
             summary = schema.get("conversionSummary") or {}
+            unmapped |= self.unrecognised_keys(schema, _SCHEMA_KEYS)
+            unmapped |= self.unrecognised_keys(summary, _SUMMARY_KEYS, "conversionSummary.")
             automatic = int(summary.get("automatic", 0))
             manual = int(summary.get("manual", 0))
             errors = int(summary.get("errors", 0))
@@ -83,6 +101,8 @@ class SsmaAdapter(EvidenceAdapter):
                 ],
                 "measured": True,
             }
+            if unmapped:
+                attributes[UNMAPPED_ATTRIBUTE] = sorted(unmapped)
             records.append(
                 self._record(
                     engagement_id=engagement_id,

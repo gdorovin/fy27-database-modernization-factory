@@ -22,6 +22,14 @@ from dbmodernize.utils.hashing import slugify, stable_id
 #: discussed, not silently absorbed.
 MAX_RECORDS_PER_FILE = 5_000
 
+#: Attribute naming input an adapter could not interpret. Set only when non-empty.
+#:
+#: Every adapter reads a documented subset of its format and ignores the rest. Ignoring is
+#: fine; ignoring *invisibly* is not, because a field we failed to read is indistinguishable
+#: downstream from a field the customer never provided. The assessment then reports a gap in
+#: the estate that is really a gap in the adapter.
+UNMAPPED_ATTRIBUTE = "unmapped_fields"
+
 
 class EvidenceAdapter(abc.ABC):
     """Convert one export format into normalized evidence records."""
@@ -81,6 +89,17 @@ class EvidenceAdapter(abc.ABC):
         return f"wl-{slugify(name)}"
 
     @staticmethod
+    def unrecognised_keys(mapping: Any, known: frozenset[str], prefix: str = "") -> set[str]:
+        """Keys present in the input that this adapter does not read.
+
+        ``prefix`` names the nesting level (``"performance."``), so a reader can find the
+        field in the source document rather than guessing which object it came from.
+        """
+        if not isinstance(mapping, dict):
+            return set()
+        return {f"{prefix}{key}" for key in mapping if key not in known}
+
+    @staticmethod
     def _guard_count(records: list[EvidenceRecord], path: Path) -> list[EvidenceRecord]:
         if len(records) > MAX_RECORDS_PER_FILE:
             raise UsageError(
@@ -130,6 +149,7 @@ def default_registry() -> AdapterRegistry:
 
 __all__ = [
     "MAX_RECORDS_PER_FILE",
+    "UNMAPPED_ATTRIBUTE",
     "AdapterRegistry",
     "EvidenceAdapter",
     "default_registry",

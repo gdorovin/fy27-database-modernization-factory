@@ -11,6 +11,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Any
 
+from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE
 from dbmodernize.evidence.normalize import evidence_ids_for, merged_attributes
 from dbmodernize.models.base import (
     ArtifactStatus,
@@ -168,22 +169,22 @@ def rule_unresolved_conflicts(ctx: AssessmentContext) -> list[AssessmentFinding]
 
 
 def rule_unmapped_input(ctx: AssessmentContext) -> list[AssessmentFinding]:
-    columns = ctx.attributes.get("unmapped_columns")
-    if not isinstance(columns, list) or not columns:
+    fields = ctx.attributes.get(UNMAPPED_ATTRIBUTE)
+    if not isinstance(fields, list) or not fields:
         return []
-    named = ", ".join(str(column) for column in columns)
+    named = ", ".join(str(field) for field in fields)
     return [
         ctx.finding(
             "r-unmapped-input",
             FindingCategory.DATA_QUALITY,
             Severity.MEDIUM,
-            f"The source file carried columns this repository did not recognise: {named}. "
-            "Their contents were not read, so any gap this assessment reports may be a gap "
-            "in the column map rather than in the estate.",
+            f"The source evidence carried fields this repository did not read: {named}. "
+            "Any gap reported below may therefore be a gap in the adapter rather than in "
+            "the estate, and the two look identical from here.",
             evidence_class=EvidenceClass.OBSERVED,
             remediation=(
-                "Confirm the columns hold nothing decision-relevant, or add the spelling to "
-                "COLUMN_MAP in the CSV adapter and re-run."
+                "Confirm the fields hold nothing decision-relevant, or teach the adapter to "
+                "read them and re-run."
             ),
         )
     ]

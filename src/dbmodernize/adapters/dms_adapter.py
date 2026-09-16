@@ -11,11 +11,23 @@ from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar
 
-from dbmodernize.adapters.base import EvidenceAdapter
+from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE, EvidenceAdapter
 from dbmodernize.errors import UsageError
 from dbmodernize.models.base import Confidence, EvidenceClass
 from dbmodernize.models.evidence import EvidenceRecord, EvidenceSource
 from dbmodernize.utils.io import read_json
+
+_DOCUMENT_KEYS = frozenset({"assessedOn", "results"})
+_RESULT_KEYS = frozenset(
+    {
+        "databaseName",
+        "targetPlatform",
+        "featureParity",
+        "compatibilityIssues",
+        "sourcePlatform",
+        "sourceVersion",
+    }
+)
 
 
 class DmsAdapter(EvidenceAdapter):
@@ -39,6 +51,7 @@ class DmsAdapter(EvidenceAdapter):
 
         assessed_on = self._parse_date(document.get("assessedOn"), collected_on)
         records: list[EvidenceRecord] = []
+        unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
 
         for index, result in enumerate(document.get("results", [])):
             if not isinstance(result, dict):
@@ -47,6 +60,7 @@ class DmsAdapter(EvidenceAdapter):
             if not name:
                 continue
 
+            unmapped |= self.unrecognised_keys(result, _RESULT_KEYS)
             parity = [
                 {
                     "feature": str(item.get("feature", "")),
@@ -79,6 +93,8 @@ class DmsAdapter(EvidenceAdapter):
                 "source_version": result.get("sourceVersion"),
                 "measured": True,
             }
+            if unmapped:
+                attributes[UNMAPPED_ATTRIBUTE] = sorted(unmapped)
             records.append(
                 self._record(
                     engagement_id=engagement_id,
