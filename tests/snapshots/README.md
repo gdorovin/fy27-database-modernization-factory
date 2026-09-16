@@ -21,9 +21,17 @@ supposed to encode, so a silently regenerated snapshot still fails.
 
 ## Why this directory exists
 
-Reserved for snapshots that are not tied to a single scenario — for example, a future
-comparison of rendering across multiple playbooks, where the interesting variable is the
-playbook rather than the estate.
+For comparisons that are not tied to a single scenario. Everything under `scenarios/` holds
+the playbook constant and varies the estate; `test_cross_playbook.py` is the other axis —
+one estate, four playbooks.
 
-Nothing needs it yet. It is kept so the convention has an obvious home when it does, rather
-than being invented under time pressure.
+It exists because "configuration-driven" was a claim the repository made about itself in
+several places and proved nowhere. Validating the example playbooks showed only that they
+parse. It did not show that swapping one changes a single decision, which is the entire
+premise.
+
+Writing it found something worth knowing: the *set* of targets considered is identical
+across playbooks, because `targets.md` promises a prohibited target is still compared and
+rejected with a citation rather than dropped. A playbook's effect shows up in the verdicts,
+never in the membership. The obvious assertion — that a narrower playbook considers fewer
+options — looks stronger and is simply wrong.

@@ -229,8 +229,8 @@ class TestExceptions:
             "approver": "security-owner-a",
             "controls": "Rotated every 30 days; access restricted",
             "granted": "2026-01-15",
-            "expires": "2026-06-30",
-            "review": "2026-04-30",
+            "expires": "2026-04-15",  # exactly the 90-day ceiling
+            "review": "2026-03-15",
         }
         fields.update(overrides)
         return (
@@ -252,6 +252,28 @@ class TestExceptions:
         directory = write_playbook(tmp_path / "expired", exceptions=self._row())
         _, findings = validate_playbook(directory, as_of=date(2026, 7, 1))
         assert any(f.rule == "PLAYBOOK-EXCEPTION-EXPIRED" for f in findings.errors)
+
+    def test_an_exception_at_the_ceiling_is_not_warned_about(self, tmp_path: Path) -> None:
+        directory = write_playbook(tmp_path / "ceiling", exceptions=self._row())
+        _, findings = validate_playbook(directory, as_of=AS_OF)
+        assert not any(f.rule == "PLAYBOOK-EXCEPTION-HORIZON" for f in findings.warnings)
+
+    def test_an_exception_longer_than_the_ceiling_is_warned_about(self, tmp_path: Path) -> None:
+        """A five-year exception is a policy change wearing an exception's clothes.
+
+        The check is deliberately clock-free — it measures grant date to expiry, not expiry
+        against today. "Is this too long?" must have the same answer whenever it is asked,
+        or the warning appears and disappears depending on when CI happens to run.
+        """
+        directory = write_playbook(tmp_path / "long", exceptions=self._row(expires="2031-01-15"))
+        _, findings = validate_playbook(directory, as_of=AS_OF)
+        assert any(f.rule == "PLAYBOOK-EXCEPTION-HORIZON" for f in findings.warnings)
+
+    def test_a_long_horizon_is_a_warning_not_a_rejection(self, tmp_path: Path) -> None:
+        """Some deviations genuinely outlast a quarter. Make it visible, not impossible."""
+        directory = write_playbook(tmp_path / "long", exceptions=self._row(expires="2031-01-15"))
+        _, findings = validate_playbook(directory, as_of=AS_OF)
+        assert findings.ok
 
     def test_an_exception_without_compensating_controls_fails(self, tmp_path: Path) -> None:
         directory = write_playbook(tmp_path / "nocontrols", exceptions=self._row(controls=""))

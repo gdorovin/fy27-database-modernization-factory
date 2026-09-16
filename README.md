@@ -232,9 +232,11 @@ Playbooks capture **decisions**. Procedures live in skills, so improving a proce
 not require a governance review.
 
 Validation fails on duplicate policy IDs, contradictory directives over the same subject,
-a missing policy category, an exception without an expiry, and an expired exception.
-Content that does not fit the tables is retained verbatim in an "Extended" section with a
-warning that enforcement over it is best-effort.
+a missing policy category, an exception without an expiry, and an expired exception. It
+warns on an exception granted for more than 90 days, measured grant-to-expiry so the
+judgement does not change with the calendar. Content that does not fit the tables is
+retained verbatim in an "Extended" section with a warning that enforcement over it is
+best-effort.
 
 ```bash
 dbmodernize validate-playbook playbooks/default

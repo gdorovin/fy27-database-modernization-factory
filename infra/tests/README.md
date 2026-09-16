@@ -16,10 +16,33 @@ The properties worth asserting, and where they are enforced today:
 | --- | --- |
 | Templates compile | `bicep build` in CI |
 | No lint violations | `bicep lint` in CI |
-| No administrator password parameter exists | `tests/repository/test_repository.py` secret scan, plus review |
-| No real subscription, tenant, or resource id | `scripts/check_no_secrets.py` |
-| No production default for region or environment | Review against `.github/instructions/infrastructure.instructions.md` |
-| Public network access defaults to disabled | Review; see `infra/README.md` for the policy mapping |
+| No administrator password parameter exists | `tests/infra/test_bicep_templates.py` |
+| No real subscription, tenant, or resource id | `scripts/check_no_secrets.py`, plus a GUID check in `tests/infra/` |
+| No production default for region | `tests/infra/test_bicep_templates.py` |
+| Public network access is decided, and decided closed | `tests/infra/test_bicep_templates.py` |
+| No template downgrades TLS below 1.2 | `tests/infra/test_bicep_templates.py` |
+| `main.bicep` composes and declares no resources | `tests/infra/test_bicep_templates.py` |
+| Every module is reachable from `main.bicep` | `tests/infra/test_bicep_templates.py` |
+
+Three of these used to say "Review". A control that depends on somebody remembering to look
+is not a control, and all three were checkable from the text of the templates.
+
+The tests live in `tests/infra/` rather than here, because that is where pytest collects
+from and a test nobody runs is worth less than no test at all. This file explains what they
+assert and why; it is not a second place to put them.
+
+## What these tests deliberately do not do
+
+They read what the templates say. They do not model what Azure would do with them. A
+property that can only be confirmed against a live API version — whether a given default is
+secure this month, whether a preview flag still exists — is left to `bicep build` and to a
+human reading what-if output. Approximating it here would produce a test that is confidently
+wrong, which is worse than an honest gap.
+
+One such gap: `postgresql-flexible.bicep` sets no TLS property, because Flexible Server
+takes that from server configuration rather than from the resource body. The tests assert
+only that nothing in the repository *downgrades* TLS, which is what the files can actually
+tell us.
 
 ## Why there is no deployment test
 

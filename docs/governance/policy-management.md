@@ -75,10 +75,26 @@ An exception without an expiry becomes permanent by default. An expired exceptio
 validation** rather than lapsing quietly — that is the control working, not the build being
 awkward.
 
-Ninety days is a reasonable ceiling. The requesting role may not be the approving role.
+Ninety days is the ceiling, and it is enforced: an exception running longer than that from
+its grant date raises `PLAYBOOK-EXCEPTION-HORIZON`. The check measures grant date to expiry
+rather than expiry against today, so "is this too long?" has the same answer whenever it is
+asked. It warns rather than fails, because some deviations genuinely outlast a quarter and
+the useful thing is to make that visible rather than impossible. An exception long enough to
+outlive the people who agreed to it is a policy change wearing an exception's clothes.
+
+The requesting role may not be the approving role.
 
 A compensating control is something that reduces the risk. "Accepted by the business" is not
 a compensating control; it is a decision to carry the risk unchanged.
+
+## Why the baseline playbook grants none
+
+`playbooks/default/policies.md` has an empty exceptions table, and should stay that way. An
+exception names a system, an owner, and an end date, none of which exist until an engagement
+does. One shipped in a reusable baseline is either meaningless or silently inherited by
+everyone who copies the file — and it forces a choice between modelling a bad horizon and
+having the baseline expire on a fixed date. The format is documented there in a fenced
+block, which is not parsed and therefore cannot be in force by accident.
 
 ## Requesting one
 

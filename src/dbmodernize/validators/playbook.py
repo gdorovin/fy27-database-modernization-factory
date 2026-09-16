@@ -16,6 +16,12 @@ from dbmodernize.policies.models import (
     PolicyCategory,
 )
 
+#: Longest exception this repository will accept without complaint, measured from the grant
+#: date to the expiry date. Deliberately clock-free: the question "is this exception too
+#: long?" has the same answer today and in five years, so it must not depend on when it is
+#: asked. `policies.md` names 90 days as the ceiling for a real exception.
+MAX_EXCEPTION_DAYS = 90
+
 #: Categories a playbook must speak to. Silence on any of these is a governance gap.
 REQUIRED_CATEGORIES = frozenset(
     {
@@ -182,6 +188,20 @@ def _check_exceptions(playbook: Playbook, directory: Path, as_of: date) -> Findi
                     "must not lapse quietly into permanence."
                 ),
                 path=str(directory / "policies.md"),
+            )
+
+        granted = (exception.expires_on - exception.granted_on).days
+        if granted > MAX_EXCEPTION_DAYS:
+            findings.add(
+                rule="PLAYBOOK-EXCEPTION-HORIZON",
+                message=(
+                    f"Exception {exception.id} runs for {granted} days, above the "
+                    f"{MAX_EXCEPTION_DAYS}-day ceiling. An exception long enough to outlive "
+                    "the people who agreed to it is a policy change wearing an exception's "
+                    "clothes; change the policy or shorten the exception."
+                ),
+                path=str(directory / "policies.md"),
+                severity="warning",
             )
     return findings
 

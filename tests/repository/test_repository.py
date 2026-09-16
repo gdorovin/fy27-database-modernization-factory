@@ -14,6 +14,8 @@ import pytest
 from dbmodernize.cli import command_names
 from dbmodernize.validators.repository import (
     REQUIRED_PATHS,
+    TWO_OWNER_PATHS,
+    check_codeowners,
     check_dated_claims,
     check_downtime_language,
     check_no_empty_directories,
@@ -106,6 +108,60 @@ def test_downtime_check_permits_a_prohibition(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     assert check_downtime_language(tmp_path).ok
+
+
+class TestCodeowners:
+    """The two-owner rule is the control that stops one person rewriting the rules.
+
+    It is enforced here rather than trusted to review, because losing an owner from a line
+    in CODEOWNERS is exactly the kind of change that looks like tidying.
+    """
+
+    @staticmethod
+    def _write(root: Path, body: str) -> Path:
+        directory = root / ".github"
+        directory.mkdir(parents=True, exist_ok=True)
+        (directory / "CODEOWNERS").write_text(body, encoding="utf-8")
+        return root
+
+    def _full_body(self, owners: str = "@org/a @org/b") -> str:
+        lines = ["* @org/a"]
+        lines += [f"{path} {owners}" for path in TWO_OWNER_PATHS]
+        return "\n".join(lines) + "\n"
+
+    def test_the_real_file_gives_every_governance_path_two_owners(self, repo_root: Path) -> None:
+        findings = check_codeowners(repo_root)
+        assert findings.ok, "\n".join(f.render() for f in findings.errors)
+
+    def test_the_real_file_warns_while_teams_are_placeholders(self, repo_root: Path) -> None:
+        """The caveat belongs in the tool's output, not only in a document nobody re-reads."""
+        rules = {f.rule for f in check_codeowners(repo_root).warnings}
+        assert "REPO-CODEOWNERS-PLACEHOLDER" in rules
+
+    def test_a_governance_path_with_one_owner_is_an_error(self, tmp_path: Path) -> None:
+        root = self._write(tmp_path, self._full_body(owners="@org/a"))
+        rules = {f.rule for f in check_codeowners(root).errors}
+        assert "REPO-CODEOWNERS-SINGLE-OWNER" in rules
+
+    def test_the_same_owner_twice_is_not_two_owners(self, tmp_path: Path) -> None:
+        root = self._write(tmp_path, self._full_body(owners="@org/a @org/a"))
+        rules = {f.rule for f in check_codeowners(root).errors}
+        assert "REPO-CODEOWNERS-SINGLE-OWNER" in rules
+
+    def test_an_unowned_governance_path_is_an_error(self, tmp_path: Path) -> None:
+        root = self._write(tmp_path, "* @org/a @org/b\n")
+        rules = {f.rule for f in check_codeowners(root).errors}
+        assert "REPO-CODEOWNERS-UNOWNED" in rules
+
+    def test_real_teams_clear_the_placeholder_warning(self, tmp_path: Path) -> None:
+        root = self._write(tmp_path, self._full_body())
+        assert not check_codeowners(root).warnings
+
+    def test_a_commented_out_owner_does_not_count(self, tmp_path: Path) -> None:
+        body = self._full_body().replace("/contracts/ @org/a @org/b", "/contracts/ @org/a # @org/b")
+        root = self._write(tmp_path, body)
+        rules = {f.rule for f in check_codeowners(root).errors}
+        assert "REPO-CODEOWNERS-SINGLE-OWNER" in rules
 
 
 def test_downtime_check_permits_an_avoid_section(tmp_path: Path) -> None:

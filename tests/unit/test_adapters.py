@@ -71,6 +71,61 @@ class TestCsvAdapter:
             CsvInventoryAdapter().extract(path, "eng-test", date(2026, 3, 2))
 
 
+class TestCsvColumnCoverage:
+    """Unrecognised columns must be reported, because dropping one invents a finding.
+
+    If ``Recovery Point Objective (min)`` is discarded in silence, the assessment reports
+    no stated recovery objective. That reads as a fact about the customer's estate when it
+    is really a fact about our column map, and nobody downstream can tell the difference.
+    """
+
+    def test_spelling_variations_reach_the_same_attribute(self, tmp_path: Path) -> None:
+        path = tmp_path / "variants.csv"
+        path.write_text(
+            "Database Name,Engine,Data Size (GB),RPO (min),Measured\n"
+            "Example,sql-server,120,15,true\n",
+            encoding="utf-8",
+        )
+        records = CsvInventoryAdapter().extract(path, "eng-test", date(2026, 3, 2))
+
+        assert records[0].attributes["data_size_gb"] == 120.0
+        assert records[0].attributes["rpo_minutes"] == 15
+        assert "unmapped_columns" not in records[0].attributes
+
+    def test_an_unrecognised_column_is_reported_on_every_row_it_affects(
+        self, tmp_path: Path
+    ) -> None:
+        path = tmp_path / "extra.csv"
+        path.write_text(
+            "Database Name,Engine,Encryption At Rest\n"
+            "Example,sql-server,tde\n"
+            "Second,sql-server,none\n",
+            encoding="utf-8",
+        )
+        records = CsvInventoryAdapter().extract(path, "eng-test", date(2026, 3, 2))
+
+        assert len(records) == 2
+        for record in records:
+            assert record.attributes["unmapped_columns"] == ["Encryption At Rest"]
+
+    def test_the_reported_spelling_is_the_author_s_not_ours(self, tmp_path: Path) -> None:
+        """A normalized name would send the reader looking for a column that is not there."""
+        path = tmp_path / "extra.csv"
+        path.write_text("name,engine,Backup Vendor\nExample,sql-server,acme\n", encoding="utf-8")
+        records = CsvInventoryAdapter().extract(path, "eng-test", date(2026, 3, 2))
+        assert records[0].attributes["unmapped_columns"] == ["Backup Vendor"]
+
+    def test_deliberately_ignored_columns_are_not_reported(self, tmp_path: Path) -> None:
+        """Discarding a cost centre on purpose is not the same as failing to read it."""
+        path = tmp_path / "cmdb.csv"
+        path.write_text(
+            "name,engine,CMDB ID,Cost Centre,Last Updated\nExample,sql-server,X1,CC-9,2026-01-01\n",
+            encoding="utf-8",
+        )
+        records = CsvInventoryAdapter().extract(path, "eng-test", date(2026, 3, 2))
+        assert "unmapped_columns" not in records[0].attributes
+
+
 class TestAdapterSelection:
     def test_json_adapters_discriminate_on_document_shape(self, tmp_path: Path) -> None:
         """Three adapters read .json. Selection must depend on content, not extension."""

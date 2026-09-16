@@ -3,10 +3,16 @@
 The lowest-common-denominator input: a spreadsheet someone exported from a CMDB. It is
 the most common starting point and the least trustworthy, so every value it produces is
 marked ``user-provided`` unless the column explicitly says it was measured.
+
+A column this adapter cannot map is reported, never dropped in silence. Silently dropping
+``Recovery Point Objective (min)`` would make the assessment say "no recovery objective
+stated", which reads as a finding about the customer's estate when it is really a finding
+about this file.
 """
 
 from __future__ import annotations
 
+import re
 from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar
@@ -16,49 +22,94 @@ from dbmodernize.models.base import Confidence, EvidenceClass
 from dbmodernize.models.evidence import EvidenceRecord, EvidenceSource
 from dbmodernize.utils.io import read_csv_rows
 
-#: Accepted header spellings mapped to the normalized attribute key.
+#: Accepted header spellings mapped to the normalized attribute key. Headers are
+#: normalized before lookup, so ``Data Size (GB)``, ``data-size-gb`` and ``DATA_SIZE_GB``
+#: all reach one entry, and only genuinely unknown columns need listing here.
 COLUMN_MAP: dict[str, str] = {
     "workload": "name",
     "workload_name": "name",
     "database": "name",
     "database_name": "name",
+    "db_name": "name",
     "name": "name",
     "platform": "source_platform",
     "source_platform": "source_platform",
     "engine": "source_platform",
+    "dbms": "source_platform",
     "version": "source_version",
     "source_version": "source_version",
+    "engine_version": "source_version",
     "edition": "edition",
     "environment": "environment",
+    "env": "environment",
     "criticality": "criticality",
+    "business_criticality": "criticality",
     "host": "host_alias",
     "host_alias": "host_alias",
+    "hostname": "host_alias",
+    "server": "host_alias",
     "size_gb": "data_size_gb",
     "data_size_gb": "data_size_gb",
+    "database_size_gb": "data_size_gb",
     "largest_table_gb": "largest_table_gb",
     "cpu_cores": "cpu_cores",
+    "cores": "cpu_cores",
+    "vcpu": "cpu_cores",
     "memory_gb": "memory_gb",
+    "ram_gb": "memory_gb",
     "peak_iops": "peak_iops",
+    "iops": "peak_iops",
     "peak_sessions": "peak_concurrent_sessions",
+    "peak_concurrent_sessions": "peak_concurrent_sessions",
     "growth_percent": "annual_growth_percent",
+    "annual_growth_percent": "annual_growth_percent",
     "rpo_minutes": "rpo_minutes",
+    "rpo_min": "rpo_minutes",
+    "recovery_point_objective_min": "rpo_minutes",
     "rto_minutes": "rto_minutes",
+    "rto_min": "rto_minutes",
+    "recovery_time_objective_min": "rto_minutes",
     "max_downtime_minutes": "max_planned_downtime_minutes",
+    "max_planned_downtime_minutes": "max_planned_downtime_minutes",
     "availability_target": "availability_target",
+    "sla": "availability_target",
     "features": "instance_features",
     "instance_features": "instance_features",
     "extensions": "extensions",
     "dependencies": "dependency_names",
+    "dependency_names": "dependency_names",
     "deps_confirmed": "dependency_discovery_complete",
     "dependency_discovery_complete": "dependency_discovery_complete",
     "sla_stated_by": "service_level_stated_by",
+    "service_level_stated_by": "service_level_stated_by",
     "compliance": "compliance_scopes",
     "compliance_scopes": "compliance_scopes",
     "data_residency": "data_residency",
     "owner": "owner_role",
+    "owner_role": "owner_role",
     "notes": "notes",
     "measured": "measured",
 }
+
+#: Columns that are common in CMDB exports and carry no decision value. Discarding these
+#: on purpose is a different act from failing to recognise a column, and only the second
+#: is worth anyone's attention.
+IGNORED_COLUMNS: frozenset[str] = frozenset(
+    {
+        "row",
+        "id",
+        "row_id",
+        "cmdb_id",
+        "asset_tag",
+        "ticket",
+        "last_updated",
+        "updated_by",
+        "cost_centre",
+        "cost_center",
+    }
+)
+
+_NON_ALPHANUMERIC = re.compile(r"[^a-z0-9]+")
 
 _LIST_FIELDS = frozenset(
     {"instance_features", "extensions", "dependency_names", "compliance_scopes"}
@@ -88,6 +139,7 @@ class CsvInventoryAdapter(EvidenceAdapter):
     def extract(self, path: Path, engagement_id: str, collected_on: date) -> list[EvidenceRecord]:
         rows = read_csv_rows(path)
         records: list[EvidenceRecord] = []
+        unmapped = self._unmapped_headers(rows)
 
         for index, row in enumerate(rows, start=2):  # row 1 is the header
             attributes = self._map_row(row)
@@ -97,6 +149,8 @@ class CsvInventoryAdapter(EvidenceAdapter):
 
             measured = bool(attributes.pop("measured", False))
             notes = attributes.pop("notes", None)
+            if unmapped:
+                attributes["unmapped_columns"] = unmapped
             records.append(
                 self._record(
                     engagement_id=engagement_id,
@@ -115,14 +169,32 @@ class CsvInventoryAdapter(EvidenceAdapter):
             )
         return self._guard_count(records, path)
 
+    def _unmapped_headers(self, rows: list[dict[str, str]]) -> list[str]:
+        """Headers this adapter did not recognise, in the spelling the author used."""
+        if not rows:
+            return []
+        unmapped = {
+            header
+            for header in rows[0]
+            if (normalized := self._normalize_header(header))
+            and normalized not in COLUMN_MAP
+            and normalized not in IGNORED_COLUMNS
+        }
+        return sorted(unmapped)
+
     def _map_row(self, row: dict[str, str]) -> dict[str, Any]:
         attributes: dict[str, Any] = {}
         for raw_key, raw_value in row.items():
-            key = COLUMN_MAP.get(raw_key.strip().lower())
+            key = COLUMN_MAP.get(self._normalize_header(raw_key))
             if key is None or raw_value == "":
                 continue
             attributes[key] = self._coerce(key, raw_value)
         return attributes
+
+    @staticmethod
+    def _normalize_header(header: str) -> str:
+        """Fold spelling variations so only genuinely unknown columns look unknown."""
+        return _NON_ALPHANUMERIC.sub("_", header.strip().lower()).strip("_")
 
     @staticmethod
     def _coerce(key: str, value: str) -> Any:
@@ -143,4 +215,4 @@ class CsvInventoryAdapter(EvidenceAdapter):
         return value
 
 
-__all__ = ["COLUMN_MAP", "CsvInventoryAdapter"]
+__all__ = ["COLUMN_MAP", "IGNORED_COLUMNS", "CsvInventoryAdapter"]

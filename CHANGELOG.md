@@ -6,6 +6,47 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Unrecognised input columns are reported instead of dropped.** The CSV adapter records
+  headers it could not map and raises a `r-unmapped-input` assessment finding. Discarding
+  `Recovery Point Objective (min)` in silence made the assessment state that no recovery
+  objective was given — a claim about the customer's estate that was really a fact about
+  our column map, and indistinguishable from the real thing downstream. Headers are also
+  normalized before lookup, so `Data Size (GB)`, `data-size-gb`, and `DATA_SIZE_GB` now
+  reach the same attribute.
+- **Cross-playbook tests** (`tests/snapshots/test_cross_playbook.py`). One estate, four
+  playbooks. "Configuration-driven" was asserted in several documents and proved nowhere;
+  validating the example playbooks showed only that they parse.
+- **Executable infrastructure tests** (`tests/infra/`). Three security properties that
+  `infra/tests/README.md` listed as enforced by "Review" — no credential parameter, no
+  defaulted region, public access decided and decided closed — are now assertions, along
+  with TLS floor, GUID literals, `main.bicep` composing rather than declaring, and module
+  reachability.
+- **CODEOWNERS validation.** Placeholder teams raise a warning on every `validate-repo`
+  run rather than sitting in a document nobody re-reads, and the two-owner rule on
+  governance paths is now an error rather than a convention.
+- **`PLAYBOOK-EXCEPTION-HORIZON`.** Warns on an exception granted for more than 90 days,
+  measured grant-to-expiry rather than against today, so the judgement does not change
+  with the calendar.
+- **Scale tests** (`tests/scale/`, marked `slow`). `MAX_RECORDS_PER_FILE` and
+  `MAX_IMPORT_BYTES` were stated in comments and exercised nowhere. An estate just under
+  the limit works; one above it is refused with a message that says what to do next.
+- **`.gitattributes`.** LF is enforced for every text file. Generated documents are
+  compared byte for byte, so a CRLF checkout would have passed on Linux and failed on
+  Windows — a failure that depends on who ran it.
+
+### Changed
+
+- **The default playbook grants no exceptions.** An exception names a system, an owner,
+  and an end date, none of which exist until an engagement does. Shipping one forced a
+  choice between modelling a five-year horizon and having the baseline expire on a fixed
+  date. The format is now documented in a fenced block, which is not parsed and so cannot
+  be in force by accident.
+- The pattern-bearing file allowlist is defined once in `validators/repository.py` and
+  imported by `scripts/check_no_secrets.py`. The two lists had already drifted: the script
+  exempted two test files that do not exist.
+
 ## [0.1.0] - 2026-09-15
 
 Initial reference implementation of the guided modernization factory.

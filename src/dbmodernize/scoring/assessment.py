@@ -167,6 +167,28 @@ def rule_unresolved_conflicts(ctx: AssessmentContext) -> list[AssessmentFinding]
     ]
 
 
+def rule_unmapped_input(ctx: AssessmentContext) -> list[AssessmentFinding]:
+    columns = ctx.attributes.get("unmapped_columns")
+    if not isinstance(columns, list) or not columns:
+        return []
+    named = ", ".join(str(column) for column in columns)
+    return [
+        ctx.finding(
+            "r-unmapped-input",
+            FindingCategory.DATA_QUALITY,
+            Severity.MEDIUM,
+            f"The source file carried columns this repository did not recognise: {named}. "
+            "Their contents were not read, so any gap this assessment reports may be a gap "
+            "in the column map rather than in the estate.",
+            evidence_class=EvidenceClass.OBSERVED,
+            remediation=(
+                "Confirm the columns hold nothing decision-relevant, or add the spelling to "
+                "COLUMN_MAP in the CSV adapter and re-run."
+            ),
+        )
+    ]
+
+
 def rule_prompt_injection(ctx: AssessmentContext) -> list[AssessmentFinding]:
     flagged = [
         record for record in ctx.bundle.by_subject(ctx.workload.id) if record.injection_findings
@@ -392,6 +414,7 @@ RULES: tuple[Rule, ...] = (
     rule_support_status,
     rule_dependency_discovery,
     rule_unresolved_conflicts,
+    rule_unmapped_input,
     rule_prompt_injection,
     rule_estimated_sizing,
     rule_service_level_assumed,

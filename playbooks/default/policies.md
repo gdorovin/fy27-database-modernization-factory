@@ -51,14 +51,31 @@ version of this file produced a given decision.
 
 ## Exceptions
 
-An exception is a time-boxed, compensated deviation. Every field below is mandatory, and
-an exception without an expiry date is rejected outright. Expired exceptions fail
-validation rather than lapsing quietly into permanence.
+This baseline grants none, and that is the correct state for a baseline. An exception is a
+named deviation for a named system with a named owner and a fixed end date. None of those
+things exist until an engagement does, so an exception shipped in a reusable playbook is
+either meaningless or, worse, silently inherited by every customer who copies the file.
 
-Keep real exceptions short — 90 days is a reasonable ceiling. The example below uses a
-long horizon only so that this baseline playbook does not fail validation on a fixed date;
-do not copy that horizon into a customer playbook.
+An exception is a time-boxed, compensated deviation. Every field below is mandatory, and an
+exception without an expiry date is rejected outright. Expired exceptions fail validation
+rather than lapsing quietly into permanence, and an exception running more than 90 days from
+its grant date raises a warning — an exception long enough to outlive the people who agreed
+to it is a policy change wearing an exception's clothes.
+
+To grant one, add a table with these columns. The row below shows the shape; it is prose in
+a fenced block, not a parsed row, so nothing here is in force.
 
 | ID | Policy ID | Scope | Justification | Owner role | Approver role | Approver principal | Compensating controls | Granted on | Expires on | Review on |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| EX-001 | IAM-001 | Legacy reporting tool that cannot use directory authentication, non-production only. | The vendor has no directory-auth support in the supported version, and replacing the tool is out of scope for this wave. | database-owner | security-owner | security-owner-a | Credential held in the managed secret store; rotated every 30 days; access restricted to the reporting subnet; use alerted | 2026-01-15 | 2030-12-31 | 2026-07-15 |
+
+```text
+| EX-001 | IAM-001 | Legacy reporting tool, non-production only.
+| The vendor has no directory-auth support in the supported version, and replacing the
+  tool is out of scope for this wave.
+| database-owner | security-owner | security-owner-a
+| Credential held in the managed secret store; rotated every 30 days; access restricted
+  to the reporting subnet; use alerted
+| 2026-01-15 | 2026-04-15 | 2026-03-15 |
+```
+
+The approver role must differ from the owner role. Requesting a deviation and approving it
+cannot be the same act, and validation rejects a playbook where it is.

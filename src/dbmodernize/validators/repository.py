@@ -107,6 +107,21 @@ PATTERN_BEARING_FILES = frozenset(
 )
 
 
+#: Marker left in CODEOWNERS until a real GitHub organization is wired up.
+OWNER_PLACEHOLDER = "REPLACE-ME-ORG"
+
+#: Paths where a change rewrites the rules the rest of the repository is judged against.
+#: Two distinct owners means changing a rule and approving that change cannot be one act.
+TWO_OWNER_PATHS: tuple[str, ...] = (
+    "/GOVERNANCE.md",
+    "/playbooks/",
+    "/contracts/",
+    "/docs/governance/",
+    "/.github/agents/",
+    "/.github/copilot-instructions.md",
+)
+
+
 def _iter_text_files(root: Path) -> list[Path]:
     files: list[Path] = []
     for path in root.rglob("*"):
@@ -128,6 +143,7 @@ def validate_repository(root: Path) -> FindingSet:
     findings.extend(check_downtime_language(root))
     findings.extend(check_dated_claims(root))
     findings.extend(check_readme_commands(root))
+    findings.extend(check_codeowners(root))
     return findings
 
 
@@ -302,6 +318,65 @@ def check_readme_commands(root: Path) -> FindingSet:
     return findings
 
 
+def check_codeowners(root: Path) -> FindingSet:
+    """Placeholder owners, and governance paths that lost their second owner.
+
+    The placeholder finding is a warning rather than an error: the repository ships with
+    placeholders, so failing on them would mean `validate-repo` never passed out of the
+    box and everyone learned to ignore it. A warning printed on every run is the point —
+    it moves the caveat out of a document nobody re-reads and into the tool's output.
+
+    The two-owner finding is an error. Losing it is silent, and it is the control that
+    stops one person changing the rules and approving the change.
+    """
+    findings = FindingSet()
+    path = root / ".github" / "CODEOWNERS"
+    if not path.is_file():
+        return findings
+
+    rules: list[tuple[str, list[str]]] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        stripped = line.split("#", 1)[0].strip()
+        if not stripped:
+            continue
+        pattern, *owners = stripped.split()
+        if owners:
+            rules.append((pattern, owners))
+
+    if any(OWNER_PLACEHOLDER in owner for _, owners in rules for owner in owners):
+        findings.add(
+            rule="REPO-CODEOWNERS-PLACEHOLDER",
+            message=(
+                f"CODEOWNERS still names {OWNER_PLACEHOLDER} teams. Until they are real, "
+                "review will be requested from teams that do not exist, and every approval "
+                "control in this repository is advisory."
+            ),
+            path=".github/CODEOWNERS",
+            severity="warning",
+            hint="Substitute real teams, then enable branch protection with the CI gate required.",
+        )
+
+    owned = dict(rules)
+    for pattern in TWO_OWNER_PATHS:
+        declared = owned.get(pattern)
+        if declared is None:
+            findings.add(
+                rule="REPO-CODEOWNERS-UNOWNED",
+                message=f"{pattern} is a governance path with no CODEOWNERS rule of its own.",
+                path=".github/CODEOWNERS",
+            )
+        elif len(set(declared)) < 2:
+            findings.add(
+                rule="REPO-CODEOWNERS-SINGLE-OWNER",
+                message=(
+                    f"{pattern} has one owner. Governance paths require two distinct owners "
+                    "so that changing a rule and approving that change cannot be one act."
+                ),
+                path=".github/CODEOWNERS",
+            )
+    return findings
+
+
 def _code_spans(markdown: str) -> list[str]:
     """Return fenced code blocks and inline code spans."""
     fenced = re.findall(r"```[a-zA-Z]*\n(.*?)```", markdown, re.DOTALL)
@@ -310,8 +385,11 @@ def _code_spans(markdown: str) -> list[str]:
 
 
 __all__ = [
+    "OWNER_PLACEHOLDER",
     "PATTERN_BEARING_FILES",
     "REQUIRED_PATHS",
+    "TWO_OWNER_PATHS",
+    "check_codeowners",
     "check_dated_claims",
     "check_downtime_language",
     "check_no_empty_directories",
