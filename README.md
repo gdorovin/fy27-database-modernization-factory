@@ -14,28 +14,133 @@ humans review, approve, and execute. That boundary is enforced in code, not just
 ```bash
 git clone <this-repo>
 cd fy27-database-modernization-factory
-make install-dev
-make gate                                   # lint, types, tests, every validator
-dbmodernize validate-scenario scenarios/01-sql2016-to-managed-instance
+python -m pip install -e ".[dev]"
+dbmodernize validate-scenario scenarios
 ```
 
-The last command runs a complete engagement offline — no Azure subscription, no database,
-no language model, no network — and compares every generated artifact with the committed
-expectation.
+That last command runs seven complete engagements offline — no Azure subscription, no
+database, no language model, no network — and compares every generated artifact with the
+committed expectation.
 
-To see what it produced:
+On Linux or macOS, `make install-dev` and `make gate` do the same and more. **`make` is not
+installed on Windows by default**, so the commands in this README are written to work
+without it. `make gate` is the union of these:
+
+```bash
+python -m ruff format --check src tests scripts
+python -m ruff check src tests scripts
+python -m mypy
+python -m pytest tests
+dbmodernize validate-repo
+dbmodernize validate-playbook playbooks/default
+dbmodernize validate-skill .github/skills
+dbmodernize validate-agent .github/agents
+dbmodernize validate-scenario scenarios
+```
+
+### See what it produces
 
 ```bash
 dbmodernize render-plan \
   --engagement scenarios/01-sql2016-to-managed-instance/input/engagement.yaml \
   --input scenarios/01-sql2016-to-managed-instance/input \
-  --out /tmp/demo
+  --out demo-output
 ```
+
+Twelve documents, from one CSV and one JSON file:
+
+```text
+assessment-summary.md     target-decision.md        migration-waves.md
+executive-brief.md        migration-plan-1.md       migration-plan-2.md
+cutover-plan-1.md         rollback-plan-1.md        validation-plan-1.md
+cutover-plan-2.md         rollback-plan-2.md        validation-plan-2.md
+```
+
+Open `target-decision.md` first. The section worth reading is the one at the top:
+
+```markdown
+## Workloads with no recommendation
+
+These workloads have open blocking findings. No target is proposed for them, because a
+target chosen from incomplete evidence is a guess wearing a decision's clothes.
+
+- `wl-store-operations` — Store operations
+```
+
+Four workloads got a recommendation. One did not, and the document says why. That refusal
+is the product.
+
+---
+
+## Use it on your own estate
+
+Four commands. Nothing here touches Azure or any database.
+
+**1. Scaffold an engagement.**
+
+```bash
+dbmodernize init --engagement-id acme-fy27 --out engagements
+```
+
+You get `engagements/acme-fy27/` containing `input/engagement.yaml`,
+`input/inventory.csv`, and a README. The command prints the next step.
+
+**2. Fill in `input/engagement.yaml`** — the customer outcome, sponsor, timeline,
+constraints. Plain text, no schema knowledge needed; validation tells you what is missing.
+
+**3. Put your estate in `input/`.** Either fill in `inventory.csv` (one row per database)
+or drop in exports from Azure Migrate, Azure Arc, Data Migration Assistant, or SSMA as
+`.json`. Formats are auto-detected, and you can mix them — disagreements between sources
+are reported rather than silently resolved.
+
+> **Leave a cell blank rather than guessing.** An empty cell becomes an explicit unknown
+> that the assessment reports. A guess becomes a fact nobody can trace back. If a column
+> you need has no obvious home, add it anyway: an unrecognised column is reported as a
+> finding, never dropped in silence.
+
+**4. Generate everything.**
+
+```bash
+dbmodernize render-plan \
+  --engagement engagements/acme-fy27/input/engagement.yaml \
+  --input engagements/acme-fy27/input \
+  --out engagements/acme-fy27/out
+```
+
+Read `assessment-summary.md` before anything else. If it reports blocking findings, that is
+the real output — the missing evidence is the finding, and the workloads it names will
+deliberately have no recommended target until you resolve it.
+
+Then, when you want work items:
+
+```bash
+dbmodernize generate-issues \
+  --engagement engagements/acme-fy27/input/engagement.yaml \
+  --input engagements/acme-fy27/input \
+  --out engagements/acme-fy27/issues
+```
+
+Issues are **written to disk**, never created on GitHub. That is a refusal, not a missing
+feature.
+
+### Changing the rules
+
+The default governance baseline is `playbooks/default/`. To use your customer's rules,
+copy it and edit the tables:
+
+```bash
+cp -r playbooks/default playbooks/acme
+dbmodernize validate-playbook playbooks/acme
+```
+
+Then pass `--playbook playbooks/acme`. Prohibiting a target there causes it to be compared
+and **rejected with your reason cited**, rather than quietly disappearing from the
+comparison. Three worked examples live in `playbooks/examples/`.
 
 ### Dev Container
 
 Open the folder in VS Code and choose **Reopen in Container**. `scripts/bootstrap.sh`
-installs everything. No cloud credentials are needed or wanted.
+installs everything, `make` included. No cloud credentials are needed or wanted.
 
 ---
 
