@@ -27,6 +27,7 @@ from dbmodernize.models.planning import MigrationPlan, WavePlan
 from dbmodernize.models.risk import RiskRegister
 from dbmodernize.models.validation import ValidationReport
 from dbmodernize.models.workload import WorkloadInventory
+from dbmodernize.policies.loader import playbook_reference
 from dbmodernize.policies.models import Playbook
 from dbmodernize.renderers import documents
 from dbmodernize.scoring.assessment import assess
@@ -107,11 +108,7 @@ def run_pipeline(
         messages = "; ".join(f.message for f in findings.errors)
         raise UsageError(f"Playbook at {playbook_dir} is not usable: {messages}")
 
-    playbook_ref = PlaybookRef(
-        path=playbook.path,
-        version=playbook.version,
-        policy_ids=[policy.id for policy in playbook.policies],
-    )
+    playbook_ref = playbook_reference(playbook, repo_root)
 
     bundle = normalize_directory(
         evidence_dir,

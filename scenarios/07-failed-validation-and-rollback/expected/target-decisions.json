@@ -100,7 +100,7 @@
       ],
       "playbook": {
         "commit": null,
-        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "path": "playbooks/default",
         "policy_ids": [
           "AVL-001",
           "AVL-002",
@@ -258,7 +258,7 @@
       ],
       "playbook": {
         "commit": null,
-        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "path": "playbooks/default",
         "policy_ids": [
           "AVL-001",
           "AVL-002",
@@ -416,7 +416,7 @@
       ],
       "playbook": {
         "commit": null,
-        "path": "C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default",
+        "path": "playbooks/default",
         "policy_ids": [
           "AVL-001",
           "AVL-002",

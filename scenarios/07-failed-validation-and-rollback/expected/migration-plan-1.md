@@ -8,7 +8,7 @@
 | Plan | `plan-wave-1-pilot` |
 | Wave | `wave-1-pilot` (sequence 1) |
 | As at | 2026-09-07 |
-| Playbook | `C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default` v1.0.0 |
+| Playbook | `playbooks/default` v1.0.0 |
 | Target decisions | td-wl-billing-sandbox |
 | Tasks that change an environment | 6 |
 

@@ -28,8 +28,8 @@ from dbmodernize.errors import (
 )
 from dbmodernize.evidence.normalize import normalize_directory
 from dbmodernize.issue_generation.generator import generate_issues
-from dbmodernize.models.base import PlaybookRef
 from dbmodernize.pipeline import load_engagement, run_pipeline
+from dbmodernize.policies.loader import playbook_reference
 from dbmodernize.scoring.assessment import assess
 from dbmodernize.scoring.targets import recommend_all
 from dbmodernize.scoring.waves import plan_waves
@@ -250,9 +250,7 @@ def assess_command(
         _report(findings, f"playbook {playbook}", False)
 
     assert book is not None
-    reference = PlaybookRef(
-        path=book.path, version=book.version, policy_ids=[p.id for p in book.policies]
-    )
+    reference = playbook_reference(book)
     bundle = normalize_directory(
         input_dir, engagement_id=record.engagement_id, collected_on=record.as_of
     )
@@ -290,9 +288,7 @@ def recommend_targets(
         _report(findings, f"playbook {playbook}", False)
     assert book is not None
 
-    reference = PlaybookRef(
-        path=book.path, version=book.version, policy_ids=[p.id for p in book.policies]
-    )
+    reference = playbook_reference(book)
     bundle = normalize_directory(
         input_dir, engagement_id=record.engagement_id, collected_on=record.as_of
     )
@@ -329,9 +325,7 @@ def plan_waves_command(
         _report(findings, f"playbook {playbook}", False)
     assert book is not None
 
-    reference = PlaybookRef(
-        path=book.path, version=book.version, policy_ids=[p.id for p in book.policies]
-    )
+    reference = playbook_reference(book)
     bundle = normalize_directory(
         input_dir, engagement_id=record.engagement_id, collected_on=record.as_of
     )

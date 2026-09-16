@@ -8,7 +8,7 @@
 | Plan | `plan-wave-2-business-critical` |
 | Wave | `wave-2-business-critical` (sequence 2) |
 | As at | 2026-04-13 |
-| Playbook | `C:/Users/gdorovinis/OneDrive - Microsoft/Projects/fy27-database-modernization-factory/playbooks/default` v1.0.0 |
+| Playbook | `playbooks/default` v1.0.0 |
 | Target decisions | td-wl-product-core, td-wl-product-events, td-wl-tenant-metadata |
 | Tasks that change an environment | 6 |
 

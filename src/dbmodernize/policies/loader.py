@@ -16,6 +16,7 @@ from pydantic import ValidationError
 
 from dbmodernize.errors import FindingSet, InputNotFoundError
 from dbmodernize.models.approval import PolicyException
+from dbmodernize.models.base import PlaybookRef
 from dbmodernize.policies.models import (
     Directive,
     Playbook,
@@ -246,6 +247,29 @@ def load_playbook(directory: Path) -> tuple[Playbook | None, FindingSet]:
         extended=extended,
     )
     return playbook, findings
+
+
+def playbook_reference(playbook: Playbook, repo_root: Path | None = None) -> PlaybookRef:
+    """Pin the governance contract in a form that survives leaving this machine.
+
+    ``Playbook.path`` is absolute because the loader reads files with it. The reference
+    embedded in artifacts must not be: an absolute path makes every generated document
+    depend on one person's home directory, so the same evidence produces different output
+    on a colleague's laptop and in CI.
+    """
+    path = Path(playbook.path)
+    root = (repo_root or Path.cwd()).resolve()
+    try:
+        relative = path.resolve().relative_to(root)
+    except ValueError:
+        # A playbook outside the repository has no portable path. Its name is the most
+        # that can honestly be recorded, and it is still enough to identify.
+        relative = Path(playbook.name)
+    return PlaybookRef(
+        path=relative.as_posix(),
+        version=playbook.version,
+        policy_ids=[policy.id for policy in playbook.policies],
+    )
 
 
 def today() -> date:
