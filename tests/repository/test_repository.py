@@ -164,6 +164,55 @@ class TestCodeowners:
         assert "REPO-CODEOWNERS-SINGLE-OWNER" in rules
 
 
+_MERMAID_BLOCK = re.compile(r"```mermaid\n(.*?)```", re.DOTALL)
+_MULTI_WORD_SUBGRAPH = re.compile(r"^subgraph\s+[A-Za-z0-9_]+\s+\S")
+_LABEL = re.compile(r"[\[\{\(]+([^\]\}\)\n]*)[\]\}\)]+")
+
+#: Characters that end a Mermaid label early unless the whole label is quoted. A diagram
+#: containing one does not render partially — the entire block silently disappears, which
+#: is why this is a test rather than something a reviewer is expected to spot.
+_MUST_BE_QUOTED = ":()"
+
+
+def _mermaid_lines(root: Path) -> list[tuple[str, int, str]]:
+    found: list[tuple[str, int, str]] = []
+    for path in sorted(root.rglob("*.md")):
+        if any(part.startswith(".") and part != ".github" for part in path.parts):
+            continue
+        text = path.read_text(encoding="utf-8")
+        for block in _MERMAID_BLOCK.finditer(text):
+            first = text[: block.start()].count("\n") + 2
+            for offset, line in enumerate(block.group(1).splitlines()):
+                found.append((path.relative_to(root).as_posix(), first + offset, line.strip()))
+    return found
+
+
+def test_the_repository_actually_contains_diagrams(repo_root: Path) -> None:
+    assert _mermaid_lines(repo_root), "no Mermaid blocks found; the scan below proves nothing"
+
+
+def test_no_diagram_uses_an_unquoted_multi_word_subgraph(repo_root: Path) -> None:
+    """`subgraph Deterministic core` parses the first word as an id and drops the diagram."""
+    offenders = [
+        f"{where}:{line}: {text}"
+        for where, line, text in _mermaid_lines(repo_root)
+        if _MULTI_WORD_SUBGRAPH.match(text)
+    ]
+    assert not offenders, 'use subgraph ID["Title"]:\n' + "\n".join(offenders)
+
+
+def test_no_diagram_label_needs_quoting_and_lacks_it(repo_root: Path) -> None:
+    offenders = []
+    for where, line, text in _mermaid_lines(repo_root):
+        for label in _LABEL.findall(text):
+            if not label.strip() or label.startswith('"'):
+                continue
+            if any(character in label for character in _MUST_BE_QUOTED):
+                offenders.append(f"{where}:{line}: {text}")
+                break
+    assert not offenders, "wrap the label in double quotes:\n" + "\n".join(offenders)
+
+
 def test_downtime_check_permits_an_avoid_section(tmp_path: Path) -> None:
     """A rule has to be able to name the phrase it forbids."""
     (tmp_path / "skill.md").write_text(

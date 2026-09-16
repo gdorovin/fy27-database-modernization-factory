@@ -204,24 +204,24 @@ its own.
 
 ```mermaid
 flowchart TB
-  subgraph Governance
-    PB[playbooks/<br/>charter, targets, policies]
-    CT[contracts/<br/>JSON Schema]
+  subgraph GOV["Governance"]
+    PB["playbooks/<br/>charter, targets, policies"]
+    CT["contracts/<br/>JSON Schema"]
   end
-  subgraph Reasoning
-    SK[.github/skills/<br/>17 Agent Skills]
-    AG[.github/agents/<br/>8 agents]
+  subgraph REA["Reasoning"]
+    SK[".github/skills/<br/>17 Agent Skills"]
+    AG[".github/agents/<br/>8 agents"]
   end
-  subgraph Deterministic core
-    CLI[dbmodernize CLI]
-    EV[evidence + adapters]
-    SC[scoring: assess, targets, waves]
-    RN[renderers + templates]
-    IG[issue generation]
+  subgraph CORE["Deterministic core"]
+    CLI["dbmodernize CLI"]
+    EV["evidence + adapters"]
+    SC["scoring — assess, targets, waves"]
+    RN["renderers + templates"]
+    IG["issue generation"]
   end
-  subgraph Proof
-    SCN[scenarios/<br/>7 executable fixtures]
-    TS[tests/]
+  subgraph PRF["Proof"]
+    SCN["scenarios/<br/>7 executable fixtures"]
+    TS["tests/"]
   end
 
   PB --> SC

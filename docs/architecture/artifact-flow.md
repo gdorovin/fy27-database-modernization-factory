@@ -55,11 +55,11 @@ and the merged view **omits** the attribute entirely.
 
 ```mermaid
 flowchart LR
-  A[CSV: 1250 GB] --> C{Compare}
-  B[Arc: 980 GB] --> C
-  C -->|28% apart| CF[Conflict recorded]
-  CF --> BF[Blocking finding]
-  BF --> HR{{Database owner resolves}}
+  A["CSV — 1250 GB"] --> C{Compare}
+  B["Arc — 980 GB"] --> C
+  C -->|28% apart| CF["Conflict recorded"]
+  CF --> BF["Blocking finding"]
+  BF --> HR{{"Database owner resolves"}}
 ```
 
 Numeric differences within 5% are measurement noise and are ignored. Beyond that, the
