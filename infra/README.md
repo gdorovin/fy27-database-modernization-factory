@@ -53,10 +53,10 @@ deployment takes a deliberate act rather than an oversight:
 | `SEC-002` encryption at rest | Enabled and not parameterised off |
 | `SEC-003` encryption in transit | Minimum TLS version set explicitly |
 | `IAM-001` managed or directory identity | No administrator password parameter exists |
-| `NET-001` private connectivity | Private endpoint module composed by default |
-| `NET-002` name resolution | Private DNS zone group created with the endpoint |
+| `NET-001` private connectivity | SQL Database: private endpoint module composed by default. Managed Instance and PostgreSQL Flexible Server: injected into a delegated subnet, which is private by construction |
+| `NET-002` name resolution | SQL Database: private DNS zone group created with the endpoint. PostgreSQL: the server is linked to a `*.private.postgres.database.azure.com` zone you supply; a `privatelink.*` zone is the wrong kind and the deployment will say so |
 | `OBS-002` diagnostics | Diagnostic settings module requires a workspace |
-| `AVL-003` backup | Retention is a parameter with a conservative default |
+| `AVL-003` backup | Retention is a parameter with a conservative default. Backup storage redundancy (`Geo` by default) and PostgreSQL geo-redundant backup (`Enabled` by default) are separate, explicit parameters, never derived from zone redundancy: deriving them silently produced locally redundant backups with no geo-restore |
 
 Where a parameter could turn a control off, it carries a comment explaining when that is
 legitimate.

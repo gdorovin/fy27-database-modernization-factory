@@ -30,21 +30,25 @@ param backupRetentionDays int
 
 param zoneRedundant bool
 
-@description('Service tier. Sized from measured evidence.')
-@allowed(['GP_Gen8IM', 'GP_Gen8IH', 'BC_Gen8IM', 'BC_Gen8IH'])
-param skuName string = 'GP_Gen8IM'
+@description('Where automated backups are stored. Independent of zone redundancy on purpose: tying the two together silently set backups to locally redundant storage and removed geo-restore. Zone redundancy requires Zone or GeoZone.')
+@allowed(['Local', 'Zone', 'Geo', 'GeoZone'])
+param backupStorageRedundancy string = 'Geo'
+
+@description('Service tier and hardware series, using the resource provider names: GP_Gen5 / BC_Gen5 are standard-series, GP_G8IM / BC_G8IM premium-series, GP_G8IH / BC_G8IH premium-series memory optimized. Sized from measured evidence.')
+@allowed(['GP_Gen5', 'BC_Gen5', 'GP_G8IM', 'GP_G8IH', 'BC_G8IM', 'BC_G8IH'])
+param skuName string = 'GP_Gen5'
 
 @minValue(4)
-@maxValue(80)
+@maxValue(128)
 param vCores int = 4
 
 @minValue(32)
-@maxValue(16384)
+@maxValue(32768)
 param storageSizeInGB int = 256
 
 var instanceName = '${namePrefix}-sqlmi'
 
-resource managedInstance 'Microsoft.Sql/managedInstances@2023-08-01-preview' = {
+resource managedInstance 'Microsoft.Sql/managedInstances@2023-08-01' = {
   name: instanceName
   location: location
   tags: tags
@@ -74,12 +78,13 @@ resource managedInstance 'Microsoft.Sql/managedInstances@2023-08-01-preview' = {
       azureADOnlyAuthentication: true
     }
     zoneRedundant: zoneRedundant
-    requestedBackupStorageRedundancy: zoneRedundant ? 'Zone' : 'Local'
-    backupStorageRedundancy: zoneRedundant ? 'Zone' : 'Local'
+    // AVL-003: backup storage redundancy is an explicit decision, not a side effect of the
+    // availability choice. `currentBackupStorageRedundancy` is read-only and is not set.
+    requestedBackupStorageRedundancy: backupStorageRedundancy
   }
 }
 
-resource retention 'Microsoft.Sql/managedInstances/backupShortTermRetentionPolicies@2023-08-01-preview' = {
+resource retention 'Microsoft.Sql/managedInstances/backupShortTermRetentionPolicies@2023-08-01' = {
   parent: managedInstance
   name: 'default'
   properties: {

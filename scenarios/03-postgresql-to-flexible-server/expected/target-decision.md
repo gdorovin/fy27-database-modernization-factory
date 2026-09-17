@@ -37,12 +37,12 @@ Azure-database-for-postgresql-flexible-server scored highest (68) for Partner in
 | --- | --- | --- | --- |
 | azure-database-for-postgresql-flexible-server | recommended | 68.0 | Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_stat_statements, pgcrypto (-12) |
 | retain-on-premises | rejected | 30.0 | Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20) |
-| sql-server-on-azure-vm | rejected | 42.0 | Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10) |
+| self-managed-on-azure-vm | rejected | 42.0 | Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10) |
 
 #### Why the alternatives were not chosen
 
 - **retain-on-premises** — Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20).
-- **sql-server-on-azure-vm** — Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10).
+- **self-managed-on-azure-vm** — Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10).
 
 #### Compatibility
 
@@ -112,12 +112,12 @@ Azure-database-for-postgresql-flexible-server scored highest (68) for Routing en
 | --- | --- | --- | --- |
 | azure-database-for-postgresql-flexible-server | recommended | 68.0 | Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_cron, pg_stat_statements, postgis (-12) |
 | retain-on-premises | rejected | 30.0 | Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20) |
-| sql-server-on-azure-vm | rejected | 37.0 | Scored 37 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5) |
+| self-managed-on-azure-vm | rejected | 37.0 | Scored 37 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5) |
 
 #### Why the alternatives were not chosen
 
 - **retain-on-premises** — Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20).
-- **sql-server-on-azure-vm** — Scored 37 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5).
+- **self-managed-on-azure-vm** — Scored 37 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5).
 
 #### Compatibility
 
@@ -186,12 +186,12 @@ Azure-database-for-postgresql-flexible-server scored highest (68) for Tracking h
 | --- | --- | --- | --- |
 | azure-database-for-postgresql-flexible-server | recommended | 68.0 | Managed flexible server is the default for this engine family (+20); Built-in high availability, backup, and patching reduce operational load (+10); Extensions in use must be verified per extension and per version before this target can be confirmed: pg_partman, pg_stat_statements (-12) |
 | retain-on-premises | rejected | 30.0 | Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20) |
-| sql-server-on-azure-vm | rejected | 42.0 | Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10) |
+| self-managed-on-azure-vm | rejected | 42.0 | Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10) |
 
 #### Why the alternatives were not chosen
 
 - **retain-on-premises** — Scored 30 against 68 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20).
-- **sql-server-on-azure-vm** — Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10).
+- **self-managed-on-azure-vm** — Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10).
 
 #### Compatibility
 
@@ -242,4 +242,4 @@ case needs them from the customer or the account team.
 - Assumptions: none recorded.
 
 
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

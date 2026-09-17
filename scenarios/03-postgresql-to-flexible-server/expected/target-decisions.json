@@ -41,7 +41,7 @@
           ],
           "rationale": "Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
           "score": 42.0,
-          "target": "sql-server-on-azure-vm",
+          "target": "self-managed-on-azure-vm",
           "verdict": "rejected"
         }
       ],
@@ -170,7 +170,7 @@
           ],
           "rationale": "Scored 37 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5)",
           "score": 37.0,
-          "target": "sql-server-on-azure-vm",
+          "target": "self-managed-on-azure-vm",
           "verdict": "rejected"
         }
       ],
@@ -298,7 +298,7 @@
           ],
           "rationale": "Scored 42 against 68 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
           "score": 42.0,
-          "target": "sql-server-on-azure-vm",
+          "target": "self-managed-on-azure-vm",
           "verdict": "rejected"
         }
       ],

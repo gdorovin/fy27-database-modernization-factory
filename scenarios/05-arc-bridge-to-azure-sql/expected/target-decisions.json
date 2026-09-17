@@ -159,7 +159,9 @@
       "rationale": "No destination can be recommended for Acquired unit b sales while blocking evidence is open, so every migration target is blocked. azure-arc-enabled-sql-server is proposed as an interim posture only: it governs the workload where it stands and does not move it. It must not be recorded as completed modernization. Evidence is incomplete, and Arc gives continuous inventory, assessment, and governance while that is fixed (+25); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
       "recommended_target": "azure-arc-enabled-sql-server",
       "requires_application_change": false,
-      "risk_ids": [],
+      "risk_ids": [
+        "risk-wl-acquired-unit-b-sales-r-dependencies-unknown"
+      ],
       "schema_version": "1.0.0",
       "security_notes": [
         "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."
@@ -356,7 +358,7 @@
       "assumptions": [],
       "author": "agent:target-architect",
       "compatibility_notes": [
-        "Instance-scoped features observed in use: polybase, sql-agent."
+        "Instance-scoped features observed in use: sql-agent."
       ],
       "confidence": "low",
       "considered_options": [
@@ -419,8 +421,8 @@
             "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
             "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
           ],
-          "rationale": "Scored 40 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Open blocking findings mean any move would be made on incomplete evidence (+10)",
-          "score": 40.0,
+          "rationale": "Scored 55 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Operating-system dependencies would need removing before any managed target (+15); Open blocking findings mean any move would be made on incomplete evidence (+10)",
+          "score": 55.0,
           "target": "retain-on-premises",
           "verdict": "rejected"
         },
@@ -522,7 +524,10 @@
       "rationale": "No destination can be recommended for Legacy warehouse while blocking evidence is open, so every migration target is blocked. azure-arc-enabled-sql-server is proposed as an interim posture only: it governs the workload where it stands and does not move it. It must not be recorded as completed modernization. Evidence is incomplete, and Arc gives continuous inventory, assessment, and governance while that is fixed (+25); Governance and security posture improve without moving the workload (+5); Arc enablement is a bridge, not a completed modernization; the workload has not moved",
       "recommended_target": "azure-arc-enabled-sql-server",
       "requires_application_change": false,
-      "risk_ids": [],
+      "risk_ids": [
+        "risk-wl-legacy-warehouse-r-dependencies-unknown",
+        "risk-wl-legacy-warehouse-r-evidence-conflict"
+      ],
       "schema_version": "1.0.0",
       "security_notes": [
         "Private network access, managed identity, and encryption in transit and at rest are landing-zone requirements and are checked separately."

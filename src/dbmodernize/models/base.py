@@ -103,9 +103,16 @@ class AzureTarget(StrEnum):
     SQL_DATABASE_HYPERSCALE = "azure-sql-database-hyperscale"
     SQL_MANAGED_INSTANCE = "azure-sql-managed-instance"
     SQL_ON_AZURE_VM = "sql-server-on-azure-vm"
+    #: The source engine, self-managed on an Azure virtual machine. Used for PostgreSQL,
+    #: MySQL, MariaDB, and Oracle sources, where offering "SQL Server on a VM" as the
+    #: infrastructure alternative would be a different engine wearing a familiar label.
+    SELF_MANAGED_ON_AZURE_VM = "self-managed-on-azure-vm"
     ARC_ENABLED_SQL = "azure-arc-enabled-sql-server"
     POSTGRESQL_FLEXIBLE = "azure-database-for-postgresql-flexible-server"
     MYSQL_FLEXIBLE = "azure-database-for-mysql-flexible-server"
+    #: Oracle Database on Oracle-managed Exadata infrastructure inside Azure data centres,
+    #: purchased through Azure Marketplace. Keeps the engine, so no conversion is involved.
+    ORACLE_DATABASE_AT_AZURE = "oracle-database-at-azure"
     RETAIN = "retain-on-premises"
     RETIRE = "retire"
     REPLACE_SAAS = "replace-with-saas"

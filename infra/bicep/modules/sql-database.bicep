@@ -25,6 +25,14 @@ param backupRetentionDays int
 
 param zoneRedundant bool
 
+@description('Where automated backups are stored. Independent of zone redundancy on purpose: deriving it from zoneRedundant silently set backups to locally redundant storage and removed geo-restore.')
+@allowed(['Local', 'Zone', 'Geo', 'GeoZone'])
+param backupStorageRedundancy string = 'Geo'
+
+@description('Whether the logical server may open outbound connections (linked servers, external data sources, elastic queries). Disabled here keeps the reference deployment self-contained; enabling it requires outbound firewall rules and a documented reason.')
+@allowed(['Enabled', 'Disabled'])
+param restrictOutboundNetworkAccess string = 'Disabled'
+
 @description('Service objective. Sized from measured evidence, never from an estimate.')
 param skuName string = 'GP_S_Gen5_2'
 
@@ -34,7 +42,7 @@ param maxSizeBytes int = 34359738368
 var serverName = '${namePrefix}-sql'
 var databaseName = '${namePrefix}-db'
 
-resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' = {
+resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
   name: serverName
   location: location
   tags: tags
@@ -56,11 +64,13 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' = {
       tenantId: tenant().tenantId
       azureADOnlyAuthentication: true
     }
-    restrictOutboundNetworkAccess: 'Enabled'
+    // NET-001: outbound restriction is a parameter with a stated default, not a silent
+    // hardening that breaks linked servers and external data sources on first use.
+    restrictOutboundNetworkAccess: restrictOutboundNetworkAccess
   }
 }
 
-resource database 'Microsoft.Sql/servers/databases@2023-08-01-preview' = {
+resource database 'Microsoft.Sql/servers/databases@2023-08-01' = {
   parent: sqlServer
   name: databaseName
   location: location
@@ -73,11 +83,11 @@ resource database 'Microsoft.Sql/servers/databases@2023-08-01-preview' = {
     zoneRedundant: zoneRedundant
     // AVL-003: backups are configured here; a restore test is a validation check, because
     // a backup that has never been restored is an assumption.
-    requestedBackupStorageRedundancy: zoneRedundant ? 'Zone' : 'Local'
+    requestedBackupStorageRedundancy: backupStorageRedundancy
   }
 }
 
-resource shortTermRetention 'Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies@2023-08-01-preview' = {
+resource shortTermRetention 'Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies@2023-08-01' = {
   parent: database
   name: 'default'
   properties: {

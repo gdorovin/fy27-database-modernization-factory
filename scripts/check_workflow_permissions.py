@@ -25,6 +25,19 @@ PINNED = re.compile(r"^[\w.-]+/[\w.-]+(/[\w.-]+)*@[0-9a-f]{40}$")
 #: this set exists only for local composite actions, which cannot be pinned by SHA.
 LOCAL_ACTION = re.compile(r"^\./")
 
+#: Write scopes any job may hold: they cannot alter repository content.
+WRITE_ALLOWED_ANYWHERE = frozenset({"security-events", "pull-requests", "id-token", "attestations"})
+
+#: Write scopes that alter repository content, allowed only where the file named here has a
+#: documented reason. ``contents: write`` used to sit in the general allowlist, which meant
+#: the single most dangerous scope was the one this script never questioned.
+WRITE_ALLOWED_BY_FILE = frozenset(
+    {
+        # Publishing a GitHub release requires writing the release object.
+        (".github/workflows/release.yml", "contents"),
+    }
+)
+
 
 def uses_values(node: Any) -> list[str]:
     found: list[str] = []
@@ -62,17 +75,17 @@ def main() -> int:
             permissions = job.get("permissions")
             if isinstance(permissions, dict):
                 for scope, level in permissions.items():
-                    if level == "write" and scope not in {
-                        "security-events",
-                        "pull-requests",
-                        "contents",
-                        "id-token",
-                        "attestations",
-                    }:
-                        problems.append(
-                            f"{relative}: job '{job_name}' requests write on '{scope}'. "
-                            "Justify it in a comment or narrow it."
-                        )
+                    if level != "write":
+                        continue
+                    if scope in WRITE_ALLOWED_ANYWHERE:
+                        continue
+                    if (relative, scope) in WRITE_ALLOWED_BY_FILE:
+                        continue
+                    problems.append(
+                        f"{relative}: job '{job_name}' requests write on '{scope}'. "
+                        "Justify it in a comment and add it to WRITE_ALLOWED_BY_FILE, "
+                        "or narrow it."
+                    )
 
         for action in uses_values(document):
             if LOCAL_ACTION.match(action):

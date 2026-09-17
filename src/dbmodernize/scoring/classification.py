@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from dbmodernize.models.base import AzureTarget, Disposition, SourcePlatform
 from dbmodernize.models.workload import Workload
-from dbmodernize.scoring.reference import HETEROGENEOUS_PAIRS, OS_LEVEL_FEATURES
+from dbmodernize.scoring.reference import HETEROGENEOUS_PAIRS, PAAS_BLOCKING_FEATURES
 
-#: Same-family moves onto infrastructure keep the engine and the operating model.
-_REHOST_TARGETS = frozenset({AzureTarget.SQL_ON_AZURE_VM})
+#: Same-family moves onto infrastructure keep the engine and the operating model. Oracle on
+#: Oracle-managed infrastructure inside Azure keeps the engine too, but the operating model
+#: changes, so it falls through to ``replatform`` below rather than being listed here.
+_REHOST_TARGETS = frozenset({AzureTarget.SQL_ON_AZURE_VM, AzureTarget.SELF_MANAGED_ON_AZURE_VM})
 
 #: Targets that do not move the data at all.
 _IN_PLACE_TARGETS = frozenset({AzureTarget.ARC_ENABLED_SQL, AzureTarget.RETAIN})
@@ -56,8 +58,14 @@ def requires_conversion(workload: Workload, target: AzureTarget) -> bool:
 
 
 def blocks_platform_as_a_service(workload: Workload) -> list[str]:
-    """Operating-system dependencies that rule out every managed target."""
-    return sorted(set(workload.instance_features) & OS_LEVEL_FEATURES)
+    """Features that rule out every managed target.
+
+    Two kinds, treated alike by the comparison: features that need operating-system
+    access, and engine features that no managed target offers at any scope (FILESTREAM,
+    FileTable, PolyBase). Either way the workload cannot land on a managed service until
+    the application stops depending on the feature.
+    """
+    return sorted(set(workload.instance_features) & PAAS_BLOCKING_FEATURES)
 
 
 def is_open_source_relational(platform: SourcePlatform) -> bool:

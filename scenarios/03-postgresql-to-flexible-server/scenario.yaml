@@ -1,4 +1,4 @@
-﻿title: Self-managed PostgreSQL to Azure Database for PostgreSQL Flexible Server
+title: Self-managed PostgreSQL to Azure Database for PostgreSQL Flexible Server
 engagement: input/engagement.yaml
 evidence_dir: input
 playbook: playbooks/default
@@ -12,10 +12,12 @@ acceptance:
     workload: wl-partner-integration
     target: azure-database-for-postgresql-flexible-server
 
-  # SQL Server targets must not appear as options for a PostgreSQL workload.
+  # The infrastructure alternative for a PostgreSQL workload is the same engine on a
+  # virtual machine. It is compared and must lose to the managed service here; a SQL Server
+  # target must never appear at all.
   - kind: option_not_recommended
     workload: wl-routing-engine
-    target: sql-server-on-azure-vm
+    target: self-managed-on-azure-vm
 
   # Extensions are inventoried and flagged for per-version verification. This is the whole
   # point of the scenario: a lift-and-shift narrative hides exactly this work.

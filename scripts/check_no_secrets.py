@@ -29,9 +29,15 @@ TEXT_SUFFIXES = frozenset(
         ".cfg",
         ".txt",
         ".bicep",
+        ".bicepparam",  # the file most likely to hold a real subscription or resource id
         ".sh",
         ".ps1",
         ".csv",
+        ".env",
+        ".ini",
+        ".xml",
+        ".sql",
+        ".j2",
     }
 )
 
@@ -61,11 +67,24 @@ REAL_LOOKING = (
             re.IGNORECASE,
         ),
     ),
-    ("azure-endpoint", re.compile(r"(?i)\b[\w-]+\.(database|blob|vault)\.(windows|azure)\.net\b")),
+    (
+        "azure-endpoint",
+        re.compile(
+            r"(?i)\b[\w-]+\.("
+            r"(database|blob|vault)\.(windows|azure)\.net"
+            r"|(blob|file|queue|table|dfs)\.core\.windows\.net"
+            r"|(postgres|mysql|mariadb)\.database\.azure\.com"
+            r")\b"
+        ),
+    ),
     ("email", re.compile(r"(?i)\b[\w.+-]+@(?!example\.|contoso\.example)[\w-]+\.[a-z]{2,}\b")),
 )
 
 ALL_ZERO_GUID = "00000000-0000-0000-0000-000000000000"
+
+#: Private DNS zone names are service-wide labels, not customer endpoints. A resource id
+#: that ends in one names the zone type, never a real server.
+PRIVATE_LINK_ZONE_PREFIX = "privatelink."
 
 
 def candidate_files(argv: list[str]) -> list[Path]:
@@ -99,6 +118,8 @@ def main(argv: list[str]) -> int:
             for match in pattern.finditer(text):
                 value = match.group(0)
                 if name == "guid" and value.lower() == ALL_ZERO_GUID:
+                    continue
+                if name == "azure-endpoint" and value.lower().startswith(PRIVATE_LINK_ZONE_PREFIX):
                     continue
                 problems.append(
                     f"{relative}: contains a real-looking {name} ({value!r}). "

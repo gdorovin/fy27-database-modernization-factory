@@ -1,7 +1,5 @@
 {
-  "deferred_workload_ids": [
-    "wl-plant-maintenance"
-  ],
+  "deferred_workload_ids": [],
   "engagement_id": "eng-litware-manufacturing-fy27",
   "waves": [
     {
@@ -259,7 +257,8 @@
       "supersedes": null,
       "updated_at": "2026-06-08T00:00:00Z",
       "workload_ids": [
-        "wl-finance-ledger"
+        "wl-finance-ledger",
+        "wl-plant-maintenance"
       ]
     }
   ]

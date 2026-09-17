@@ -18,14 +18,14 @@ not about runtime compromise of a production system.
 
 | # | Threat | Control |
 | --- | --- | --- |
-| T-01 | Prompt injection through an imported assessment document | All imported text is treated as data. `evidence.normalization` scans for directive patterns and raises `EVID-INJECTION` findings instead of acting. |
+| T-01 | Prompt injection through an imported assessment document | All imported text is treated as data. `evidence.injection` (called by every adapter) scans for directive patterns and raises `EVID-INJECTION` findings instead of acting. |
 | T-02 | Path traversal through a filename in an archive or CSV | `utils.safe_paths.resolve_within` rejects any resolved path outside the allowed root. |
 | T-03 | Zip-slip / decompression bomb | Adapters enforce entry-count, per-entry size, and total-size limits before extraction. |
 | T-04 | Secrets committed to source control | `.gitignore` denylist, `scripts/check_no_secrets.py` pre-commit hook, GitHub secret scanning and push protection. |
 | T-05 | Customer PII in fixtures | Synthetic-only rule, enforced by repository validation; `scripts/redact_fixture.py` for import. |
 | T-06 | Log disclosure of sensitive values | `utils.redaction.redact` applied at the logging boundary; connection-string and token patterns masked. |
 | T-07 | Over-privileged agent making an unreviewed change | Per-agent tool allowlists, validated by `dbmodernize validate-agent`. |
-| T-08 | Self-approval of a recommendation | Approval artifacts must name a principal different from the artifact author; enforced in `validators.approval`. |
+| T-08 | Self-approval of a recommendation | Approval artifacts must name a principal different from the artifact author; enforced by the `Approval` model validator in `models/approval.py`, so an approval by the author cannot be constructed. |
 | T-09 | Malformed YAML/JSON causing code execution | `yaml.safe_load` only; no `pickle`; no `eval`; no shell interpolation of imported content. |
 | T-10 | Supply-chain compromise via CI actions | Actions pinned; `permissions` minimized; dependency review and CodeQL enabled. |
 | T-11 | Long-lived cloud credentials | None stored. Optional Azure integration uses GitHub OIDC federated credentials only. |

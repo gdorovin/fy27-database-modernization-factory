@@ -57,6 +57,11 @@ def resolve_within(root: Path, candidate: str | Path) -> Path:
     return target
 
 
+#: Read size used while extracting, so memory use is bounded by this rather than by the
+#: size an untrusted header claims.
+_CHUNK_BYTES = 1024 * 1024
+
+
 def safe_extract(
     archive: Path,
     destination: Path,
@@ -109,8 +114,27 @@ def safe_extract(
 
             target = resolve_within(destination, name)
             target.parent.mkdir(parents=True, exist_ok=True)
+            # The header sizes checked above are written by whoever built the archive. The
+            # bytes are counted again as they are actually decompressed, so a header that
+            # lies about its size is caught before the limit is exceeded, not after.
+            extracted = 0
             with handle.open(member) as source, target.open("wb") as sink:
-                sink.write(source.read())
+                while chunk := source.read(_CHUNK_BYTES):
+                    extracted += len(chunk)
+                    if extracted > limits.max_entry_bytes:
+                        sink.close()
+                        target.unlink(missing_ok=True)
+                        raise PolicyViolationError(
+                            f"Archive entry {name!r} decompressed past its declared size; "
+                            f"limit is {limits.max_entry_bytes} bytes"
+                        )
+                    sink.write(chunk)
+            total += max(0, extracted - member.file_size)
+            if total > limits.max_total_bytes:
+                target.unlink(missing_ok=True)
+                raise PolicyViolationError(
+                    f"Archive expands to more than {limits.max_total_bytes} bytes"
+                )
             written.append(target)
 
     return sorted(written)

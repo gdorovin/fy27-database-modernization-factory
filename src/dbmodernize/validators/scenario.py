@@ -79,19 +79,38 @@ def validate_scenario(repo_root: Path, scenario_dir: Path, update: bool = False)
     expected_dir = scenario_dir / EXPECTED_DIR
 
     if update:
+        # Compare first, so the run reports what it is about to change. Then rewrite. The
+        # rewrite is recorded as an *error*, not a warning: a command that regenerates its
+        # own expectations has, by construction, asserted nothing, and must not exit 0 in a
+        # pipeline that treats 0 as "the snapshots held".
+        drift = _compare(expected_dir, result, scenario_dir)
         _write_expectations(expected_dir, result)
+        changed = [f.path for f in drift.findings]
         findings.add(
             rule="SCENARIO-UPDATED",
             message=(
-                f"Expectations rewritten for {scenario_dir.name}. Review every line of the "
-                "diff; regenerating to silence a failure defeats the purpose of the snapshot."
+                f"Expectations rewritten for {scenario_dir.name} "
+                f"({len(changed)} artifact(s) differed). Review every line of the diff; "
+                "regenerating to silence a failure defeats the purpose of the snapshot."
             ),
             path=str(expected_dir),
-            severity="warning",
+            hint="This exit code is non-zero by design; --update is never a passing check.",
         )
     else:
         findings.extend(_compare(expected_dir, result, scenario_dir))
 
+    if not spec.acceptance:
+        # Snapshots prove the output has not changed. Only acceptance criteria prove it is
+        # *right*, and a scenario without any can be laundered by regenerating its snapshot.
+        findings.add(
+            rule="SCENARIO-NO-ACCEPTANCE",
+            message=(
+                f"{scenario_dir.name} declares no acceptance criteria. A scenario must state "
+                "at least one behavioural expectation that a regenerated snapshot cannot "
+                "satisfy by itself."
+            ),
+            path=str(spec.directory / SCENARIO_FILE),
+        )
     findings.extend(_check_acceptance(spec, result))
     return findings
 

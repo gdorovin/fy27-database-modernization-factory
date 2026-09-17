@@ -352,4 +352,4 @@ case needs them from the customer or the account team.
   - Dependency discovery is incomplete, so the consumers of this database and the blast radius of a cutover are unknown. This must be resolved before a destination can be recommended. (owner: database-owner, blocking)
 
 
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

@@ -109,12 +109,20 @@ def detect_conflicts(records: list[EvidenceRecord]) -> list[EvidenceConflict]:
             continue
         if _within_tolerance([value for _, value in entries]):
             continue
+        # Compare on the normalised form, but *report* the raw spellings. ``640.0`` from a
+        # spreadsheet and ``"640.0"`` from a JSON export normalise differently yet print the
+        # same, and the conflict model rightly refuses a "disagreement" with one value.
+        values = sorted({str(value) for _, value in entries})
+        if len(values) < 2:
+            values = sorted({_normalise(value) for _, value in entries})
+        if len(values) < 2:
+            continue
         conflicts.append(
             EvidenceConflict(
                 id=stable_id("conflict", subject_id, attribute),
                 subject_id=subject_id,
                 attribute=attribute,
-                values=sorted({str(value) for _, value in entries}),
+                values=values,
                 evidence_refs=sorted({record_id for record_id, _ in entries}),
                 resolution_owner_role="database-owner",
                 resolved=False,

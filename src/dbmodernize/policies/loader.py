@@ -52,13 +52,26 @@ def split_sections(markdown: str) -> dict[str, str]:
     return {k: v for k, v in sections.items() if v or k != "_preamble"}
 
 
-def parse_table(markdown: str) -> list[dict[str, str]]:
-    """Parse the first Markdown pipe table found in ``markdown``."""
+def parse_table(markdown: str, malformed: list[str] | None = None) -> list[dict[str, str]]:
+    """Parse the first Markdown pipe table found in ``markdown``.
+
+    Lines inside a fenced code block are never table rows, however many pipes they carry:
+    a worked example in a fence must not become a live policy. A row whose cell count does
+    not match the header is appended to ``malformed`` (when given) instead of being skipped
+    in silence, because a mistyped policy row that quietly stops being enforced is worse
+    than one that fails validation.
+    """
     lines = [line.strip() for line in markdown.splitlines()]
     header: list[str] | None = None
     rows: list[dict[str, str]] = []
+    in_fence = False
 
     for line in lines:
+        if line.startswith("```") or line.startswith("~~~"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
         if not line.startswith("|"):
             if header is not None and rows:
                 break
@@ -70,6 +83,10 @@ def parse_table(markdown: str) -> list[dict[str, str]]:
             header = [cell.lower().replace(" ", "_") for cell in cells]
             continue
         if len(cells) != len(header):
+            if malformed is not None:
+                malformed.append(
+                    f"row has {len(cells)} cell(s) but the header has {len(header)}: {line}"
+                )
             continue
         rows.append(dict(zip(header, cells, strict=True)))
     return rows
@@ -87,7 +104,8 @@ def _parse_policies(text: str, findings: FindingSet, source: str) -> list[Policy
         )
         return policies
 
-    for row in parse_table(body):
+    malformed: list[str] = []
+    for row in parse_table(body, malformed):
         try:
             policies.append(
                 Policy(
@@ -105,6 +123,13 @@ def _parse_policies(text: str, findings: FindingSet, source: str) -> list[Policy
                 message=f"Policy row {row.get('id', '<no id>')!r} is invalid: {exc}",
                 path=source,
             )
+    for problem in malformed:
+        findings.add(
+            rule="PLAYBOOK-ROW-MALFORMED",
+            message=f"Policy table {problem}",
+            path=source,
+            hint="A row the parser cannot read is a policy that is not enforced.",
+        )
     return policies
 
 
@@ -114,7 +139,18 @@ def _parse_exceptions(text: str, findings: FindingSet, source: str) -> list[Poli
     if not body:
         return exceptions
 
-    for row in parse_table(body):
+    malformed: list[str] = []
+    rows = parse_table(body, malformed)
+    for problem in malformed:
+        findings.add(
+            rule="PLAYBOOK-ROW-MALFORMED",
+            message=f"Exception table {problem}",
+            path=source,
+            hint=(
+                "A row the parser cannot read is an exception that is neither granted nor refused."
+            ),
+        )
+    for row in rows:
         payload: dict[str, Any] = {
             "id": row.get("id", ""),
             "policy_id": row.get("policy_id", ""),
@@ -154,7 +190,16 @@ def _parse_targets(text: str, findings: FindingSet, source: str) -> list[TargetP
         body = sections.get(heading)
         if body is None:
             continue
-        for row in parse_table(body):
+        malformed: list[str] = []
+        rows = parse_table(body, malformed)
+        for problem in malformed:
+            findings.add(
+                rule="PLAYBOOK-ROW-MALFORMED",
+                message=f"Target table under '{heading}' {problem}",
+                path=source,
+                hint="An unreadable target row is a target treated as prohibited by accident.",
+            )
+        for row in rows:
             status = row.get("status") or (
                 "prohibited" if heading == "Prohibited targets" else "approved"
             )

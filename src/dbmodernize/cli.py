@@ -25,11 +25,14 @@ from dbmodernize.errors import (
     ExitCode,
     FindingSet,
     SafetyRefusalError,
+    ValidationFailedError,
 )
 from dbmodernize.evidence.normalize import normalize_directory
 from dbmodernize.issue_generation.generator import generate_issues
+from dbmodernize.models.base import PlaybookRef
 from dbmodernize.pipeline import load_engagement, run_pipeline
 from dbmodernize.policies.loader import playbook_reference
+from dbmodernize.policies.models import Playbook
 from dbmodernize.scoring.assessment import assess
 from dbmodernize.scoring.targets import recommend_all
 from dbmodernize.scoring.waves import plan_waves
@@ -76,6 +79,21 @@ def command_names() -> set[str]:
 
 def _repo(value: Path | None) -> Path:
     return (value or Path.cwd()).resolve()
+
+
+def _load_playbook(playbook: Path, as_of: date, root: Path) -> tuple[Playbook, PlaybookRef]:
+    """Validate a playbook and pin it relative to the repository root.
+
+    Every command goes through here so that ``assess`` and ``render-plan`` embed the same
+    ``PlaybookRef`` for the same inputs. The reference is pinned against ``root``, never
+    against the current working directory, because a path that depends on where the
+    command was launched is a path that differs between two runs of identical evidence.
+    """
+    book, findings = validate_playbook(playbook, as_of=as_of)
+    if book is None or not findings.ok:
+        messages = "; ".join(f.message for f in findings.errors) or "see findings"
+        raise ValidationFailedError(f"Playbook at {playbook} is not usable: {messages}", findings)
+    return book, playbook_reference(book, root)
 
 
 def _report(findings: FindingSet, subject: str, as_json: bool) -> None:
@@ -240,17 +258,13 @@ def assess_command(
     input_dir: Annotated[Path, typer.Option("--input", help="Directory of exports.")],
     playbook: Annotated[Path, typer.Option(help="Playbook directory.")] = Path("playbooks/default"),
     out: Annotated[Path, typer.Option(help="Output directory.")] = Path("out"),
+    repo: RepoOption = None,
     force: ForceOption = False,
     dry_run: DryRunOption = False,
 ) -> None:
     """Assess the estate: build the workload inventory, findings, and risk register."""
     record = load_engagement(engagement)
-    book, findings = validate_playbook(playbook, as_of=record.as_of)
-    if book is None or not findings.ok:
-        _report(findings, f"playbook {playbook}", False)
-
-    assert book is not None
-    reference = playbook_reference(book)
+    _, reference = _load_playbook(playbook, record.as_of, _repo(repo))
     bundle = normalize_directory(
         input_dir, engagement_id=record.engagement_id, collected_on=record.as_of
     )
@@ -278,22 +292,18 @@ def recommend_targets(
     input_dir: Annotated[Path, typer.Option("--input", help="Directory of exports.")],
     playbook: Annotated[Path, typer.Option(help="Playbook directory.")] = Path("playbooks/default"),
     out: Annotated[Path, typer.Option(help="Output directory.")] = Path("out"),
+    repo: RepoOption = None,
     force: ForceOption = False,
     dry_run: DryRunOption = False,
 ) -> None:
     """Compare Azure targets per workload and record the rejected alternatives."""
     record = load_engagement(engagement)
-    book, findings = validate_playbook(playbook, as_of=record.as_of)
-    if book is None or not findings.ok:
-        _report(findings, f"playbook {playbook}", False)
-    assert book is not None
-
-    reference = playbook_reference(book)
+    book, reference = _load_playbook(playbook, record.as_of, _repo(repo))
     bundle = normalize_directory(
         input_dir, engagement_id=record.engagement_id, collected_on=record.as_of
     )
-    inventory, _ = assess(record, bundle, reference)
-    decisions = recommend_all(inventory, record, book, reference)
+    inventory, risks = assess(record, bundle, reference)
+    decisions = recommend_all(inventory, record, book, reference, risks)
 
     path = write_json(
         out / "target-decisions.json",
@@ -315,22 +325,18 @@ def plan_waves_command(
     input_dir: Annotated[Path, typer.Option("--input", help="Directory of exports.")],
     playbook: Annotated[Path, typer.Option(help="Playbook directory.")] = Path("playbooks/default"),
     out: Annotated[Path, typer.Option(help="Output directory.")] = Path("out"),
+    repo: RepoOption = None,
     force: ForceOption = False,
     dry_run: DryRunOption = False,
 ) -> None:
     """Group workloads into dependency-aware, low-risk-first waves."""
     record = load_engagement(engagement)
-    book, findings = validate_playbook(playbook, as_of=record.as_of)
-    if book is None or not findings.ok:
-        _report(findings, f"playbook {playbook}", False)
-    assert book is not None
-
-    reference = playbook_reference(book)
+    book, reference = _load_playbook(playbook, record.as_of, _repo(repo))
     bundle = normalize_directory(
         input_dir, engagement_id=record.engagement_id, collected_on=record.as_of
     )
-    inventory, _ = assess(record, bundle, reference)
-    decisions = recommend_all(inventory, record, book, reference)
+    inventory, risks = assess(record, bundle, reference)
+    decisions = recommend_all(inventory, record, book, reference, risks)
     waves = plan_waves(inventory, decisions, record, reference)
 
     path = write_json(
@@ -455,6 +461,11 @@ def run() -> int:
         app(standalone_mode=False)
     except typer.Exit as exit_signal:
         return int(exit_signal.exit_code)
+    except ValidationFailedError as error:
+        for finding in error.findings:
+            typer.echo(finding.render(), err=True)
+        typer.echo(f"error: {error}", err=True)
+        return int(error.exit_code)
     except DbModernizeError as error:
         typer.echo(f"error: {error}", err=True)
         return int(error.exit_code)

@@ -18,7 +18,7 @@ from dbmodernize.models.base import AzureTarget, SourcePlatform
 from dbmodernize.models.workload import SupportStatus
 
 #: The date a maintainer last checked these tables against published product guidance.
-VERIFIED_ON: date = date(2026, 9, 15)
+VERIFIED_ON: date = date(2026, 9, 16)
 
 REVALIDATION_NOTE = (
     "Reference tables were last verified on "
@@ -28,25 +28,44 @@ REVALIDATION_NOTE = (
 )
 
 #: SQL Server major version to support posture. Keys are the engine major version.
+#:
+#: Mainstream support is what ``SUPPORTED`` means here. A version in extended support still
+#: receives security fixes, but nothing else, and that finite window is what should anchor
+#: a modernization date. Dates from the Microsoft Lifecycle pages, checked on VERIFIED_ON:
+#: 2016 extended support ended 2026-07-14; 2017 mainstream ended 2022-10-11 (extended to
+#: 2027-10-12); 2019 mainstream ended 2025-02-28 (extended to 2030-01-08); 2022 mainstream
+#: runs to 2028-01-11; 2025 (engine major 17) was released 2025-11-18.
 SQL_SERVER_SUPPORT: dict[int, SupportStatus] = {
     10: SupportStatus.END_OF_SUPPORT,  # 2008 / 2008 R2
     11: SupportStatus.END_OF_SUPPORT,  # 2012
     12: SupportStatus.END_OF_SUPPORT,  # 2014
     13: SupportStatus.END_OF_SUPPORT,  # 2016
     14: SupportStatus.EXTENDED_SUPPORT,  # 2017
-    15: SupportStatus.SUPPORTED,  # 2019
+    15: SupportStatus.EXTENDED_SUPPORT,  # 2019
     16: SupportStatus.SUPPORTED,  # 2022
+    17: SupportStatus.SUPPORTED,  # 2025
 }
 
 #: PostgreSQL major versions this repository treats as unsupported for new deployments.
-POSTGRESQL_END_OF_SUPPORT_BELOW = 13
+#: PostgreSQL 13 reached community end of life on 2025-11-13. PostgreSQL 14 follows on
+#: 2026-11-12, inside FY27, so an estate on 14 should already be planning its upgrade.
+POSTGRESQL_END_OF_SUPPORT_BELOW = 14
 
-#: MySQL major.minor below this is treated as unsupported for new deployments.
-MYSQL_END_OF_SUPPORT_BELOW = (8, 0)
+#: MySQL major.minor below this is treated as unsupported for new deployments. MySQL 8.0
+#: reached community end of life on 2026-04-30; 8.4 is the current long-term-support line.
+#: A managed service may sell extended support for 8.0 beyond that date; that is a
+#: commercial arrangement the account team confirms, not a support posture this table
+#: asserts.
+MYSQL_END_OF_SUPPORT_BELOW = (8, 4)
 
 #: Engine features that are scoped to an instance rather than a database. Their presence
 #: does not forbid a database-scoped target, but it does mean the application must change,
 #: and that has to be an explicit decision rather than a silent assumption.
+#:
+#: Every feature listed here is available on an instance-scoped managed target. That is
+#: the property the scoring relies on: an instance-scoped feature *rewards* the instance
+#: target. A feature that no managed target offers belongs in
+#: MANAGED_TARGET_UNAVAILABLE_FEATURES instead, and a unit test keeps the two sets disjoint.
 INSTANCE_SCOPED_FEATURES: frozenset[str] = frozenset(
     {
         "sql-agent",
@@ -54,12 +73,25 @@ INSTANCE_SCOPED_FEATURES: frozenset[str] = frozenset(
         "cross-database-queries",
         "linked-servers",
         "clr",
-        "filestream",
-        "filetable",
         "replication",
+        # Managed instances support distributed transactions between managed instances and
+        # with SQL Server; a classic on-premises coordinator in the loop is an application
+        # change that the assessment has to confirm rather than assume.
         "distributed-transactions",
         "database-mail",
         "server-level-triggers",
+    }
+)
+
+#: Engine features that no managed SQL target offers, at either database or instance scope.
+#: Using one of them rules out every platform-as-a-service target, exactly as an
+#: operating-system dependency does, until the application stops depending on it. Listing
+#: them as instance-scoped would have scored a managed instance *up* for a feature it
+#: cannot run.
+MANAGED_TARGET_UNAVAILABLE_FEATURES: frozenset[str] = frozenset(
+    {
+        "filestream",
+        "filetable",
         "polybase",
     }
 )
@@ -74,6 +106,9 @@ OS_LEVEL_FEATURES: frozenset[str] = frozenset(
         "kerberos-constrained-delegation-custom",
     }
 )
+
+#: Everything that blocks a managed target, whichever of the two reasons applies.
+PAAS_BLOCKING_FEATURES: frozenset[str] = OS_LEVEL_FEATURES | MANAGED_TARGET_UNAVAILABLE_FEATURES
 
 #: Data size above which a Hyperscale comparison becomes worth making, in gigabytes.
 HYPERSCALE_SIZE_THRESHOLD_GB = 1024.0
@@ -94,36 +129,43 @@ PLATFORM_CANDIDATES: dict[SourcePlatform, tuple[AzureTarget, ...]] = {
     ),
     SourcePlatform.POSTGRESQL: (
         AzureTarget.POSTGRESQL_FLEXIBLE,
-        AzureTarget.SQL_ON_AZURE_VM,
+        AzureTarget.SELF_MANAGED_ON_AZURE_VM,
         AzureTarget.RETAIN,
     ),
     SourcePlatform.MYSQL: (
         AzureTarget.MYSQL_FLEXIBLE,
-        AzureTarget.SQL_ON_AZURE_VM,
+        AzureTarget.SELF_MANAGED_ON_AZURE_VM,
         AzureTarget.RETAIN,
     ),
     SourcePlatform.MARIADB: (
         AzureTarget.MYSQL_FLEXIBLE,
-        AzureTarget.SQL_ON_AZURE_VM,
+        AzureTarget.SELF_MANAGED_ON_AZURE_VM,
         AzureTarget.RETAIN,
     ),
     SourcePlatform.ORACLE: (
+        AzureTarget.ORACLE_DATABASE_AT_AZURE,
         AzureTarget.POSTGRESQL_FLEXIBLE,
         AzureTarget.SQL_MANAGED_INSTANCE,
         AzureTarget.SQL_DATABASE,
+        AzureTarget.SELF_MANAGED_ON_AZURE_VM,
         AzureTarget.REPLACE_SAAS,
         AzureTarget.RETAIN,
     ),
     SourcePlatform.OTHER: (AzureTarget.RETAIN,),
 }
 
-#: Migrating between engine families always means schema and code conversion.
+#: Migrating between engine families always means schema and code conversion. Oracle on
+#: Oracle-managed infrastructure inside Azure, and Oracle on an Azure virtual machine, keep
+#: the engine and are therefore *not* in this set: they are relocations, not conversions.
+#: MariaDB to a MySQL-family managed service is a fork crossing; it is listed so that
+#: conversion evidence is required rather than assumed from the shared ancestry.
 HETEROGENEOUS_PAIRS: frozenset[tuple[SourcePlatform, AzureTarget]] = frozenset(
     {
         (SourcePlatform.ORACLE, AzureTarget.POSTGRESQL_FLEXIBLE),
         (SourcePlatform.ORACLE, AzureTarget.SQL_MANAGED_INSTANCE),
         (SourcePlatform.ORACLE, AzureTarget.SQL_DATABASE),
         (SourcePlatform.ORACLE, AzureTarget.REPLACE_SAAS),
+        (SourcePlatform.MARIADB, AzureTarget.MYSQL_FLEXIBLE),
     }
 )
 
@@ -171,8 +213,10 @@ __all__ = [
     "HYPERSCALE_GROWTH_THRESHOLD_PERCENT",
     "HYPERSCALE_SIZE_THRESHOLD_GB",
     "INSTANCE_SCOPED_FEATURES",
+    "MANAGED_TARGET_UNAVAILABLE_FEATURES",
     "MYSQL_END_OF_SUPPORT_BELOW",
     "OS_LEVEL_FEATURES",
+    "PAAS_BLOCKING_FEATURES",
     "PLATFORM_CANDIDATES",
     "POSTGRESQL_END_OF_SUPPORT_BELOW",
     "REVALIDATION_NOTE",

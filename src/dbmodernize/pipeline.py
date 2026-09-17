@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from dbmodernize.errors import InputNotFoundError, UsageError
+from dbmodernize.errors import InputNotFoundError, ValidationFailedError
 from dbmodernize.evidence.normalize import normalize_directory
 from dbmodernize.issue_generation.generator import generate_issues
 from dbmodernize.models.base import PlaybookRef
@@ -105,8 +105,12 @@ def run_pipeline(
 
     playbook, findings = validate_playbook(playbook_dir, as_of=engagement.as_of)
     if playbook is None or not findings.ok:
-        messages = "; ".join(f.message for f in findings.errors)
-        raise UsageError(f"Playbook at {playbook_dir} is not usable: {messages}")
+        # Exit code 1, the same as ``dbmodernize validate-playbook`` returns for the same
+        # defect. One condition, one exit code, whichever command surfaces it.
+        messages = "; ".join(f.message for f in findings.errors) or "see findings"
+        raise ValidationFailedError(
+            f"Playbook at {playbook_dir} is not usable: {messages}", findings
+        )
 
     playbook_ref = playbook_reference(playbook, repo_root)
 
@@ -116,7 +120,7 @@ def run_pipeline(
         collected_on=engagement.as_of,
     )
     inventory, risks = assess(engagement, bundle, playbook_ref)
-    decisions = recommend_all(inventory, engagement, playbook, playbook_ref)
+    decisions = recommend_all(inventory, engagement, playbook, playbook_ref, risks)
     waves = plan_waves(inventory, decisions, engagement, playbook_ref)
     plans = [
         build_plan(wave, decisions, engagement, playbook, playbook_ref)

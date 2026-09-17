@@ -61,6 +61,11 @@ DELEGATION_ALLOWED = frozenset({"engagement-orchestrator"})
 
 _NAME_PATTERN = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
+#: An agent body that describes itself as read-only. Matched case-insensitively at the
+#: start of a bullet or sentence so that a *prohibition* ("never treat a read-only agent
+#: as...") in another agent's file is not mistaken for a self-description.
+_READ_ONLY_CLAIM = re.compile(r"(?im)^\s*(?:[-*]\s*)?read-only\b")
+
 _SELF_APPROVAL = re.compile(r"(?i)\b(approve (?:my|its) own|self[- ]approv)")
 
 
@@ -99,7 +104,7 @@ def validate_agent(path: Path) -> FindingSet:
             path=str(path),
         )
 
-    findings.extend(_check_tools(name or stem, tools, path))
+    findings.extend(_check_tools(name or stem, tools, path, document.body))
 
     if "target" not in document.frontmatter:
         findings.add(
@@ -113,7 +118,7 @@ def validate_agent(path: Path) -> FindingSet:
     return findings
 
 
-def _check_tools(name: str, tools: object, path: Path) -> FindingSet:
+def _check_tools(name: str, tools: object, path: Path, body: str = "") -> FindingSet:
     findings = FindingSet()
     if not isinstance(tools, list) or not tools:
         findings.add(
@@ -139,13 +144,19 @@ def _check_tools(name: str, tools: object, path: Path) -> FindingSet:
             path=str(path),
         )
 
-    if name in NON_EDITING_AGENTS:
+    # Two independent signals decide whether an agent may edit: the curated list, and the
+    # agent's own body. An agent that calls itself read-only is held to that whether or not
+    # anyone remembered to add its name to the list, so a new "read-only" agent cannot slip
+    # an editing tool past the check by being new.
+    declares_read_only = _READ_ONLY_CLAIM.search(body) is not None
+    if name in NON_EDITING_AGENTS or declares_read_only:
         violating = sorted(declared & MUTATING_TOOLS)
         if violating:
+            basis = "listed as non-editing" if name in NON_EDITING_AGENTS else "documented"
             findings.add(
                 rule="AGENT-PRIVILEGE-READONLY",
                 message=(
-                    f"{name} is documented as non-editing but declares "
+                    f"{name} is {basis} as read-only but declares "
                     f"{', '.join(violating)}. Remove the tool or change the documented "
                     "role; the two must agree."
                 ),

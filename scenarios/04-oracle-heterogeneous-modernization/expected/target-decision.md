@@ -38,8 +38,10 @@ Azure-sql-managed-instance scored highest (45) for Finance ledger on the publish
 | azure-database-for-postgresql-flexible-server | blocked | 0.0 | Blocked: Conversion was assessed against azure-sql-managed-instance, not against azure-database-for-postgresql-flexible-server. A conversion result does not transfer between destinations. |
 | azure-sql-database | blocked | 0.0 | Blocked: Conversion was assessed against azure-sql-managed-instance, not against azure-sql-database. A conversion result does not transfer between destinations. |
 | azure-sql-managed-instance | recommended | 45.0 | Conversion assessment exists for this target, so the scale of the change is known (+10); Converted code requires application remediation and business validation before it can be trusted (-15); Automatic compatibility is not claimed; conversion percentages describe tool output only |
+| oracle-database-at-azure | rejected | 40.0 | Scored 40 against 45 for azure-sql-managed-instance. A conversion assessment exists, so the engagement has invested in leaving the engine; keeping it retains the licence position that investment is meant to change, and is recorded as the fallback (-15); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); Engine-native availability features remain available for a critical workload (+5); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine |
 | replace-with-saas | blocked | 0.0 | Blocked: Conversion was assessed against azure-sql-managed-instance, not against replace-with-saas. A conversion result does not transfer between destinations. |
 | retain-on-premises | rejected | 30.0 | Scored 30 against 45 for azure-sql-managed-instance. Retaining the workload leaves every current risk in place (-20) |
+| self-managed-on-azure-vm | rejected | 37.0 | Scored 37 against 45 for azure-sql-managed-instance. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5) |
 
 #### Why the alternatives were not chosen
 
@@ -47,9 +49,11 @@ Azure-sql-managed-instance scored highest (45) for Finance ledger on the publish
   - Blockers: Conversion was assessed against azure-sql-managed-instance, not against azure-database-for-postgresql-flexible-server. A conversion result does not transfer between destinations.
 - **azure-sql-database** — Blocked: Conversion was assessed against azure-sql-managed-instance, not against azure-sql-database. A conversion result does not transfer between destinations.
   - Blockers: Conversion was assessed against azure-sql-managed-instance, not against azure-sql-database. A conversion result does not transfer between destinations.
+- **oracle-database-at-azure** — Scored 40 against 45 for azure-sql-managed-instance. A conversion assessment exists, so the engagement has invested in leaving the engine; keeping it retains the licence position that investment is meant to change, and is recorded as the fallback (-15); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); Engine-native availability features remain available for a critical workload (+5); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine.
 - **replace-with-saas** — Blocked: Conversion was assessed against azure-sql-managed-instance, not against replace-with-saas. A conversion result does not transfer between destinations.
   - Blockers: Conversion was assessed against azure-sql-managed-instance, not against replace-with-saas. A conversion result does not transfer between destinations.
 - **retain-on-premises** — Scored 30 against 45 for azure-sql-managed-instance. Retaining the workload leaves every current risk in place (-20).
+- **self-managed-on-azure-vm** — Scored 37 against 45 for azure-sql-managed-instance. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5).
 
 #### Compatibility
 
@@ -120,8 +124,10 @@ Azure-database-for-postgresql-flexible-server scored highest (45) for Order mana
 | azure-database-for-postgresql-flexible-server | recommended | 45.0 | Conversion assessment exists for this target, so the scale of the change is known (+10); Converted code requires application remediation and business validation before it can be trusted (-15); Automatic compatibility is not claimed; conversion percentages describe tool output only |
 | azure-sql-database | blocked | 0.0 | Blocked: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against azure-sql-database. A conversion result does not transfer between destinations. |
 | azure-sql-managed-instance | blocked | 0.0 | Blocked: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against azure-sql-managed-instance. A conversion result does not transfer between destinations. |
+| oracle-database-at-azure | rejected | 35.0 | Scored 35 against 45 for azure-database-for-postgresql-flexible-server. A conversion assessment exists, so the engagement has invested in leaving the engine; keeping it retains the licence position that investment is meant to change, and is recorded as the fallback (-15); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine |
 | replace-with-saas | blocked | 0.0 | Blocked: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against replace-with-saas. A conversion result does not transfer between destinations. |
 | retain-on-premises | rejected | 30.0 | Scored 30 against 45 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20) |
+| self-managed-on-azure-vm | rejected | 42.0 | Scored 42 against 45 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10) |
 
 #### Why the alternatives were not chosen
 
@@ -129,9 +135,11 @@ Azure-database-for-postgresql-flexible-server scored highest (45) for Order mana
   - Blockers: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against azure-sql-database. A conversion result does not transfer between destinations.
 - **azure-sql-managed-instance** — Blocked: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against azure-sql-managed-instance. A conversion result does not transfer between destinations.
   - Blockers: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against azure-sql-managed-instance. A conversion result does not transfer between destinations.
+- **oracle-database-at-azure** — Scored 35 against 45 for azure-database-for-postgresql-flexible-server. A conversion assessment exists, so the engagement has invested in leaving the engine; keeping it retains the licence position that investment is meant to change, and is recorded as the fallback (-15); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine.
 - **replace-with-saas** — Blocked: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against replace-with-saas. A conversion result does not transfer between destinations.
   - Blockers: Conversion was assessed against azure-database-for-postgresql-flexible-server, not against replace-with-saas. A conversion result does not transfer between destinations.
 - **retain-on-premises** — Scored 30 against 45 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20).
+- **self-managed-on-azure-vm** — Scored 42 against 45 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10).
 
 #### Compatibility
 
@@ -185,14 +193,14 @@ case needs them from the customer or the account team.
 
 | | |
 | --- | --- |
-| Recommended target | **retain-on-premises** |
-| Disposition | retain |
+| Recommended target | **oracle-database-at-azure** |
+| Disposition | replatform |
 | Status | recommended |
 | Confidence | medium |
 | Requires application change | No |
 | Requires schema or code conversion | No |
 
-Retain-on-premises scored highest (30) for Plant maintenance on the published comparison. Retaining the workload leaves every current risk in place (-20). This is a recommendation and requires architecture review before it becomes a decision.
+Oracle-database-at-azure scored highest (70) for Plant maintenance on the published comparison. No conversion assessment exists, so no cross-engine destination can be recommended; keeping the engine removes the hardware and support risk without claiming a compatibility nobody has demonstrated (+20); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine. This is a recommendation and requires architecture review before it becomes a decision.
 
 #### Options considered
 
@@ -201,8 +209,10 @@ Retain-on-premises scored highest (30) for Plant maintenance on the published co
 | azure-database-for-postgresql-flexible-server | blocked | 0.0 | Blocked: No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema. |
 | azure-sql-database | blocked | 0.0 | Blocked: No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema. |
 | azure-sql-managed-instance | blocked | 0.0 | Blocked: No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema. |
+| oracle-database-at-azure | recommended | 70.0 | No conversion assessment exists, so no cross-engine destination can be recommended; keeping the engine removes the hardware and support risk without claiming a compatibility nobody has demonstrated (+20); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine |
 | replace-with-saas | blocked | 0.0 | Blocked: No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema. |
-| retain-on-premises | recommended | 30.0 | Retaining the workload leaves every current risk in place (-20) |
+| retain-on-premises | rejected | 30.0 | Scored 30 against 70 for oracle-database-at-azure. Retaining the workload leaves every current risk in place (-20) |
+| self-managed-on-azure-vm | rejected | 42.0 | Scored 42 against 70 for oracle-database-at-azure. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10) |
 
 #### Why the alternatives were not chosen
 
@@ -214,6 +224,8 @@ Retain-on-premises scored highest (30) for Plant maintenance on the published co
   - Blockers: No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema.
 - **replace-with-saas** — Blocked: No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema.
   - Blockers: No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema.
+- **retain-on-premises** — Scored 30 against 70 for oracle-database-at-azure. Retaining the workload leaves every current risk in place (-20).
+- **self-managed-on-azure-vm** — Scored 42 against 70 for oracle-database-at-azure. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10).
 
 #### Compatibility
 
@@ -221,7 +233,8 @@ Retain-on-premises scored highest (30) for Plant maintenance on the published co
 
 #### Operations
 
-- Existing operational burden and risk continue unchanged.
+- Infrastructure and engine patching are Oracle-managed; database administration, licensing, and the Oracle support relationship remain the customer's.
+- Regional availability, private-offer terms, and licence entitlement must be confirmed with the account team and recorded with a date before commitment.
 
 #### Security
 
@@ -263,4 +276,4 @@ case needs them from the customer or the account team.
 - Assumptions: none recorded.
 
 
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

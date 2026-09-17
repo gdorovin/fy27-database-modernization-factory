@@ -49,12 +49,11 @@ jobs:
           cache: pip
       - name: Install
         run: python -m pip install -e ".[dev]"
-      - name: Unit, contract, and security tests
-        run: python -m pytest tests/unit tests/contract tests/security -q
-      - name: Repository, skill, agent, and playbook tests
-        run: python -m pytest tests/repository tests/skills tests/agents tests/playbooks -q
-      - name: Integration and scenario tests
-        run: python -m pytest tests/integration tests/scenarios -q
+      # The whole suite, the same way `make gate` runs it. Enumerating directories here
+      # silently excluded tests/infra, tests/scale, tests/snapshots and tests/evals from
+      # every pull request, and any new tests/<area>/ would have been invisible by default.
+      - name: Full test suite
+        run: python -m pytest -q
 
   validators:
     name: Deterministic validators
@@ -115,17 +114,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      # Pinned version, downloaded and integrity-checked by the Azure CLI already present on
+      # the runner. The previous step fetched `releases/latest` over curl with no version and
+      # no checksum, inside the merge gate, which is exactly the unpinned supply chain that
+      # scripts/check_workflow_permissions.py exists to forbid for actions.
       - name: Install Bicep
+        env:
+          BICEP_VERSION: v0.47.16 # bump deliberately; Dependabot does not track this
         run: |
-          curl -fsSL https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 -o bicep
-          chmod +x bicep
-          sudo mv bicep /usr/local/bin/bicep
-          bicep --version
+          az bicep install --version "${BICEP_VERSION}"
+          az bicep version
       # Compilation only. This repository has no credentials and deploys nothing.
       - name: Build
-        run: bicep build infra/bicep/main.bicep --stdout > /dev/null
+        run: az bicep build --file infra/bicep/main.bicep --stdout > /dev/null
       - name: Lint
-        run: bicep lint infra/bicep/main.bicep
+        run: az bicep lint --file infra/bicep/main.bicep
 
   gate:
     name: Merge gate

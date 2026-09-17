@@ -104,8 +104,10 @@ Observed repeatedly, and each one has a control in this repository:
 
 ## Tooling
 
-Evidence can come from Azure Migrate, Arc-enabled SQL assessment, Database Migration
-Service, SQL Server Management Studio, SQL Server Migration Assistant, or a spreadsheet.
+Evidence can come from Azure Migrate, Arc-enabled SQL Server assessment, Azure Database
+Migration Service (including the Azure SQL migration extension), SQL Server Migration
+Assistant for Oracle-to-SQL conversion, an Oracle-to-PostgreSQL conversion tool, or a
+spreadsheet. Data Migration Assistant is retired and is not an input.
 
 The repository is deliberately not coupled to any one of them. Adapters normalize onto a
 common evidence contract, so a customer who has only a CMDB extract is not blocked, and a

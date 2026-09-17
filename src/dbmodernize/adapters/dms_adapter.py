@@ -51,33 +51,33 @@ class DmsAdapter(EvidenceAdapter):
 
         assessed_on = self._parse_date(document.get("assessedOn"), collected_on)
         records: list[EvidenceRecord] = []
+        results = [r for r in self._as_list(document.get("results")) if isinstance(r, dict)]
         unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
+        for result in results:
+            unmapped |= self.unrecognised_keys(result, _RESULT_KEYS)
 
-        for index, result in enumerate(document.get("results", [])):
-            if not isinstance(result, dict):
-                continue
+        for index, result in enumerate(results):
             name = str(result.get("databaseName", "")).strip()
             if not name:
                 continue
 
-            unmapped |= self.unrecognised_keys(result, _RESULT_KEYS)
             parity = [
                 {
                     "feature": str(item.get("feature", "")),
                     "severity": str(item.get("severity", "medium")),
                     "description": str(item.get("description", "")),
                 }
-                for item in result.get("featureParity", [])
+                for item in self._as_list(result.get("featureParity"))
                 if isinstance(item, dict)
             ]
             compatibility = [
                 {
                     "rule_id": str(item.get("ruleId", "")),
                     "severity": str(item.get("severity", "medium")),
-                    "impacted_objects": item.get("impactedObjects", 0),
+                    "impacted_objects": self._as_int(item.get("impactedObjects")),
                     "description": str(item.get("description", "")),
                 }
-                for item in result.get("compatibilityIssues", [])
+                for item in self._as_list(result.get("compatibilityIssues"))
                 if isinstance(item, dict)
             ]
 

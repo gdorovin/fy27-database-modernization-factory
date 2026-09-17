@@ -34,9 +34,12 @@ every figure attributed and every gap visibly empty and owned.
 
 ## Outputs
 
-- A business case document from `templates/business-case.md`.
-- `cost_inputs` recorded on the relevant target decisions, each with a named source and an
-  estimate flag, so the figure and the decision it supports stay together.
+- The drafted business case, structured as `templates/business-case.md`, returned in the
+  conversation for a human to place in the engagement folder. This agent holds no editing
+  tool, so it drafts; it never writes the file.
+- The `cost_inputs` to record on each relevant target decision, each with a named source and
+  an estimate flag, handed to `migration-planner` (or the human owner) to write into the
+  decision so the figure and the decision it supports stay together.
 
 ## Decisions I may make
 

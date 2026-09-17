@@ -381,7 +381,20 @@
           "id": "wl-legacy-warehouse-r-instance-scoped-features",
           "remediation": "Confirm each feature is genuinely required, then weigh it in target selection.",
           "severity": "high",
-          "statement": "Instance-scoped features are in use (polybase, sql-agent). A database-scoped target would require application change."
+          "statement": "Instance-scoped features are in use (sql-agent). A database-scoped target would require application change."
+        },
+        {
+          "blocking": false,
+          "category": "compatibility",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-arc-sql-wl-legacy-warehouse-arc-inventor-302ee897",
+            "ev-csv-inventory-wl-legacy-warehouse-invent-98e9db73"
+          ],
+          "id": "wl-legacy-warehouse-r-managed-target-unavailable-features",
+          "remediation": "Decide whether to re-engineer the dependency (for example, move file data to blob storage) or accept an infrastructure target.",
+          "severity": "high",
+          "statement": "Engine features are in use that no managed SQL target offers (polybase). Every platform-as-a-service target is ruled out until the application stops depending on them; infrastructure targets remain available."
         },
         {
           "blocking": false,

@@ -74,7 +74,7 @@ No imported content matched a prompt-injection pattern.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Acquired unit b sales | sql-server | 12.0 | end-of-support | production | high | 5 | No |
 | Group finance | sql-server | 14.0 | extended-support | production | critical | 3 | Yes |
-| Legacy warehouse | sql-server | 11.0 | end-of-support | production | medium | 5 | No |
+| Legacy warehouse | sql-server | 11.0 | end-of-support | production | medium | 6 | No |
 | Shared services | sql-server | 14.0 | extended-support | production | medium | 1 | Yes |
 
 ## Findings by workload
@@ -122,7 +122,8 @@ No imported content matched a prompt-injection pattern.
 | Dependency discovery is incomplete, so the consumers of this database and the blast radius of a cutover are unknown. | dependency | blocker | observed | Yes |
 | Engine version 11.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure. | support-lifecycle | high | derived | No |
 | Evidence sources disagree about: data_size_gb. The repository will not choose between them. | data-quality | blocker | observed | Yes |
-| Instance-scoped features are in use (polybase, sql-agent). A database-scoped target would require application change. | compatibility | high | observed | No |
+| Instance-scoped features are in use (sql-agent). A database-scoped target would require application change. | compatibility | high | observed | No |
+| Engine features are in use that no managed SQL target offers (polybase). Every platform-as-a-service target is ruled out until the application stops depending on them; infrastructure targets remain available. | compatibility | high | observed | No |
 | No RPO or RTO has been stated, so no availability design can be justified and no rollback window can be sized. | availability | medium | assumption | No |
 
 ### Shared services (`wl-shared-services`)
@@ -153,4 +154,4 @@ downstream of it requires architecture review, and every production change requi
 documented approval from the business, application, database, security, and operations
 owners.
 
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

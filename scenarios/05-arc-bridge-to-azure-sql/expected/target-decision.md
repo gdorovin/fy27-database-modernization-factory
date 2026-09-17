@@ -213,7 +213,7 @@ No destination can be recommended for Legacy warehouse while blocking evidence i
 | azure-sql-database | blocked | 0.0 | Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support. |
 | azure-sql-database-hyperscale | blocked | 0.0 | Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support. |
 | azure-sql-managed-instance | blocked | 0.0 | Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support. |
-| retain-on-premises | rejected | 40.0 | Scored 40 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Open blocking findings mean any move would be made on incomplete evidence (+10) |
+| retain-on-premises | rejected | 55.0 | Scored 55 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Operating-system dependencies would need removing before any managed target (+15); Open blocking findings mean any move would be made on incomplete evidence (+10) |
 | sql-server-on-azure-vm | blocked | 0.0 | Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support. |
 
 #### Why the alternatives were not chosen
@@ -224,13 +224,13 @@ No destination can be recommended for Legacy warehouse while blocking evidence i
   - Blockers: wl-legacy-warehouse-r-dependencies-unknown; wl-legacy-warehouse-r-evidence-conflict
 - **azure-sql-managed-instance** — Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.
   - Blockers: wl-legacy-warehouse-r-dependencies-unknown; wl-legacy-warehouse-r-evidence-conflict
-- **retain-on-premises** — Scored 40 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Open blocking findings mean any move would be made on incomplete evidence (+10).
+- **retain-on-premises** — Scored 55 against 80 for azure-arc-enabled-sql-server. Retaining the workload leaves every current risk in place (-20); Operating-system dependencies would need removing before any managed target (+15); Open blocking findings mean any move would be made on incomplete evidence (+10).
 - **sql-server-on-azure-vm** — Cannot be recommended while blocking evidence is open. Choosing a destination now would commit the engagement to a decision the evidence does not support.
   - Blockers: wl-legacy-warehouse-r-dependencies-unknown; wl-legacy-warehouse-r-evidence-conflict
 
 #### Compatibility
 
-- Instance-scoped features observed in use: polybase, sql-agent.
+- Instance-scoped features observed in use: sql-agent.
 
 #### Operations
 
@@ -361,4 +361,4 @@ case needs them from the customer or the account team.
 - Assumptions: none recorded.
 
 
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

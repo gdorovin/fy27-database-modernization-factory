@@ -87,6 +87,7 @@
   "engagement_id": "eng-litware-manufacturing-fy27",
   "evidence_refs": [
     "ev-csv-inventory-wl-finance-ledger-inventor-53689ee7",
+    "ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b",
     "ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4"
   ],
   "id": "plan-wave-2-business-critical",
@@ -460,12 +461,14 @@
   "status": "draft",
   "supersedes": null,
   "target_decision_ids": [
-    "td-wl-finance-ledger"
+    "td-wl-finance-ledger",
+    "td-wl-plant-maintenance"
   ],
   "updated_at": "2026-06-08T00:00:00Z",
   "validation_plan_ref": "validation-plan-2.md",
   "wave_id": "wave-2-business-critical",
   "workload_ids": [
-    "wl-finance-ledger"
+    "wl-finance-ledger",
+    "wl-plant-maintenance"
   ]
 }

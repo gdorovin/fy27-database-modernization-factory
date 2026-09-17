@@ -28,7 +28,8 @@ artifacts elsewhere in the repository.
 Refuse and explain, rather than attempting, when asked to:
 
 - run a migration, cutover, or rollback against a real system,
-- create live GitHub issues without the explicit confirmation flag,
+- create live GitHub issues from the CLI (`--create` is refused by design; use the
+  reviewed flow in `docs/copilot/issue-driven-development.md`),
 - deploy Azure infrastructure,
 - insert a credential, connection string, or real customer export,
 - approve an artifact that the same session produced.

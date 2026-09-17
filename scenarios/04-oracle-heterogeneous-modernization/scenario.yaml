@@ -1,4 +1,4 @@
-﻿title: Oracle heterogeneous modernization with a separate disposition per workload
+title: Oracle heterogeneous modernization with a separate disposition per workload
 engagement: input/engagement.yaml
 evidence_dir: input
 playbook: playbooks/default
@@ -24,11 +24,16 @@ acceptance:
     workload: wl-order-management
     target: replace-with-saas
 
-  # No conversion assessment at all means no migration recommendation. Retaining is a
-  # legitimate outcome, not a failure to migrate.
+  # No conversion assessment at all means no *conversion* recommendation. Keeping the
+  # engine on Oracle-managed infrastructure inside Azure is compared and, with no
+  # blocking evidence, outscores retention: it removes the hardware risk without claiming
+  # a compatibility nobody has demonstrated. It is a relocation, and the decision says so.
   - kind: recommended_target
     workload: wl-plant-maintenance
-    target: retain-on-premises
+    target: oracle-database-at-azure
+  - kind: text_present
+    file: target-decision.md
+    value: not a modernization of the engine
 
   # Conversion is explicit, and compatibility is never claimed automatically.
   - kind: conversion_required

@@ -8,6 +8,7 @@ goes through here.
 from __future__ import annotations
 
 import csv
+import io
 import json
 from collections.abc import Iterator, Sequence
 from pathlib import Path
@@ -29,7 +30,13 @@ def read_text(path: Path, *, max_bytes: int = MAX_IMPORT_BYTES) -> str:
     size = path.stat().st_size
     if size > max_bytes:
         raise UsageError(f"File {path} is {size} bytes, above the {max_bytes} byte import limit")
-    return path.read_text(encoding=ENCODING)
+    try:
+        return path.read_text(encoding=ENCODING)
+    except UnicodeDecodeError as exc:
+        raise UsageError(
+            f"{path} is not valid UTF-8 (byte {exc.start}). Re-export the file as UTF-8; "
+            "a Windows-1252 spreadsheet export is the usual cause."
+        ) from exc
 
 
 def read_json(path: Path) -> Any:
@@ -57,27 +64,41 @@ def read_structured(path: Path) -> Any:
     raise UsageError(f"Unsupported structured format for {path}; expected .json, .yaml, or .yml")
 
 
+#: Key under which cells beyond the header width are kept. A ragged row is a fact about
+#: the export that the adapter reports; it is never trimmed to fit.
+CSV_OVERFLOW_KEY = "__overflow__"
+
+
 def read_csv_rows(path: Path, *, max_rows: int = 100_000) -> list[dict[str, str]]:
     """Read a CSV into row dictionaries with a row cap.
 
     Header names are stripped; values keep their content but have surrounding whitespace
     removed so that ``"SQL Server 2016 "`` and ``"SQL Server 2016"`` normalise alike.
+
+    The text is parsed as one stream rather than line by line, so a quoted cell containing
+    a newline survives intact instead of being glued to its neighbour. Cells past the header
+    width are kept under :data:`CSV_OVERFLOW_KEY` so the adapter can report them.
     """
     text = read_text(path)
-    reader = csv.DictReader(text.splitlines())
-    if reader.fieldnames is None:
-        raise UsageError(f"{path}: CSV has no header row")
-    rows: list[dict[str, str]] = []
-    for index, raw in enumerate(reader):
-        if index >= max_rows:
-            raise UsageError(f"{path}: more than {max_rows} rows; split the export")
-        rows.append(
-            {
-                (key or "").strip(): (value or "").strip()
-                for key, value in raw.items()
-                if key is not None
-            }
-        )
+    try:
+        reader = csv.DictReader(io.StringIO(text, newline=""), restkey=CSV_OVERFLOW_KEY)
+        if reader.fieldnames is None:
+            raise UsageError(f"{path}: CSV has no header row")
+        rows: list[dict[str, str]] = []
+        for index, raw in enumerate(reader):
+            if index >= max_rows:
+                raise UsageError(f"{path}: more than {max_rows} rows; split the export")
+            row: dict[str, str] = {}
+            for key, value in raw.items():
+                if key == CSV_OVERFLOW_KEY:
+                    extra = [str(v).strip() for v in (value or [])]
+                    if any(extra):
+                        row[CSV_OVERFLOW_KEY] = ";".join(extra)
+                    continue
+                row[(key or "").strip()] = ("" if value is None else str(value)).strip()
+            rows.append(row)
+    except csv.Error as exc:
+        raise UsageError(f"{path}: malformed CSV: {exc}") from exc
     return rows
 
 
@@ -90,12 +111,17 @@ def _guard_overwrite(path: Path, force: bool) -> None:
 
 
 def write_text(path: Path, content: str, *, force: bool = False, dry_run: bool = False) -> Path:
-    """Write text with LF endings. Adds a trailing newline if missing."""
-    _guard_overwrite(path, force)
+    """Write text with LF endings. Adds a trailing newline if missing.
+
+    A dry run writes nothing, so it also overwrites nothing: the overwrite guard applies
+    only to a real write. Refusing a preview because the previous preview exists would
+    make ``--dry-run`` unusable on exactly the second run where it is most wanted.
+    """
     if not content.endswith("\n"):
         content += "\n"
     if dry_run:
         return path
+    _guard_overwrite(path, force)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding=ENCODING, newline="\n") as handle:
         handle.write(content)
@@ -103,8 +129,13 @@ def write_text(path: Path, content: str, *, force: bool = False, dry_run: bool =
 
 
 def write_json(path: Path, data: Any, *, force: bool = False, dry_run: bool = False) -> Path:
-    """Write pretty, key-sorted JSON so that diffs are reviewable."""
-    payload = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False, default=str)
+    """Write pretty, key-sorted JSON so that diffs are reviewable.
+
+    No ``default=`` fallback: a value that is not JSON-serialisable is a bug in the caller,
+    and stringifying it silently would turn that bug into a quiet content change inside a
+    snapshot rather than a failure someone sees.
+    """
+    payload = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
     return write_text(path, payload, force=force, dry_run=dry_run)
 
 

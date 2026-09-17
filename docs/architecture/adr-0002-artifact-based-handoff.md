@@ -88,7 +88,7 @@ does, at any price.
 
 ## Compliance and security impact
 
-Directly supports the governance model: `IAM-004`-style separation of duties needs an
+Directly supports the governance model: `IAM-002`-style least privilege and the no-self-approval rule needs an
 artifact with a recorded author, and an approval needs something to hash. Neither works over
 conversation.
 

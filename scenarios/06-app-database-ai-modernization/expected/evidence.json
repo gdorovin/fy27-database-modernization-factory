@@ -115,7 +115,10 @@
         "rto_minutes": 2880,
         "service_level_stated_by": "database-owner",
         "source_platform": "sql-server",
-        "source_version": "13.0"
+        "source_version": "13.0",
+        "unmapped_fields": [
+          "row 4: cells beyond the header (so it can move separately.)"
+        ]
       },
       "classification": "internal",
       "collected_on": "2026-08-10",

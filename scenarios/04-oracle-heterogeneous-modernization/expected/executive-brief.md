@@ -30,7 +30,7 @@ A manufacturer under licensing and audit pressure on its Oracle estate. Several 
 | --- | --- |
 | azure-database-for-postgresql-flexible-server | 1 |
 | azure-sql-managed-instance | 1 |
-| retain-on-premises | 1 |
+| oracle-database-at-azure | 1 |
 
 Not every workload moves to the same place, and retaining, retiring, or replacing a
 workload is a legitimate outcome rather than a failure to migrate.
@@ -40,7 +40,7 @@ workload is a legitimate outcome rather than a failure to migrate.
 | # | Wave | Workloads | Pilot |
 | --- | --- | --- | --- |
 | 1 | Wave 1 - pilot | 1 | Yes |
-| 2 | Wave 2 - business critical | 1 | No |
+| 2 | Wave 2 - business critical | 2 | No |
 
 ## What could go wrong
 

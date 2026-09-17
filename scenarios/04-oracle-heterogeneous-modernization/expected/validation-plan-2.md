@@ -7,8 +7,8 @@
 | Engagement | `eng-litware-manufacturing-fy27` |
 | Wave | `wave-2-business-critical` |
 | As at | 2026-06-08 |
-| Checks | 29 |
-| Blocking checks | 27 |
+| Checks | 39 |
+| Blocking checks | 37 |
 
 ## How this plan is used
 
@@ -52,6 +52,7 @@ Checks without a tolerance are judgement calls and name the owner who makes the 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: concurrency and locking behaviour are acceptable | Run the peak concurrency profile and observe blocking and deadlocks | No sustained blocking beyond the baseline profile | Yes |
+| Plant maintenance: concurrency and locking behaviour are acceptable | Run the peak concurrency profile and observe blocking and deadlocks | No sustained blocking beyond the baseline profile | Yes |
 
 ### Configuration
 
@@ -76,12 +77,14 @@ Checks without a tolerance are judgement calls and name the owner who makes the 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: row counts and checksums reconcile | Compare row counts and column checksums per table | Zero unreconciled tables | Yes |
+| Plant maintenance: row counts and checksums reconcile | Compare row counts and column checksums per table | Zero unreconciled tables | Yes |
 
 ### Data types
 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: data types and precision are preserved | Compare column types, precision, scale, and collation | Zero precision or collation differences without a recorded decision | Yes |
+| Plant maintenance: data types and precision are preserved | Compare column types, precision, scale, and collation | Zero precision or collation differences without a recorded decision | Yes |
 
 ### Encryption
 
@@ -94,6 +97,7 @@ Checks without a tolerance are judgement calls and name the owner who makes the 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: application functional tests pass | Run the application functional suite against the target | Zero failures | Yes |
+| Plant maintenance: application functional tests pass | Run the application functional suite against the target | Zero failures | Yes |
 
 ### Identity
 
@@ -106,6 +110,7 @@ Checks without a tolerance are judgement calls and name the owner who makes the 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: integrations with dependent systems succeed | Exercise each confirmed dependency end to end | Every confirmed dependency succeeds | Yes |
+| Plant maintenance: integrations with dependent systems succeed | Exercise each confirmed dependency end to end | Every confirmed dependency succeeds | Yes |
 
 ### Inventory
 
@@ -130,6 +135,7 @@ Checks without a tolerance are judgement calls and name the owner who makes the 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: performance is within tolerance of baseline | Replay the baseline workload and compare latency and throughput | Within 10% of the recorded baseline | Yes |
+| Plant maintenance: performance is within tolerance of baseline | Replay the baseline workload and compare latency and throughput | Within 10% of the recorded baseline | Yes |
 
 ### Posture
 
@@ -143,18 +149,21 @@ Checks without a tolerance are judgement calls and name the owner who makes the 
 | --- | --- | --- | --- |
 | Finance ledger: converted code produces identical results | Run the agreed comparison set against source and target and diff the output. Conversion tooling statistics are not accepted as evidence here. | Identical results for every case in the comparison set | Yes |
 | Finance ledger: stored procedures and functions behave identically | Execute the agreed procedure test set and compare results with the source | Identical results for every case in the set | Yes |
+| Plant maintenance: stored procedures and functions behave identically | Execute the agreed procedure test set and compare results with the source | Identical results for every case in the set | Yes |
 
 ### Referential integrity
 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: referential integrity holds | Validate constraints and check for orphaned rows | Zero constraint violations and zero orphans | Yes |
+| Plant maintenance: referential integrity holds | Validate constraints and check for orphaned rows | Zero constraint violations and zero orphans | Yes |
 
 ### Regression
 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: regression suite passes | Run the application regression suite against the target | Zero new failures against the source run | Yes |
+| Plant maintenance: regression suite passes | Run the application regression suite against the target | Zero new failures against the source run | Yes |
 
 ### Rpo rto
 
@@ -173,6 +182,7 @@ Checks without a tolerance are judgement calls and name the owner who makes the 
 | Check | Method | Tolerance | Blocking |
 | --- | --- | --- | --- |
 | Finance ledger: schema objects reconcile | Compare object counts and definitions between source and target | Zero unexplained differences | Yes |
+| Plant maintenance: schema objects reconcile | Compare object counts and definitions between source and target | Zero unexplained differences | Yes |
 
 ### Security configuration
 

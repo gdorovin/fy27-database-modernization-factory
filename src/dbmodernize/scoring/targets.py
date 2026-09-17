@@ -34,6 +34,7 @@ from dbmodernize.models.decision import (
     TargetDecisionSet,
 )
 from dbmodernize.models.engagement import Engagement
+from dbmodernize.models.risk import RiskRegister
 from dbmodernize.models.workload import Criticality, Workload, WorkloadInventory
 from dbmodernize.policies.models import Playbook
 from dbmodernize.scoring.classification import (
@@ -70,9 +71,18 @@ class Evaluation:
     reasons: list[str] = field(default_factory=list)
 
     def adjust(self, delta: float, reason: str) -> None:
+        """Apply an adjustment and record the amount that was *actually* applied.
+
+        The score is clamped to 0-100. Recording the requested delta rather than the applied
+        one would let the printed adjustments stop summing to the printed score, and the
+        whole point of the table is that a reviewer can add it up by hand.
+        """
+        previous = self.score
         self.score = max(0.0, min(100.0, self.score + delta))
-        sign = "+" if delta >= 0 else ""
-        self.reasons.append(f"{reason} ({sign}{delta:g})")
+        applied = self.score - previous
+        sign = "+" if applied >= 0 else ""
+        note = "" if applied == delta else f", clamped from {delta:+g}"
+        self.reasons.append(f"{reason} ({sign}{applied:g}{note})")
 
     def block(self, reason: str) -> None:
         self.blockers.append(reason)
@@ -103,12 +113,14 @@ def evaluate(workload: Workload, target: AzureTarget) -> Evaluation:
             _evaluate_hyperscale(evaluation, os_blockers, instance_features, size, growth)
         case AzureTarget.SQL_MANAGED_INSTANCE:
             _evaluate_managed_instance(evaluation, os_blockers, instance_features)
-        case AzureTarget.SQL_ON_AZURE_VM:
+        case AzureTarget.SQL_ON_AZURE_VM | AzureTarget.SELF_MANAGED_ON_AZURE_VM:
             _evaluate_azure_vm(evaluation, os_blockers, workload)
         case AzureTarget.ARC_ENABLED_SQL:
             _evaluate_arc(evaluation, workload)
         case AzureTarget.POSTGRESQL_FLEXIBLE | AzureTarget.MYSQL_FLEXIBLE:
             _evaluate_managed_open_source(evaluation, os_blockers, workload, target)
+        case AzureTarget.ORACLE_DATABASE_AT_AZURE:
+            _evaluate_oracle_database_at_azure(evaluation, os_blockers, workload)
         case AzureTarget.RETAIN:
             _evaluate_retain(evaluation, workload, os_blockers)
         case _:
@@ -205,7 +217,9 @@ def _evaluate_managed_instance(
 def _evaluate_azure_vm(evaluation: Evaluation, os_blockers: list[str], workload: Workload) -> None:
     if os_blockers:
         evaluation.adjust(
-            30, "Operating-system level control is required: " + ", ".join(os_blockers)
+            30,
+            "Features that no managed target offers, or that need operating-system control, "
+            "are in use: " + ", ".join(os_blockers),
         )
     else:
         evaluation.adjust(
@@ -273,6 +287,66 @@ def _evaluate_managed_open_source(
         )
 
 
+def _evaluate_oracle_database_at_azure(
+    evaluation: Evaluation, os_blockers: list[str], workload: Workload
+) -> None:
+    """Oracle on Oracle-managed infrastructure inside Azure.
+
+    The engine does not change, so the conversion question disappears. What remains is a
+    commercial and operational decision the evidence here cannot settle: licensing terms,
+    the private offer, and regional availability are inputs from the account team with a
+    date on them, never something this comparison invents.
+
+    It is scored the way Arc is scored for SQL Server: as the honest answer when the
+    evidence for leaving the engine does not exist, and as the fallback when it does. A
+    workload whose conversion has already been assessed against a destination has an
+    engagement invested in leaving Oracle; keeping the engine would retain the licence
+    position that engagement exists to change, so it is recorded and rejected, not chosen.
+    """
+    if workload.source_platform is not SourcePlatform.ORACLE:
+        evaluation.block(
+            f"{AzureTarget.ORACLE_DATABASE_AT_AZURE.value} runs the Oracle engine only; "
+            f"it does not serve {workload.source_platform.value}"
+        )
+        return
+    if os_blockers:
+        evaluation.block(
+            "Operating-system dependencies rule out a managed target: " + ", ".join(os_blockers)
+        )
+        return
+    has_conversion_evidence = bool(workload.assessed_targets) or any(
+        finding.id.endswith("r-conversion-effort") for finding in workload.findings
+    )
+    if has_conversion_evidence:
+        evaluation.adjust(
+            -15,
+            "A conversion assessment exists, so the engagement has invested in leaving the "
+            "engine; keeping it retains the licence position that investment is meant to "
+            "change, and is recorded as the fallback",
+        )
+    else:
+        evaluation.adjust(
+            20,
+            "No conversion assessment exists, so no cross-engine destination can be "
+            "recommended; keeping the engine removes the hardware and support risk without "
+            "claiming a compatibility nobody has demonstrated",
+        )
+    evaluation.adjust(10, "Oracle-managed infrastructure removes patching and hardware toil")
+    evaluation.adjust(
+        -10,
+        "Commercial terms, regional availability, and licence entitlement are unverified "
+        "inputs that the account team must supply with a date",
+    )
+    if workload.criticality is Criticality.CRITICAL:
+        evaluation.adjust(
+            5, "Engine-native availability features remain available for a critical workload"
+        )
+    evaluation.reasons.append(
+        "This keeps the estate on Oracle; it is a relocation and a licensing decision, not a "
+        "modernization of the engine"
+    )
+
+
 def _evaluate_retain(evaluation: Evaluation, workload: Workload, os_blockers: list[str]) -> None:
     evaluation.adjust(-20, "Retaining the workload leaves every current risk in place")
     if os_blockers:
@@ -327,12 +401,17 @@ def recommend(
     engagement: Engagement,
     playbook: Playbook,
     playbook_ref: PlaybookRef,
+    risks: RiskRegister | None = None,
 ) -> TargetDecision | None:
     """Produce a target decision.
 
     When blocking evidence is open, every destination target is blocked and only a
     non-moving posture remains available. That is the honest answer: the workload cannot
     move yet, but leaving it ungoverned in the meantime is a separate, avoidable failure.
+
+    ``risks`` is the register the assessment derived. The risks raised against this
+    workload are carried on the decision so that the plans built from it inherit them;
+    without that link the register is a document nothing downstream ever reads.
     """
     ready = workload.is_recommendation_ready
     open_blockers = [finding.id for finding in workload.blocking_findings] + [
@@ -415,6 +494,9 @@ def recommend(
 
     timestamp = datetime.combine(engagement.as_of, datetime.min.time(), tzinfo=UTC)
     target = winner.target
+    risk_ids = sorted(
+        risk.id for risk in (risks.risks if risks else []) if workload.id in risk.workload_ids
+    )
     return TargetDecision(
         id=f"td-{workload.id}",
         engagement_id=engagement.engagement_id,
@@ -423,6 +505,7 @@ def recommend(
         updated_at=timestamp,
         author=AUTHOR,
         evidence_refs=workload.evidence_refs,
+        risk_ids=risk_ids,
         playbook=playbook_ref,
         confidence=_confidence(workload, ready),
         status=ArtifactStatus.RECOMMENDED,
@@ -507,10 +590,17 @@ def _compatibility_notes(workload: Workload, target: AzureTarget) -> list[str]:
 
 
 def _operational_notes(target: AzureTarget) -> list[str]:
-    if target is AzureTarget.SQL_ON_AZURE_VM:
+    if target in {AzureTarget.SQL_ON_AZURE_VM, AzureTarget.SELF_MANAGED_ON_AZURE_VM}:
         return [
             "Patching, backup, and availability design remain the customer's responsibility.",
             "Operational runbooks must be written before the workload is considered live.",
+        ]
+    if target is AzureTarget.ORACLE_DATABASE_AT_AZURE:
+        return [
+            "Infrastructure and engine patching are Oracle-managed; database administration, "
+            "licensing, and the Oracle support relationship remain the customer's.",
+            "Regional availability, private-offer terms, and licence entitlement must be "
+            "confirmed with the account team and recorded with a date before commitment.",
         ]
     if target is AzureTarget.ARC_ENABLED_SQL:
         return [
@@ -592,11 +682,12 @@ def recommend_all(
     engagement: Engagement,
     playbook: Playbook,
     playbook_ref: PlaybookRef,
+    risks: RiskRegister | None = None,
 ) -> TargetDecisionSet:
     decisions: list[TargetDecision] = []
     unresolved: list[str] = []
     for workload in inventory.workloads:
-        decision = recommend(workload, engagement, playbook, playbook_ref)
+        decision = recommend(workload, engagement, playbook, playbook_ref, risks)
         if decision is None or not workload.is_recommendation_ready:
             unresolved.append(workload.id)
         if decision is not None:

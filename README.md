@@ -89,7 +89,8 @@ You get `engagements/acme-fy27/` containing `input/engagement.yaml`,
 constraints. Plain text, no schema knowledge needed; validation tells you what is missing.
 
 **3. Put your estate in `input/`.** Either fill in `inventory.csv` (one row per database)
-or drop in exports from Azure Migrate, Azure Arc, Data Migration Assistant, or SSMA as
+or drop in exports from Azure Migrate, Azure Arc-enabled SQL Server, Azure Database
+Migration Service, or SSMA as
 `.json`. Formats are auto-detected, and you can mix them — disagreements between sources
 are reported rather than silently resolved.
 
@@ -359,8 +360,8 @@ to make a failure disappear.
 | --- | --- | --- |
 | 01 | SQL Server 2016 to Managed Instance | Unknown dependencies block a recommendation; Managed Instance, SQL Database, and Azure VM are all compared |
 | 02 | SQL Server to Azure SQL Database | Database scope fits when no instance-scoped dependency exists; Hyperscale is rejected when size and growth do not justify it |
-| 03 | PostgreSQL to Flexible Server | Extensions are inventoried and flagged for per-version verification, not waved through |
-| 04 | Oracle heterogeneous modernization | Per-workload dispositions differ; no automatic compatibility is ever claimed |
+| 03 | PostgreSQL to Flexible Server | Extensions are inventoried and flagged for per-version verification, not waved through; the infrastructure alternative is PostgreSQL on a VM, never SQL Server |
+| 04 | Oracle heterogeneous modernization | Per-workload dispositions differ; no automatic compatibility is ever claimed; keeping the engine on Oracle Database@Azure is compared and is the fallback, not the default |
 | 05 | Arc bridge to Azure SQL | Arc classifies as `retain`, and enablement is never counted as modernization |
 | 06 | Application, database, and AI modernization | AI attachment is conditional on data quality and governance readiness |
 | 07 | Failed validation and rollback | Produces `no-go`, triggers rollback, creates corrective issues, and forbids success language |
@@ -381,9 +382,9 @@ dbmodernize validate-playbook playbooks/default
 dbmodernize validate-skill .github/skills
 dbmodernize validate-agent .github/agents
 dbmodernize normalize-evidence --engagement <file> --input <dir> --out <dir>
-dbmodernize assess --engagement <file> --input <dir> --out <dir>
-dbmodernize recommend-targets --engagement <file> --input <dir> --out <dir>
-dbmodernize plan-waves --engagement <file> --input <dir> --out <dir>
+dbmodernize assess --engagement <file> --input <dir> --out <dir> [--repo <root>]
+dbmodernize recommend-targets --engagement <file> --input <dir> --out <dir> [--repo <root>]
+dbmodernize plan-waves --engagement <file> --input <dir> --out <dir> [--repo <root>]
 dbmodernize render-plan --engagement <file> --input <dir> --out <dir>
 dbmodernize generate-issues --engagement <file> --input <dir> --out <dir>
 dbmodernize validate-scenario scenarios

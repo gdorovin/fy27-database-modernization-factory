@@ -264,6 +264,92 @@ issues:
   workload_ids:
   - wl-finance-ledger
 - acceptance_criteria:
+  - Non-production target is deployed from reviewed infrastructure as code.
+  - Replication reaches and holds zero lag.
+  - Cutover rehearsal produces a measured downtime figure.
+  - Rollback rehearsal completes inside the decision window.
+  approved_target: oracle-database-at-azure
+  blocked_by: []
+  definition_of_done:
+  - Rehearsal evidence attached to the wave.
+  - Validation plan executed with observations recorded for every blocking check.
+  - No new blocking finding introduced.
+  dependencies:
+  - Wave 2 entry criteria are met.
+  engagement_id: eng-litware-manufacturing-fy27
+  id: issue-wave-2-business-critical-wl-plant-maintenance-implement
+  labels:
+  - migrate
+  - oracle-database-at-azure
+  - wave-2
+  milestone: Wave 2 - business critical
+  out_of_scope:
+  - Production cutover, which requires a separate recorded approval from all five
+    owner roles.
+  - Decommissioning the source system.
+  owner_role: database-owner
+  playbook:
+    commit: null
+    path: playbooks/default
+    policy_ids:
+    - AVL-001
+    - AVL-002
+    - AVL-003
+    - AVL-004
+    - COMP-001
+    - COMP-002
+    - COST-001
+    - COST-002
+    - DATA-001
+    - DATA-002
+    - DATA-003
+    - DATA-004
+    - IAM-001
+    - IAM-002
+    - IAM-003
+    - NAME-001
+    - NET-001
+    - NET-002
+    - NET-003
+    - OBS-001
+    - OBS-002
+    - OBS-003
+    - OPS-001
+    - OPS-002
+    - OPS-003
+    - SEC-001
+    - SEC-002
+    - SEC-003
+    - SEC-004
+    - SEC-005
+    - VAL-001
+    - VAL-002
+    - VAL-003
+    - VAL-004
+    version: 1.0.0
+  problem_statement: Plant maintenance runs on oracle 12.2 and is scheduled in Wave
+    2 - business critical. The recommended target is oracle-database-at-azure.
+  rollback_considerations:
+  - Non-production work is reversible by deleting the target resource group.
+  - No production traffic moves under this issue.
+  scope:
+  - Prepare the oracle-database-at-azure target for Plant maintenance in a non-production
+    environment.
+  - Seed data and establish continuous replication.
+  - Rehearse the cutover and measure the actual window.
+  security_considerations:
+  - No credential, connection string, or customer identifier may appear in this issue
+    or in any artifact it produces.
+  source_evidence:
+  - ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b
+  target_decision_id: td-wl-plant-maintenance
+  title: Implement oracle-database-at-azure migration for Plant maintenance
+  validation_commands:
+  - dbmodernize validate-scenario scenarios
+  - az deployment group what-if --template-file infra/bicep/main.bicep
+  workload_ids:
+  - wl-plant-maintenance
+- acceptance_criteria:
   - Every blocking check has a recorded observation.
   - The validation report is schema-valid and its outcome follows the evidence.
   - All five owner roles have reviewed the report.
@@ -344,3 +430,4 @@ issues:
   - dbmodernize render-report --help
   workload_ids:
   - wl-finance-ledger
+  - wl-plant-maintenance

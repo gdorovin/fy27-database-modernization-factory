@@ -35,7 +35,20 @@
         "ev-csv-inventory-wl-product-core-inventory--d7dab8f7"
       ],
       "extensions": [],
-      "findings": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-product-core-inventory--d7dab8f7"
+          ],
+          "id": "wl-product-core-r-extended-support",
+          "remediation": null,
+          "severity": "medium",
+          "statement": "Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date."
+        }
+      ],
       "host_alias": "host-app-a",
       "id": "wl-product-core",
       "instance_features": [],
@@ -106,7 +119,7 @@
       "source_version": "15.0",
       "status": "evidence-complete",
       "supersedes": null,
-      "support_status": "supported",
+      "support_status": "extended-support",
       "updated_at": "2026-04-13T00:00:00Z",
       "workload_ids": [
         "wl-product-core"
@@ -144,7 +157,20 @@
         "ev-csv-inventory-wl-product-events-inventor-d0657a84"
       ],
       "extensions": [],
-      "findings": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-product-events-inventor-d0657a84"
+          ],
+          "id": "wl-product-events-r-extended-support",
+          "remediation": null,
+          "severity": "medium",
+          "statement": "Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date."
+        }
+      ],
       "host_alias": "host-app-a",
       "id": "wl-product-events",
       "instance_features": [],
@@ -215,7 +241,7 @@
       "source_version": "15.0",
       "status": "evidence-complete",
       "supersedes": null,
-      "support_status": "supported",
+      "support_status": "extended-support",
       "updated_at": "2026-04-13T00:00:00Z",
       "workload_ids": [
         "wl-product-events"
@@ -242,7 +268,20 @@
         "ev-csv-inventory-wl-product-staging-invento-b829061d"
       ],
       "extensions": [],
-      "findings": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-product-staging-invento-b829061d"
+          ],
+          "id": "wl-product-staging-r-extended-support",
+          "remediation": null,
+          "severity": "medium",
+          "statement": "Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date."
+        }
+      ],
       "host_alias": "host-stg-a",
       "id": "wl-product-staging",
       "instance_features": [],
@@ -313,7 +352,7 @@
       "source_version": "15.0",
       "status": "evidence-complete",
       "supersedes": null,
-      "support_status": "supported",
+      "support_status": "extended-support",
       "updated_at": "2026-04-13T00:00:00Z",
       "workload_ids": [
         "wl-product-staging"
@@ -340,7 +379,20 @@
         "ev-csv-inventory-wl-tenant-metadata-invento-82223d4e"
       ],
       "extensions": [],
-      "findings": [],
+      "findings": [
+        {
+          "blocking": false,
+          "category": "support-lifecycle",
+          "evidence_class": "derived",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-tenant-metadata-invento-82223d4e"
+          ],
+          "id": "wl-tenant-metadata-r-extended-support",
+          "remediation": null,
+          "severity": "medium",
+          "statement": "Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date."
+        }
+      ],
       "host_alias": "host-app-a",
       "id": "wl-tenant-metadata",
       "instance_features": [],
@@ -411,7 +463,7 @@
       "source_version": "15.0",
       "status": "evidence-complete",
       "supersedes": null,
-      "support_status": "supported",
+      "support_status": "extended-support",
       "updated_at": "2026-04-13T00:00:00Z",
       "workload_ids": [
         "wl-tenant-metadata"

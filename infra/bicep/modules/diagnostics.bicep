@@ -13,13 +13,8 @@ param resourceId string
 @description('Resource name, used only to build a readable setting name.')
 param resourceName string
 
-@description('Destination workspace. Required by design.')
+@description('Destination workspace. Required by design. Retention is a property of the workspace and its tables, not of this setting: the per-setting retentionPolicy was retired and is deliberately absent.')
 param logAnalyticsWorkspaceId string
-
-@description('Retention in days at the destination. Zero means the workspace policy applies.')
-@minValue(0)
-@maxValue(730)
-param retentionDays int = 0
 
 var settingName = 'diag-${replace(resourceName, '/', '-')}'
 
@@ -30,30 +25,15 @@ resource diagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021-05-01-pre
     workspaceId: logAnalyticsWorkspaceId
     logs: [
       {
-        categoryGroup: 'audit'
-        enabled: true
-        retentionPolicy: {
-          enabled: retentionDays > 0
-          days: retentionDays
-        }
-      }
-      {
+        // allLogs is a superset of audit; listing both duplicated every audit record.
         categoryGroup: 'allLogs'
         enabled: true
-        retentionPolicy: {
-          enabled: retentionDays > 0
-          days: retentionDays
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          enabled: retentionDays > 0
-          days: retentionDays
-        }
       }
     ]
   }

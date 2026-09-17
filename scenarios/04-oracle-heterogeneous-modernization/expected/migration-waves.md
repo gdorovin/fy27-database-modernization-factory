@@ -7,7 +7,7 @@
 | Engagement | `eng-litware-manufacturing-fy27` |
 | As at | 2026-06-08 |
 | Waves | 2 |
-| Deferred workloads | 1 |
+| Deferred workloads | 0 |
 
 Waves are ordered lowest risk first, and workloads that depend on each other stay
 together. Splitting a dependency pair across waves produces a cutover that half-works,
@@ -15,16 +15,14 @@ which is harder to recover from than either whole option.
 
 ## Deferred workloads
 
-These workloads are not yet assignable, normally because a blocking finding is open.
-
-- `wl-plant-maintenance` — Plant maintenance
+No workloads are deferred.
 
 ## Sequence
 
 | # | Wave | Pilot | Workloads | Depends on |
 | --- | --- | --- | --- | --- |
 | 1 | Wave 1 - pilot | Yes | 1 | — |
-| 2 | Wave 2 - business critical | No | 1 | wave-1-pilot |
+| 2 | Wave 2 - business critical | No | 2 | wave-1-pilot |
 
 ## Wave 1 - pilot
 
@@ -79,6 +77,7 @@ Move the highest-criticality workloads last, with the fullest validation and reh
 ### Workloads
 
 - `wl-finance-ledger` — Finance ledger
+- `wl-plant-maintenance` — Plant maintenance
 
 ### Prerequisites
 

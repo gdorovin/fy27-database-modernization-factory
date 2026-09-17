@@ -79,7 +79,7 @@ justify it. `conversion_required` is true whenever the disposition is `refactor`
 
 ```bash
 dbmodernize recommend-targets --engagement input/engagement.yaml --input input --out out --dry-run
-python -m pytest tests/unit/test_classification.py -q
+python -m pytest tests/unit/test_scoring.py -q -k "classif or disposition"
 ```
 
 ## Failure and fallback

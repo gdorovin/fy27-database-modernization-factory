@@ -48,10 +48,12 @@ the evidence never pointed.
    table in `src/dbmodernize/scoring/reference.py`. Revalidate that table before quoting
    it to a customer.
 2. Inventory instance-scoped features actually in use: scheduled jobs, cross-database
-   queries, service broker, linked servers, CLR, filestream, replication, distributed
-   transactions, server-level triggers.
-3. Inventory operating-system dependencies: third-party agents, filesystem access,
-   extended stored procedures. Any of these rules out every managed target.
+   queries, service broker, linked servers, CLR, replication, distributed transactions,
+   server-level triggers. These favour an instance-scoped managed target.
+3. Inventory features that no managed target offers at any scope: FILESTREAM, FileTable,
+   PolyBase. And operating-system dependencies: third-party agents, filesystem access,
+   extended stored procedures. Any of these rules out every managed target; only an
+   infrastructure target or retention remains until the application changes.
 4. Record sizing and growth, and mark whether they were measured.
 5. Record the availability configuration, and whether failover has ever been tested. An
    untested failover is a design, not a capability.

@@ -21,11 +21,18 @@ param administratorGroupName = 'grp-placeholder-dba'
 
 param backupRetentionDays = 14
 param zoneRedundant = false
+// Backup redundancy is decided on its own. Geo is the platform default and keeps
+// geo-restore; a non-production estate that accepts losing it can choose Local here, but
+// that is a decision to record, not a side effect of zoneRedundant = false.
+param backupStorageRedundancy = 'Geo'
+param geoRedundantBackup = 'Enabled'
 
 param tags = {
   workload: 'storeops'
   environment: 'dev'
-  owner: 'REPLACE-ME-owner-role'
+  // The role that answers a page for this resource. A placeholder in an example file is
+  // fine; a placeholder in a deployed tag is an unowned resource.
+  owner: 'platform-owner-role-placeholder'
   managedBy: 'fy27-database-modernization-factory'
   deploymentMode: 'reference-only'
 }

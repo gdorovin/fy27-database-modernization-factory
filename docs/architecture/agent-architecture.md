@@ -46,7 +46,7 @@ reviewer may declare readiness and may never approve.
 | `target-architect` | search, read, list, create, runCommands | Creates decisions and ADRs. Cannot edit evidence it is reasoning from. |
 | `value-advisor` | search, read, list | Drafts a case a human owns. Nothing to write. |
 | `migration-planner` | search, read, list, create, runCommands | Creates plans and issue definitions. |
-| `implementation-engineer` | + edit, runTests | The only agent that changes repository code. |
+| `implementation-engineer` | + edit, create, runTests | The only agent that changes repository code. |
 | `validation-engineer` | search, read, list, create, runCommands, runTests | Creates validation artifacts; cannot edit the plan it is validating. |
 | `governance-reviewer` | search, read, list, runCommands | Runs validators. Editing would let it fix a finding instead of reporting it. |
 

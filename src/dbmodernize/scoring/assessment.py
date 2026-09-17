@@ -39,6 +39,7 @@ from dbmodernize.models.workload import (
 )
 from dbmodernize.scoring.reference import (
     INSTANCE_SCOPED_FEATURES,
+    MANAGED_TARGET_UNAVAILABLE_FEATURES,
     OS_LEVEL_FEATURES,
     open_source_support,
     sql_server_support,
@@ -299,6 +300,27 @@ def rule_os_level_features(ctx: AssessmentContext) -> list[AssessmentFinding]:
     ]
 
 
+def rule_managed_target_unavailable_features(ctx: AssessmentContext) -> list[AssessmentFinding]:
+    used = sorted(set(ctx.workload.instance_features) & MANAGED_TARGET_UNAVAILABLE_FEATURES)
+    if not used:
+        return []
+    return [
+        ctx.finding(
+            "r-managed-target-unavailable-features",
+            FindingCategory.COMPATIBILITY,
+            Severity.HIGH,
+            f"Engine features are in use that no managed SQL target offers ({', '.join(used)}). "
+            "Every platform-as-a-service target is ruled out until the application stops "
+            "depending on them; infrastructure targets remain available.",
+            evidence_class=EvidenceClass.OBSERVED,
+            remediation=(
+                "Decide whether to re-engineer the dependency (for example, move file data to "
+                "blob storage) or accept an infrastructure target."
+            ),
+        )
+    ]
+
+
 def rule_extensions(ctx: AssessmentContext) -> list[AssessmentFinding]:
     if not ctx.workload.extensions:
         return []
@@ -318,10 +340,16 @@ def rule_extensions(ctx: AssessmentContext) -> list[AssessmentFinding]:
 
 def rule_tool_blocking_issues(ctx: AssessmentContext) -> list[AssessmentFinding]:
     findings: list[AssessmentFinding] = []
+    seen_codes: set[str] = set()
     for issue in ctx.attributes.get("blocking_issues", []) or []:
         if not isinstance(issue, dict):
             continue
         code = str(issue.get("code", "unknown"))
+        # Two tool issues with one code would otherwise produce two findings with the same
+        # id, and then two risks and two issues with the same id downstream.
+        if code.lower() in seen_codes:
+            continue
+        seen_codes.add(code.lower())
         findings.append(
             ctx.finding(
                 f"r-tool-blocking-{code.lower()}",
@@ -358,7 +386,11 @@ def rule_conversion_effort(ctx: AssessmentContext) -> list[AssessmentFinding]:
     if errors == 0 and manual == 0:
         return []
     percent = ctx.attributes.get("conversion_automatic_percent")
-    suffix = f" Automatic conversion covered {percent}% of objects." if percent else ""
+    # ``is not None`` rather than truthiness: a genuine 0% automatic conversion is the worst
+    # case and must not read like a missing value.
+    suffix = ""
+    if percent is not None:
+        suffix = f" Automatic conversion covered {percent}% of objects."
     return [
         ctx.finding(
             "r-conversion-effort",
@@ -421,6 +453,7 @@ RULES: tuple[Rule, ...] = (
     rule_service_level_assumed,
     rule_instance_features,
     rule_os_level_features,
+    rule_managed_target_unavailable_features,
     rule_extensions,
     rule_tool_blocking_issues,
     rule_conversion_effort,

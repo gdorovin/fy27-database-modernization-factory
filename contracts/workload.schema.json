@@ -41,7 +41,7 @@
     "instance_features": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Engine features observed in use, e.g. sql-agent, service-broker, clr, linked-servers, filestream, replication, cross-database-queries."
+      "description": "Engine features observed in use, e.g. sql-agent, service-broker, clr, linked-servers, replication, cross-database-queries, filestream, polybase."
     },
     "extensions": {
       "type": "array",

@@ -52,6 +52,17 @@
           "verdict": "recommended"
         },
         {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-finance-ledger-inventor-53689ee7",
+            "ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4"
+          ],
+          "rationale": "Scored 40 against 45 for azure-sql-managed-instance. A conversion assessment exists, so the engagement has invested in leaving the engine; keeping it retains the licence position that investment is meant to change, and is recorded as the fallback (-15); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); Engine-native availability features remain available for a critical workload (+5); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine",
+          "score": 40.0,
+          "target": "oracle-database-at-azure",
+          "verdict": "rejected"
+        },
+        {
           "blockers": [
             "Conversion was assessed against azure-sql-managed-instance, not against replace-with-saas. A conversion result does not transfer between destinations."
           ],
@@ -73,6 +84,17 @@
           "rationale": "Scored 30 against 45 for azure-sql-managed-instance. Retaining the workload leaves every current risk in place (-20)",
           "score": 30.0,
           "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-finance-ledger-inventor-53689ee7",
+            "ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4"
+          ],
+          "rationale": "Scored 37 against 45 for azure-sql-managed-instance. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10); Availability design remains the customer's responsibility on infrastructure (-5)",
+          "score": 37.0,
+          "target": "self-managed-on-azure-vm",
           "verdict": "rejected"
         }
       ],
@@ -213,6 +235,17 @@
           "verdict": "blocked"
         },
         {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-order-management-invent-6a4e1f19",
+            "ev-ssma-wl-order-management-ssma-conversion-cad17b4a"
+          ],
+          "rationale": "Scored 35 against 45 for azure-database-for-postgresql-flexible-server. A conversion assessment exists, so the engagement has invested in leaving the engine; keeping it retains the licence position that investment is meant to change, and is recorded as the fallback (-15); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine",
+          "score": 35.0,
+          "target": "oracle-database-at-azure",
+          "verdict": "rejected"
+        },
+        {
           "blockers": [
             "Conversion was assessed against azure-database-for-postgresql-flexible-server, not against replace-with-saas. A conversion result does not transfer between destinations."
           ],
@@ -234,6 +267,17 @@
           "rationale": "Scored 30 against 45 for azure-database-for-postgresql-flexible-server. Retaining the workload leaves every current risk in place (-20)",
           "score": 30.0,
           "target": "retain-on-premises",
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-order-management-invent-6a4e1f19",
+            "ev-ssma-wl-order-management-ssma-conversion-cad17b4a"
+          ],
+          "rationale": "Scored 42 against 45 for azure-database-for-postgresql-flexible-server. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
+          "score": 42.0,
+          "target": "self-managed-on-azure-vm",
           "verdict": "rejected"
         }
       ],
@@ -372,6 +416,16 @@
           "verdict": "blocked"
         },
         {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b"
+          ],
+          "rationale": "No conversion assessment exists, so no cross-engine destination can be recommended; keeping the engine removes the hardware and support risk without claiming a compatibility nobody has demonstrated (+20); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine",
+          "score": 70.0,
+          "target": "oracle-database-at-azure",
+          "verdict": "recommended"
+        },
+        {
           "blockers": [
             "No schema or code conversion assessment is present. Compatibility across engine families is never assumed; it is demonstrated per schema."
           ],
@@ -388,16 +442,26 @@
           "evidence_refs": [
             "ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b"
           ],
-          "rationale": "Retaining the workload leaves every current risk in place (-20)",
+          "rationale": "Scored 30 against 70 for oracle-database-at-azure. Retaining the workload leaves every current risk in place (-20)",
           "score": 30.0,
           "target": "retain-on-premises",
-          "verdict": "recommended"
+          "verdict": "rejected"
+        },
+        {
+          "blockers": [],
+          "evidence_refs": [
+            "ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b"
+          ],
+          "rationale": "Scored 42 against 70 for oracle-database-at-azure. No operating-system dependency was found, so this target keeps patching and backup responsibility without a reason (-18); Full engine control preserves third-party application support (+10)",
+          "score": 42.0,
+          "target": "self-managed-on-azure-vm",
+          "verdict": "rejected"
         }
       ],
       "conversion_required": false,
       "cost_inputs": [],
       "created_at": "2026-06-08T00:00:00Z",
-      "disposition": "retain",
+      "disposition": "replatform",
       "downtime_approach": {
         "basis": "A budget of 240 minutes has been stated. The class stays short-planned until a rehearsal measures the actual window.",
         "expected_class": "short-planned",
@@ -411,7 +475,8 @@
       "id": "td-wl-plant-maintenance",
       "open_questions": [],
       "operational_notes": [
-        "Existing operational burden and risk continue unchanged."
+        "Infrastructure and engine patching are Oracle-managed; database administration, licensing, and the Oracle support relationship remain the customer's.",
+        "Regional availability, private-offer terms, and licence entitlement must be confirmed with the account team and recorded with a date before commitment."
       ],
       "performance_notes": [
         "Sizing is based on measured figures; target sizing must still be validated against a baseline comparison after migration."
@@ -457,8 +522,8 @@
         ],
         "version": "1.0.0"
       },
-      "rationale": "retain-on-premises scored highest (30) for Plant maintenance on the published comparison. Retaining the workload leaves every current risk in place (-20). This is a recommendation and requires architecture review before it becomes a decision.",
-      "recommended_target": "retain-on-premises",
+      "rationale": "oracle-database-at-azure scored highest (70) for Plant maintenance on the published comparison. No conversion assessment exists, so no cross-engine destination can be recommended; keeping the engine removes the hardware and support risk without claiming a compatibility nobody has demonstrated (+20); Oracle-managed infrastructure removes patching and hardware toil (+10); Commercial terms, regional availability, and licence entitlement are unverified inputs that the account team must supply with a date (-10); This keeps the estate on Oracle; it is a relocation and a licensing decision, not a modernization of the engine. This is a recommendation and requires architecture review before it becomes a decision.",
+      "recommended_target": "oracle-database-at-azure",
       "requires_application_change": false,
       "risk_ids": [],
       "schema_version": "1.0.0",

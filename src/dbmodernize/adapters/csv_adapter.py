@@ -20,7 +20,7 @@ from typing import Any, ClassVar
 from dbmodernize.adapters.base import UNMAPPED_ATTRIBUTE, EvidenceAdapter
 from dbmodernize.models.base import Confidence, EvidenceClass
 from dbmodernize.models.evidence import EvidenceRecord, EvidenceSource
-from dbmodernize.utils.io import read_csv_rows
+from dbmodernize.utils.io import CSV_OVERFLOW_KEY, read_csv_rows
 
 #: Accepted header spellings mapped to the normalized attribute key. Headers are
 #: normalized before lookup, so ``Data Size (GB)``, ``data-size-gb`` and ``DATA_SIZE_GB``
@@ -149,8 +149,14 @@ class CsvInventoryAdapter(EvidenceAdapter):
 
             measured = bool(attributes.pop("measured", False))
             notes = attributes.pop("notes", None)
-            if unmapped:
-                attributes[UNMAPPED_ATTRIBUTE] = unmapped
+            row_unmapped = list(unmapped)
+            overflow = row.get(CSV_OVERFLOW_KEY)
+            if overflow:
+                # More cells than headers. The values had no column to land in, so they
+                # are reported verbatim rather than trimmed off the end of the row.
+                row_unmapped.append(f"row {index}: cells beyond the header ({overflow})")
+            if row_unmapped:
+                attributes[UNMAPPED_ATTRIBUTE] = row_unmapped
             records.append(
                 self._record(
                     engagement_id=engagement_id,
@@ -176,7 +182,8 @@ class CsvInventoryAdapter(EvidenceAdapter):
         unmapped = {
             header
             for header in rows[0]
-            if (normalized := self._normalize_header(header))
+            if header != CSV_OVERFLOW_KEY
+            and (normalized := self._normalize_header(header))
             and normalized not in COLUMN_MAP
             and normalized not in IGNORED_COLUMNS
         }
@@ -185,6 +192,8 @@ class CsvInventoryAdapter(EvidenceAdapter):
     def _map_row(self, row: dict[str, str]) -> dict[str, Any]:
         attributes: dict[str, Any] = {}
         for raw_key, raw_value in row.items():
+            if raw_key == CSV_OVERFLOW_KEY:
+                continue
             key = COLUMN_MAP.get(self._normalize_header(raw_key))
             if key is None or raw_value == "":
                 continue

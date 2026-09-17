@@ -297,6 +297,18 @@
           "remediation": "Modernize, upgrade in place, or obtain extended support cover.",
           "severity": "high",
           "statement": "Engine version 13.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure."
+        },
+        {
+          "blocking": false,
+          "category": "data-quality",
+          "evidence_class": "observed",
+          "evidence_refs": [
+            "ev-csv-inventory-wl-reporting-copy-inventor-dceef091"
+          ],
+          "id": "wl-reporting-copy-r-unmapped-input",
+          "remediation": "Confirm the fields hold nothing decision-relevant, or teach the adapter to read them and re-run.",
+          "severity": "medium",
+          "statement": "The source evidence carried fields this repository did not read: row 4: cells beyond the header (so it can move separately.). Any gap reported below may therefore be a gap in the adapter rather than in the estate, and the two look identical from here."
         }
       ],
       "host_alias": "host-rpt-a",

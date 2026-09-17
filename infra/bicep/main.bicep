@@ -21,10 +21,10 @@ param location string
 @allowed(['sql-database', 'sql-managed-instance', 'postgresql-flexible'])
 param targetKind string
 
-@description('Resource id of the subnet holding the private endpoint.')
+@description('Resource id of the data subnet. For sql-database it holds the private endpoint; for sql-managed-instance and postgresql-flexible it must be delegated to the service, because those targets are injected into the virtual network rather than reached through a private endpoint.')
 param privateEndpointSubnetId string
 
-@description('Resource id of the private DNS zone for the target service.')
+@description('Resource id of the private DNS zone for the target service. sql-database needs privatelink.database.windows.net; postgresql-flexible needs a zone ending in .private.postgres.database.azure.com linked to the virtual network. One zone never serves both, which is why the parameter file must be edited per target.')
 param privateDnsZoneId string
 
 @description('Resource id of the Log Analytics workspace receiving diagnostics.')
@@ -43,6 +43,14 @@ param backupRetentionDays int = 14
 
 @description('Zone redundancy. Costs more and survives a zone failure.')
 param zoneRedundant bool = false
+
+@description('Backup storage redundancy for the SQL targets. Decided separately from zone redundancy; Geo is the platform default and keeps geo-restore available.')
+@allowed(['Local', 'Zone', 'Geo', 'GeoZone'])
+param backupStorageRedundancy string = 'Geo'
+
+@description('Geo-redundant backup for the PostgreSQL target. Immutable after creation.')
+@allowed(['Enabled', 'Disabled'])
+param geoRedundantBackup string = 'Enabled'
 
 @description('Tags applied to every resource. Include an owner; an unowned resource has no incident response.')
 param tags object = {
@@ -67,6 +75,7 @@ module sqlDatabase 'modules/sql-database.bicep' = if (targetKind == 'sql-databas
     logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
     backupRetentionDays: backupRetentionDays
     zoneRedundant: zoneRedundant
+    backupStorageRedundancy: backupStorageRedundancy
   }
 }
 
@@ -82,6 +91,7 @@ module sqlManagedInstance 'modules/sql-managed-instance.bicep' = if (targetKind 
     logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
     backupRetentionDays: backupRetentionDays
     zoneRedundant: zoneRedundant
+    backupStorageRedundancy: backupStorageRedundancy
   }
 }
 
@@ -93,11 +103,12 @@ module postgresqlFlexible 'modules/postgresql-flexible.bicep' = if (targetKind =
     tags: tags
     administratorGroupObjectId: administratorGroupObjectId
     administratorGroupName: administratorGroupName
-    privateEndpointSubnetId: privateEndpointSubnetId
+    delegatedSubnetId: privateEndpointSubnetId
     privateDnsZoneId: privateDnsZoneId
     logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
     backupRetentionDays: backupRetentionDays
     zoneRedundant: zoneRedundant
+    geoRedundantBackup: geoRedundantBackup
   }
 }
 

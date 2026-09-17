@@ -47,10 +47,10 @@ No imported content matched a prompt-injection pattern.
 
 | Workload | Platform | Version | Support | Environment | Criticality | Findings | Ready for a target decision |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Product core | sql-server | 15.0 | supported | production | high | 0 | Yes |
-| Product events | sql-server | 15.0 | supported | production | medium | 0 | Yes |
-| Product staging | sql-server | 15.0 | supported | pre-production | low | 0 | Yes |
-| Tenant metadata | sql-server | 15.0 | supported | production | high | 0 | Yes |
+| Product core | sql-server | 15.0 | extended-support | production | high | 1 | Yes |
+| Product events | sql-server | 15.0 | extended-support | production | medium | 1 | Yes |
+| Product staging | sql-server | 15.0 | extended-support | pre-production | low | 1 | Yes |
+| Tenant metadata | sql-server | 15.0 | extended-support | production | high | 1 | Yes |
 
 ## Findings by workload
 
@@ -62,7 +62,9 @@ No imported content matched a prompt-injection pattern.
 - Instance features in use: none recorded
 - Dependency discovery complete: Yes
 
-No findings recorded.
+| Finding | Category | Severity | Evidence class | Blocking |
+| --- | --- | --- | --- | --- |
+| Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date. | support-lifecycle | medium | derived | No |
 
 ### Product events (`wl-product-events`)
 
@@ -72,7 +74,9 @@ No findings recorded.
 - Instance features in use: none recorded
 - Dependency discovery complete: Yes
 
-No findings recorded.
+| Finding | Category | Severity | Evidence class | Blocking |
+| --- | --- | --- | --- | --- |
+| Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date. | support-lifecycle | medium | derived | No |
 
 ### Product staging (`wl-product-staging`)
 
@@ -82,7 +86,9 @@ No findings recorded.
 - Instance features in use: none recorded
 - Dependency discovery complete: Yes
 
-No findings recorded.
+| Finding | Category | Severity | Evidence class | Blocking |
+| --- | --- | --- | --- | --- |
+| Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date. | support-lifecycle | medium | derived | No |
 
 ### Tenant metadata (`wl-tenant-metadata`)
 
@@ -92,7 +98,9 @@ No findings recorded.
 - Instance features in use: none recorded
 - Dependency discovery complete: Yes
 
-No findings recorded.
+| Finding | Category | Severity | Evidence class | Blocking |
+| --- | --- | --- | --- | --- |
+| Engine version 15.0 is in extended support; the window is finite and should anchor the modernization date. | support-lifecycle | medium | derived | No |
 
 
 ## Risks raised
@@ -106,4 +114,4 @@ downstream of it requires architecture review, and every production change requi
 documented approval from the business, application, database, security, and operations
 owners.
 
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

@@ -368,6 +368,39 @@ class TestParsing:
         rows = parse_table("| A | B |\n| --- | --- |\n| 1 |\n| 3 | 4 |\n")
         assert rows == [{"a": "3", "b": "4"}]
 
+    def test_table_parsing_reports_malformed_rows_when_asked(self) -> None:
+        """A skipped row is a policy nobody enforces. The caller must be able to see it."""
+        malformed: list[str] = []
+        rows = parse_table("| A | B |\n| --- | --- |\n| 1 |\n| 3 | 4 |\n", malformed)
+        assert rows == [{"a": "3", "b": "4"}]
+        assert len(malformed) == 1
+        assert "1 cell(s)" in malformed[0]
+
+    def test_table_parsing_ignores_pipe_rows_inside_fenced_blocks(self) -> None:
+        """A worked example inside a fence must never become a live row."""
+        text = "| A | B |\n| --- | --- |\n| 1 | 2 |\n```text\n| 9 | 9 |\n| 8 | 8 |\n```\n"
+        malformed: list[str] = []
+        rows = parse_table(text, malformed)
+        assert rows == [{"a": "1", "b": "2"}]
+        assert malformed == []
+
+    def test_malformed_policy_row_is_a_finding(self, tmp_path: Path, repo_root: Path) -> None:
+        """One mistyped cell must fail validation, not quietly drop the policy."""
+        import shutil
+
+        broken = tmp_path / "broken"
+        shutil.copytree(repo_root / "playbooks" / "default", broken)
+        policies = broken / "policies.md"
+        text = policies.read_text(encoding="utf-8")
+        text = text.replace(
+            "| COST-002 | cost | cost.observation | recommended |",
+            "| COST-002 | cost | cost.observation recommended |",
+            1,
+        )
+        policies.write_text(text, encoding="utf-8")
+        _, findings = load_playbook(broken)
+        assert any(f.rule == "PLAYBOOK-ROW-MALFORMED" for f in findings.findings)
+
     def test_load_returns_none_when_files_are_missing(self, tmp_path: Path) -> None:
         directory = tmp_path / "empty"
         directory.mkdir()

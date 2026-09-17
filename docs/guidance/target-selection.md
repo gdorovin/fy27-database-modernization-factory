@@ -27,10 +27,10 @@ Retaining patching responsibility for no reason: penalised, heavily, but choosab
 
 | Source | Compared against |
 | --- | --- |
-| SQL Server | Managed Instance, SQL Database, Hyperscale, Azure VM, Arc, retain |
-| PostgreSQL | PostgreSQL Flexible Server, Azure VM, retain |
-| MySQL, MariaDB | MySQL Flexible Server, Azure VM, retain |
-| Oracle | PostgreSQL Flexible Server, Managed Instance, SQL Database, replace, retain |
+| SQL Server | Managed Instance, SQL Database, Hyperscale, SQL Server on Azure VM, Arc, retain |
+| PostgreSQL | PostgreSQL Flexible Server, self-managed on Azure VM, retain |
+| MySQL, MariaDB | MySQL Flexible Server, self-managed on Azure VM, retain (MariaDB requires conversion evidence) |
+| Oracle | Oracle Database@Azure, PostgreSQL Flexible Server, Managed Instance, SQL Database, self-managed on Azure VM, replace, retain |
 
 Every candidate appears in the decision record, including prohibited ones — rejected with a
 citation. Silently omitting an option hides that it was considered, and the rejected options
@@ -54,9 +54,17 @@ Reconstructable by hand from `scoring/targets.py`. Base is 50.
 `+25` instance-scoped features in use · `+12` broad engine compatibility ·
 `+8` managed operations ·
 `−5` when no instance-scoped dependency exists.
+Blocked outright, like every managed target, when FILESTREAM, FileTable, or PolyBase is in
+use: those have no managed home at any scope, so they never count as instance-scoped.
 
-**SQL on Azure VM**
-`+30` operating-system control required · `+10` full engine control ·
+**Oracle Database@Azure** (Oracle sources only)
+`+20` engine unchanged, no conversion · `+10` Oracle-managed infrastructure ·
+`−10` commercial terms, region, and licence entitlement are unverified account-team inputs ·
+`+5` engine-native availability for a critical workload. A relocation, not an engine
+modernization, and the decision record says so.
+
+**SQL Server on Azure VM**, and the source engine self-managed on an Azure VM
+`+30` operating-system control, or a feature no managed target offers, required · `+10` full engine control ·
 `−18` when no such dependency exists · `−5` for a business-critical workload, since
 availability design stays with the customer.
 

@@ -58,21 +58,25 @@ class SsmaAdapter(EvidenceAdapter):
         converted_on = self._parse_date(document.get("convertedOn"), collected_on)
         project = str(document.get("project", path.stem))
         records: list[EvidenceRecord] = []
+        schemas = [s for s in self._as_list(document.get("schemas")) if isinstance(s, dict)]
         unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
+        for schema in schemas:
+            unmapped |= self.unrecognised_keys(schema, _SCHEMA_KEYS)
+            unmapped |= self.unrecognised_keys(
+                self._as_dict(schema.get("conversionSummary")),
+                _SUMMARY_KEYS,
+                "conversionSummary.",
+            )
 
-        for index, schema in enumerate(document.get("schemas", [])):
-            if not isinstance(schema, dict):
-                continue
+        for index, schema in enumerate(schemas):
             name = str(schema.get("workloadName") or schema.get("sourceSchema") or "").strip()
             if not name:
                 continue
 
-            summary = schema.get("conversionSummary") or {}
-            unmapped |= self.unrecognised_keys(schema, _SCHEMA_KEYS)
-            unmapped |= self.unrecognised_keys(summary, _SUMMARY_KEYS, "conversionSummary.")
-            automatic = int(summary.get("automatic", 0))
-            manual = int(summary.get("manual", 0))
-            errors = int(summary.get("errors", 0))
+            summary = self._as_dict(schema.get("conversionSummary"))
+            automatic = self._as_int(summary.get("automatic"))
+            manual = self._as_int(summary.get("manual"))
+            errors = self._as_int(summary.get("errors"))
             total = automatic + manual + errors
 
             attributes: dict[str, Any] = {
@@ -80,7 +84,7 @@ class SsmaAdapter(EvidenceAdapter):
                 "source_platform": schema.get("sourcePlatform", "oracle"),
                 "source_schema": schema.get("sourceSchema"),
                 "assessed_target": schema.get("targetPlatform"),
-                "object_counts": schema.get("objects", {}),
+                "object_counts": self._as_dict(schema.get("objects")),
                 "conversion_automatic": automatic,
                 "conversion_manual": manual,
                 "conversion_errors": errors,
@@ -94,9 +98,9 @@ class SsmaAdapter(EvidenceAdapter):
                     {
                         "category": str(issue.get("category", "")),
                         "description": str(issue.get("description", "")),
-                        "occurrences": issue.get("occurrences", 0),
+                        "occurrences": self._as_int(issue.get("occurrences")),
                     }
-                    for issue in schema.get("topIssues", [])
+                    for issue in self._as_list(schema.get("topIssues"))
                     if isinstance(issue, dict)
                 ],
                 "measured": True,

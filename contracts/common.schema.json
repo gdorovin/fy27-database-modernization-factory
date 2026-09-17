@@ -68,9 +68,11 @@
         "azure-sql-database-hyperscale",
         "azure-sql-managed-instance",
         "sql-server-on-azure-vm",
+        "self-managed-on-azure-vm",
         "azure-arc-enabled-sql-server",
         "azure-database-for-postgresql-flexible-server",
         "azure-database-for-mysql-flexible-server",
+        "oracle-database-at-azure",
         "retain-on-premises",
         "retire",
         "replace-with-saas"

@@ -9,7 +9,7 @@
 | Wave | `wave-2-business-critical` (sequence 2) |
 | As at | 2026-06-08 |
 | Playbook | `playbooks/default` v1.0.0 |
-| Target decisions | td-wl-finance-ledger |
+| Target decisions | td-wl-finance-ledger, td-wl-plant-maintenance |
 | Tasks that change an environment | 6 |
 
 Move the highest-criticality workloads last, with the fullest validation and rehearsal.
@@ -19,6 +19,7 @@ Move the highest-criticality workloads last, with the fullest validation and reh
 | Workload | Target | Disposition | Application change | Conversion |
 | --- | --- | --- | --- | --- |
 | Finance ledger | azure-sql-managed-instance | refactor | Yes | Yes |
+| Plant maintenance | oracle-database-at-azure | replatform | No | No |
 
 ## Approval gates
 
@@ -244,7 +245,7 @@ proof.
 
 ## Evidence and provenance
 
-- Evidence: ev-csv-inventory-wl-finance-ledger-inventor-53689ee7, ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4
+- Evidence: ev-csv-inventory-wl-finance-ledger-inventor-53689ee7, ev-csv-inventory-wl-plant-maintenance-inven-5ce4310b, ev-ssma-wl-finance-ledger-ssma-conversion-j-5a905ec4
 - Risks: _none linked_
 - Policies in force: AVL-001, AVL-002, AVL-003, AVL-004, COMP-001, COMP-002, COST-001, COST-002, DATA-001, DATA-002, DATA-003, DATA-004, IAM-001, IAM-002, IAM-003, NAME-001, NET-001, NET-002, NET-003, OBS-001, OBS-002, OBS-003, OPS-001, OPS-002, OPS-003, SEC-001, SEC-002, SEC-003, SEC-004, SEC-005, VAL-001, VAL-002, VAL-003, VAL-004
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

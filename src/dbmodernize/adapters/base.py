@@ -100,6 +100,29 @@ class EvidenceAdapter(abc.ABC):
         return {f"{prefix}{key}" for key in mapping if key not in known}
 
     @staticmethod
+    def _as_list(value: Any) -> list[Any]:
+        """A list, or an empty list. ``"databases": null`` is malformed, not fatal."""
+        return value if isinstance(value, list) else []
+
+    @staticmethod
+    def _as_dict(value: Any) -> dict[str, Any]:
+        """A mapping, or an empty mapping. ``"performance": []`` must not crash the run."""
+        return value if isinstance(value, dict) else {}
+
+    @staticmethod
+    def _as_int(value: Any, default: int = 0) -> int:
+        """An integer, or ``default``. Untrusted input never earns a traceback."""
+        if isinstance(value, bool):
+            return int(value)
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float) and value.is_integer():
+            return int(value)
+        if isinstance(value, str) and value.strip().lstrip("-").isdigit():
+            return int(value.strip())
+        return default
+
+    @staticmethod
     def _guard_count(records: list[EvidenceRecord], path: Path) -> list[EvidenceRecord]:
         if len(records) > MAX_RECORDS_PER_FILE:
             raise UsageError(

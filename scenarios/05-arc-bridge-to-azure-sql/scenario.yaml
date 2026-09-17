@@ -1,4 +1,4 @@
-﻿title: Azure Arc as a governed bridge for an estate with unproven inventory
+title: Azure Arc as a governed bridge for an estate with unproven inventory
 engagement: input/engagement.yaml
 evidence_dir: input
 playbook: playbooks/default

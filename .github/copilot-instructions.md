@@ -141,8 +141,9 @@ a paid API, or customer data. Anything that does is marked `optional_integration
 ## Rules for generated content
 
 - Generated Markdown must state its source artifact and generation timestamp.
-- Generated issues are written to disk. Live GitHub issue creation requires an explicit
-  confirmation flag and is off by default.
+- Generated issues are written to disk. The core CLI refuses `--create` unconditionally;
+  live creation happens only through the reviewed flow in
+  `docs/copilot/issue-driven-development.md`, never from this tool.
 - Rendering is pure: identical inputs produce byte-identical outputs. No timestamps in
   the body unless they come from the input artifact.
 - Never overwrite an existing artifact unless `--force` is passed.

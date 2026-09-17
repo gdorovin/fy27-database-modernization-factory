@@ -12,8 +12,9 @@ restate the rules.**
 - Use `make gate` as the single completion check. Do not declare success on a subset.
 - This repository has no network dependency in its core path. If a command appears to
   need network access, that is a defect — report it instead of adding a dependency.
-- Long outputs: prefer `dbmodernize <command> --json` and parse, rather than scraping
-  human-readable text.
+- Long outputs: the five `validate-*` commands accept `--json`; prefer it and parse the
+  result rather than scraping human-readable text. The pipeline commands write JSON and
+  YAML artifacts to `--out`; read those files instead of their console output.
 - When a validator fails, it prints the artifact path and the failing rule ID. Quote
   both in your summary.
 

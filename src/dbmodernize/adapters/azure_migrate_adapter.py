@@ -63,18 +63,24 @@ class AzureMigrateAdapter(EvidenceAdapter):
         assessed_on = self._parse_date(document.get("assessedOn"), collected_on)
         assessment = str(document.get("assessmentName", path.stem))
         records: list[EvidenceRecord] = []
-        unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
+        entries = [e for e in self._as_list(document.get("databases")) if isinstance(e, dict)]
 
-        for index, entry in enumerate(document.get("databases", [])):
-            if not isinstance(entry, dict):
-                continue
+        # Unmapped fields are collected across the whole file first, so every record in
+        # the file reports the same set. Growing the set inside the loop gave record 0
+        # fewer unknown fields than record N for no reason a reader could see.
+        unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
+        for entry in entries:
+            unmapped |= self.unrecognised_keys(entry, _DATABASE_KEYS)
+            unmapped |= self.unrecognised_keys(
+                self._as_dict(entry.get("performance")), _PERFORMANCE_KEYS, "performance."
+            )
+
+        for index, entry in enumerate(entries):
             name = str(entry.get("databaseName") or entry.get("instanceName") or "").strip()
             if not name:
                 continue
 
-            performance = entry.get("performance") or {}
-            unmapped |= self.unrecognised_keys(entry, _DATABASE_KEYS)
-            unmapped |= self.unrecognised_keys(performance, _PERFORMANCE_KEYS, "performance.")
+            performance = self._as_dict(entry.get("performance"))
             measured = bool(performance.get("measured", False))
             attributes: dict[str, Any] = {
                 "name": name,
@@ -84,17 +90,17 @@ class AzureMigrateAdapter(EvidenceAdapter):
                 "data_size_gb": entry.get("sizeInGb"),
                 "environment": entry.get("environment"),
                 "tool_readiness": entry.get("readiness"),
-                "tool_target_readiness": entry.get("targetReadiness", {}),
+                "tool_target_readiness": self._as_dict(entry.get("targetReadiness")),
                 "blocking_issues": [
                     {
                         "code": str(issue.get("code", "")),
                         "description": str(issue.get("description", "")),
                     }
-                    for issue in entry.get("blockingIssues", [])
+                    for issue in self._as_list(entry.get("blockingIssues"))
                     if isinstance(issue, dict)
                 ],
                 "instance_features": sorted(
-                    str(feature) for feature in entry.get("featuresInUse", [])
+                    str(feature) for feature in self._as_list(entry.get("featuresInUse"))
                 ),
                 "measured": measured,
             }

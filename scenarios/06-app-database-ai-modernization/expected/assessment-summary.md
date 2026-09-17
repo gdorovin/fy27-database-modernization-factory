@@ -49,7 +49,7 @@ No imported content matched a prompt-injection pattern.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Case management | sql-server | 13.0 | end-of-support | production | high | 2 | Yes |
 | Customer master | sql-server | 13.0 | end-of-support | production | critical | 2 | Yes |
-| Reporting copy | sql-server | 13.0 | end-of-support | pre-production | low | 1 | Yes |
+| Reporting copy | sql-server | 13.0 | end-of-support | pre-production | low | 2 | Yes |
 
 ## Findings by workload
 
@@ -90,6 +90,7 @@ No imported content matched a prompt-injection pattern.
 | Finding | Category | Severity | Evidence class | Blocking |
 | --- | --- | --- | --- | --- |
 | Engine version 13.0 is past end of support, so it receives no security fixes and carries audit and cyber exposure. | support-lifecycle | high | derived | No |
+| The source evidence carried fields this repository did not read: row 4: cells beyond the header (so it can move separately.). Any gap reported below may therefore be a gap in the adapter rather than in the estate, and the two look identical from here. | data-quality | medium | observed | No |
 
 
 ## Risks raised
@@ -103,4 +104,4 @@ downstream of it requires architecture review, and every production change requi
 documented approval from the business, application, database, security, and operations
 owners.
 
-> Reference tables were last verified on 2026-09-15. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.
+> Reference tables were last verified on 2026-09-16. Support status, service capabilities, and limits change. Revalidate against current product documentation before presenting any conclusion drawn from them to a customer.

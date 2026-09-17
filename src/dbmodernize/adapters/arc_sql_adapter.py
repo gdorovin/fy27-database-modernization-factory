@@ -56,25 +56,32 @@ class ArcSqlAdapter(EvidenceAdapter):
             raise UsageError(f"{path}: expected a JSON object at the document root")
 
         collected = self._parse_date(document.get("collectedOn"), collected_on)
-        instances = [i for i in document.get("instances", []) if isinstance(i, dict)]
+        instances = [i for i in self._as_list(document.get("instances")) if isinstance(i, dict)]
         records: list[EvidenceRecord] = []
         unmapped = self.unrecognised_keys(document, _DOCUMENT_KEYS)
         for instance in instances:
             unmapped |= self.unrecognised_keys(instance, _INSTANCE_KEYS)
-            for database in instance.get("databases", []):
+            for database in self._as_list(instance.get("databases")):
                 unmapped |= self.unrecognised_keys(database, _DATABASE_KEYS, "databases.")
 
         for index, instance in enumerate(instances):
             instance_name = str(instance.get("name", "")).strip()
-            features = sorted(str(f) for f in instance.get("features", []))
-            security = [str(f) for f in instance.get("securityFindings", [])]
+            features = sorted(str(f) for f in self._as_list(instance.get("features")))
+            security = [str(f) for f in self._as_list(instance.get("securityFindings"))]
 
-            for db_index, database in enumerate(instance.get("databases", [])):
+            for db_index, database in enumerate(self._as_list(instance.get("databases"))):
                 if not isinstance(database, dict):
                     continue
                 name = str(database.get("name", "")).strip()
                 if not name:
                     continue
+                # Identity is the database name alone, deliberately: the CSV inventory and
+                # the other adapters key on the same thing, and that shared key is what lets
+                # sources be merged and their disagreements detected. The cost is that two
+                # instances each holding a database with the same name collapse into one
+                # workload. Until identity carries the instance across every adapter, an
+                # estate with duplicate database names should disambiguate them in the
+                # inventory; the assessment will report the resulting conflicts.
                 attributes: dict[str, Any] = {
                     "name": name,
                     "source_platform": "sql-server",
