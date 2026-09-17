@@ -1,0 +1,93 @@
+name: Diagnose
+
+# Temporary. Runs every gate step on the same runner image CI uses, never stops at the
+# first failure, and publishes one log bundle as a downloadable artifact. Exists so a
+# failing gate can be read in one file instead of fifteen job pages. Delete once green.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    name: Collect every gate output
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Run every gate step, capturing output
+        shell: bash
+        run: |
+          set +e
+          mkdir -p diag
+          {
+            echo "=== ENVIRONMENT ==="
+            python --version
+            uname -a
+            git rev-parse HEAD
+            echo
+            echo "=== CRLF CHECK (files with carriage returns, should be none) ==="
+            git ls-files -z | xargs -0 grep -lI $'\r' 2>/dev/null | head -50
+            echo "(end of CRLF list)"
+            echo
+            echo "=== INSTALL ==="
+            python -m pip install -e ".[dev]" 2>&1 | tail -5
+            echo
+            echo "=== VERSIONS ==="
+            python -m pip freeze | grep -iE "^(ruff|mypy|pydantic|typer|click|jsonschema|pyyaml|jinja2|pytest)=" 
+          } > diag/00-environment.txt 2>&1
+
+          run_step () {
+            local name="$1"; shift
+            echo "=== $name :: $* ===" > "diag/$name.txt"
+            "$@" >> "diag/$name.txt" 2>&1
+            echo "exit code: $?" >> "diag/$name.txt"
+          }
+
+          run_step 01-ruff-format   python -m ruff format --check src tests scripts
+          run_step 02-ruff-check    python -m ruff check src tests scripts
+          run_step 03-mypy          python -m mypy
+          run_step 04-pytest        python -m pytest tests -q -x --no-header -rA -p no:cacheprovider
+          run_step 05-validate-repo dbmodernize validate-repo
+          run_step 06-validate-playbook dbmodernize validate-playbook playbooks/default
+          run_step 07-validate-skill dbmodernize validate-skill .github/skills
+          run_step 08-validate-agent dbmodernize validate-agent .github/agents
+          run_step 09-validate-scenario dbmodernize validate-scenario scenarios
+          run_step 10-check-secrets python scripts/check_no_secrets.py
+          run_step 11-check-workflow-permissions python scripts/check_workflow_permissions.py
+          run_step 12-check-links   python scripts/check_links.py
+
+          python -m pip install yamllint > /dev/null 2>&1
+          run_step 13-yamllint yamllint -c .yamllint.yml .github playbooks scenarios templates
+
+          npm install --no-save markdownlint-cli2@0.14.0 > /dev/null 2>&1
+          run_step 14-markdownlint npx markdownlint-cli2 "**/*.md" "#node_modules" "#scenarios/*/expected"
+
+          az bicep install > /dev/null 2>&1
+          run_step 15-bicep-build az bicep build --file infra/bicep/main.bicep --stdout
+          run_step 16-bicep-lint  az bicep lint --file infra/bicep/main.bicep
+
+          echo
+          echo "################ SUMMARY ################"
+          for f in diag/*.txt; do
+            code=$(grep -E "^exit code: " "$f" | tail -1 | awk '{print $3}')
+            printf "%-40s exit=%s\n" "$(basename "$f")" "${code:-n/a}"
+          done
+          echo "#########################################"
+          # Bundle everything into one file for download.
+          cat diag/*.txt > diag/ALL-IN-ONE.txt
+          exit 0
+
+      - name: Publish the log bundle
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: diagnose-logs
+          path: diag/
+          retention-days: 3
